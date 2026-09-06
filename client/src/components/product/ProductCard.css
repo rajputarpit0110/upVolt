@@ -1,0 +1,285 @@
+.cc-product-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-body);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.cc-product-card:hover {
+  border-color: rgba(96, 165, 250, 0.35);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.1);
+}
+
+.cc-product-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  min-height: 24px;
+}
+
+.cc-product-card__wishlist {
+  color: var(--text-muted);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-subtle);
+  transition: all var(--transition-fast);
+}
+
+.cc-product-card__wishlist:hover {
+  color: #EF4444;
+  background: rgba(239, 68, 68, 0.1);
+  transform: scale(1.1);
+}
+
+.cc-product-card__wishlist--active {
+  color: #EF4444;
+  background: rgba(239, 68, 68, 0.12);
+}
+
+/* Image Box */
+.cc-product-card__image-link {
+  display: block;
+  text-decoration: none;
+}
+
+.cc-product-card__image-box {
+  width: 100%;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFFFFF;
+  border-radius: var(--radius-md);
+  padding: 8px;
+  margin-bottom: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all var(--transition-fast);
+}
+
+.cc-product-card:hover .cc-product-card__img {
+  transform: scale(1.05);
+}
+
+.cc-product-card__img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: transform var(--transition-normal);
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.25));
+}
+
+/* Body */
+.cc-product-card__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.cc-product-card__rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  margin-bottom: 6px;
+}
+
+.cc-star-icon {
+  color: #F59E0B;
+}
+
+.cc-rating-val {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.cc-rating-reviews {
+  color: var(--text-muted);
+}
+
+.cc-product-card__title {
+  font-size: 0.96rem;
+  font-weight: 600;
+  line-height: 1.35;
+  margin-bottom: 10px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.7em;
+}
+
+.cc-product-card__title a {
+  color: var(--text-primary);
+  transition: color var(--transition-fast);
+}
+
+.cc-product-card__title a:hover {
+  color: var(--accent-primary);
+}
+
+/* Price */
+.cc-product-card__price-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  margin-top: auto;
+}
+
+.cc-product-card__price-group {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.cc-product-card__price {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.cc-product-card__original-price {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.cc-product-card__discount-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #22C55E;
+}
+
+/* Actions */
+.cc-product-card__actions {
+  display: grid;
+  grid-template-columns: 1fr 42px;
+  gap: 8px;
+}
+
+.cc-product-card__btn-cart {
+  background: rgba(133, 168, 241, 0.16);
+  border: 1px solid rgba(86, 148, 246, 0.35);
+  color: #93C5FD;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.cc-product-card__btn-cart:hover {
+  background: var(--accent-primary);
+  color: #FFFFFF;
+  border-color: var(--accent-primary);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+}
+
+.cc-product-card__btn-whatsapp {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #34D399;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.cc-product-card__btn-whatsapp:hover {
+  background: rgba(16, 185, 129, 0.28);
+  border-color: rgba(16, 185, 129, 0.6);
+  color: #A7F3D0;
+  transform: scale(1.04);
+}
+
+/* =========================================================
+   LIGHT MODE: Dark, high-contrast, crystal clear buttons
+   ========================================================= */
+[data-theme="light"] .cc-product-card__btn-cart {
+  background: #3f76ec;
+  border: 1px solid #1D4ED8;
+  color: #FFFFFF;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+}
+
+[data-theme="light"] .cc-product-card__btn-cart:hover {
+  background: #1D4ED8;
+  border-color: #1E40AF;
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  transform: translateY(-1px);
+}
+
+[data-theme="light"] .cc-product-card__btn-whatsapp {
+  background: #1ac95a;
+  border: 1px solid #15803D;
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.25);
+}
+
+[data-theme="light"] .cc-product-card__btn-whatsapp:hover {
+  background: #189044;
+  border-color: #166534;
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);
+  transform: scale(1.05);
+}
+
+/* =========================================================
+   EYE CARE MODE: Warm, deep soothing forest green contrast
+   ========================================================= */
+[data-theme="eyecare"] .cc-product-card__btn-cart {
+  background: #2D6A4F;
+  border: 1px solid #21513C;
+  color: #FCFAF6;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(45, 106, 79, 0.22);
+}
+
+[data-theme="eyecare"] .cc-product-card__btn-cart:hover {
+  background: #1B4332;
+  border-color: #143526;
+  color: #FCFAF6;
+  box-shadow: 0 4px 14px rgba(45, 106, 79, 0.32);
+  transform: translateY(-1px);
+}
+
+[data-theme="eyecare"] .cc-product-card__btn-whatsapp {
+  background: #1B5E3B;
+  border: 1px solid #14492E;
+  color: #FCFAF6;
+  box-shadow: 0 2px 8px rgba(27, 94, 59, 0.22);
+}
+
+[data-theme="eyecare"] .cc-product-card__btn-whatsapp:hover {
+  background: #14492E;
+  border-color: #0E3320;
+  color: #FCFAF6;
+  box-shadow: 0 4px 14px rgba(27, 94, 59, 0.32);
+  transform: scale(1.05);
+}

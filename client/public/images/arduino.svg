@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" fill="none">
+  <!-- Arduino Uno Blue PCB -->
+  <path d="M20 15 h270 a10 10 0 0 1 10 10 v150 a10 10 0 0 1 -10 10 h-230 l-15 15 h-25 a10 10 0 0 1 -10 -10 v-175 a10 10 0 0 1 10 -10 z" fill="#0284C7" stroke="#38BDF8" stroke-width="2" />
+  
+  <!-- USB Type B Metal Connector -->
+  <rect x="10" y="30" width="55" height="42" rx="3" fill="#94A3B8" stroke="#E2E8F0" stroke-width="1.5" />
+  <rect x="10" y="38" width="40" height="26" fill="#1E293B" />
+
+  <!-- DC Power Barrel Jack -->
+  <rect x="10" y="140" width="50" height="45" rx="4" fill="#0F172A" stroke="#334155" stroke-width="2" />
+  <circle cx="35" cy="162" r="8" fill="#475569" />
+
+  <!-- Reset Button -->
+  <rect x="75" y="25" width="22" height="22" rx="4" fill="#E2E8F0" />
+  <circle cx="86" cy="36" r="6" fill="#EF4444" />
+  <text x="86" y="55" fill="#FFFFFF" font-family="'Outfit', sans-serif" font-size="7" font-weight="bold" text-anchor="middle">RESET</text>
+
+  <!-- Arduino Infinity Logo -->
+  <g transform="translate(180, 50)">
+    <circle cx="15" cy="15" r="12" stroke="#FFFFFF" stroke-width="3" fill="none" />
+    <circle cx="35" cy="15" r="12" stroke="#FFFFFF" stroke-width="3" fill="none" />
+    <text x="15" y="19" fill="#FFFFFF" font-size="12" font-weight="bold" text-anchor="middle">-</text>
+    <text x="35" y="19" fill="#FFFFFF" font-size="12" font-weight="bold" text-anchor="middle">+</text>
+  </g>
+  <text x="210" y="85" fill="#FFFFFF" font-family="'Outfit', sans-serif" font-size="18" font-weight="900" text-anchor="middle">ARDUINO</text>
+  <text x="210" y="100" fill="#E0F2FE" font-family="'Outfit', sans-serif" font-size="12" font-weight="700" text-anchor="middle">UNO</text>
+
+  <!-- Main ATmega328P DIP-28 Chip -->
+  <rect x="130" y="130" width="130" height="34" rx="4" fill="#0F172A" stroke="#334155" stroke-width="1.5" />
+  <!-- DIP Pins -->
+  <g fill="#CBD5E1">
+    <rect x="135" y="122" width="5" height="8" rx="1"/>
+    <rect x="145" y="122" width="5" height="8" rx="1"/>
+    <rect x="155" y="122" width="5" height="8" rx="1"/>
+    <rect x="165" y="122" width="5" height="8" rx="1"/>
+    <rect x="175" y="122" width="5" height="8" rx="1"/>
+    <rect x="185" y="122" width="5" height="8" rx="1"/>
+    <rect x="195" y="122" width="5" height="8" rx="1"/>
+    <rect x="205" y="122" width="5" height="8" rx="1"/>
+    <rect x="215" y="122" width="5" height="8" rx="1"/>
+    <rect x="225" y="122" width="5" height="8" rx="1"/>
+    <rect x="235" y="122" width="5" height="8" rx="1"/>
+    <rect x="245" y="122" width="5" height="8" rx="1"/>
+
+    <rect x="135" y="164" width="5" height="8" rx="1"/>
+    <rect x="145" y="164" width="5" height="8" rx="1"/>
+    <rect x="155" y="164" width="5" height="8" rx="1"/>
+    <rect x="165" y="164" width="5" height="8" rx="1"/>
+    <rect x="175" y="164" width="5" height="8" rx="1"/>
+    <rect x="185" y="164" width="5" height="8" rx="1"/>
+    <rect x="195" y="164" width="5" height="8" rx="1"/>
+    <rect x="205" y="164" width="5" height="8" rx="1"/>
+    <rect x="215" y="164" width="5" height="8" rx="1"/>
+    <rect x="225" y="164" width="5" height="8" rx="1"/>
+    <rect x="235" y="164" width="5" height="8" rx="1"/>
+    <rect x="245" y="164" width="5" height="8" rx="1"/>
+  </g>
+  <text x="195" y="151" fill="#94A3B8" font-family="'JetBrains Mono', monospace" font-size="9" text-anchor="middle">ATmega328P-PU</text>
+
+  <!-- Female Pin Headers Top & Bottom -->
+  <rect x="130" y="18" width="145" height="14" rx="2" fill="#0F172A" />
+  <rect x="130" y="188" width="145" height="14" rx="2" fill="#0F172A" />
+  <rect x="75" y="188" width="45" height="14" rx="2" fill="#0F172A" />
+
+  <!-- 16MHz Crystal -->
+  <rect x="100" y="105" width="22" height="12" rx="6" fill="#CBD5E1" stroke="#94A3B8" />
+  <text x="111" y="114" fill="#475569" font-size="7" font-weight="bold" text-anchor="middle">16.0</text>
+</svg>

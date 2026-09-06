@@ -1,0 +1,158 @@
+/* =========================================================
+   Go To Home Screen Button Bar (Rendered above Footer)
+   ========================================================= */
+
+.cc-go-home-section {
+  width: 100%;
+  padding: 36px 0 12px;
+  margin-top: 48px;
+  margin-bottom: -40px; /* balances spacing before footer */
+  position: relative;
+  z-index: 5;
+}
+
+.cc-go-home-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.cc-go-home-divider {
+  flex: 1;
+  height: 1.5px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--border-color, rgba(255, 255, 255, 0.1)) 50%,
+    transparent 100%
+  );
+}
+
+[data-theme="light"] .cc-go-home-divider {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #CBD5E1 50%,
+    transparent 100%
+  );
+}
+
+.cc-go-home-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 30px;
+  border-radius: var(--radius-full, 9999px);
+  background: var(--bg-surface, #0E1626);
+  border: 1.5px solid rgba(59, 130, 246, 0.35);
+  color: var(--text-primary, #F8FAFC);
+  font-family: var(--font-body, inherit);
+  font-size: 0.94rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.cc-go-home-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-cyan, #38BDF8);
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.cc-go-home-arrow {
+  color: var(--text-muted, #94A3B8);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+}
+
+/* Hover States (Dark Theme) */
+.cc-go-home-btn:hover {
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  border-color: #3B82F6;
+  color: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35), 0 0 15px rgba(59, 130, 246, 0.2);
+}
+
+.cc-go-home-btn:hover .cc-go-home-icon-box {
+  color: #FFFFFF;
+  transform: scale(1.12);
+}
+
+.cc-go-home-btn:hover .cc-go-home-arrow {
+  color: #FFFFFF;
+  transform: translateX(4px);
+}
+
+.cc-go-home-btn:active {
+  transform: translateY(0);
+}
+
+/* Light Theme */
+[data-theme="light"] .cc-go-home-btn {
+  background: #FFFFFF;
+  border-color: #CBD5E1;
+  color: #0F172A;
+  box-shadow: 0 4px 18px -2px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+[data-theme="light"] .cc-go-home-icon-box {
+  color: #2563EB;
+}
+
+[data-theme="light"] .cc-go-home-arrow {
+  color: #64748B;
+}
+
+[data-theme="light"] .cc-go-home-btn:hover {
+  background: #2563EB;
+  border-color: #2563EB;
+  color: #FFFFFF;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.28);
+}
+
+[data-theme="light"] .cc-go-home-btn:hover .cc-go-home-icon-box,
+[data-theme="light"] .cc-go-home-btn:hover .cc-go-home-arrow {
+  color: #FFFFFF;
+}
+
+/* Eyecare Theme */
+[data-theme="eyecare"] .cc-go-home-btn {
+  background: #F4E8D1;
+  border-color: #D4C3A3;
+  color: #433422;
+}
+
+[data-theme="eyecare"] .cc-go-home-btn:hover {
+  background: #C27D38;
+  border-color: #C27D38;
+  color: #FFFDF7;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .cc-go-home-section {
+    padding: 24px 0 6px;
+    margin-top: 32px;
+    margin-bottom: -20px;
+  }
+
+  .cc-go-home-divider {
+    display: none;
+  }
+
+  .cc-go-home-btn {
+    width: 100%;
+    max-width: 320px;
+    padding: 12px 20px;
+    font-size: 0.9rem;
+  }
+}

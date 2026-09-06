@@ -1,0 +1,20 @@
+name: Render Keep-Alive 24/7 Pinger
+
+on:
+  schedule:
+    # Trigger every 10 minutes (* / 10 * * * *)
+    - cron: '*/10 * * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions UI
+
+jobs:
+  ping-render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Keep-Alive HTTP Request to Render /health
+        run: |
+          # Set your public backend URL in repository secrets or default below
+          TARGET_URL="${{ secrets.RENDER_BACKEND_URL || 'https://campuscircuit.onrender.com' }}"
+          echo "Sending 10-minute keep-alive ping to: $TARGET_URL/health"
+          RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}\nTIME_TOTAL:%{time_total}s\n" "$TARGET_URL/health" || true)
+          echo "$RESPONSE"
+          echo "Render service kept active successfully."

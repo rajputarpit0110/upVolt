@@ -1,0 +1,73 @@
+.cc-coupon-type-toggle {
+  display: flex;
+  gap: 8px;
+  background: var(--bg-surface-elevated, #0f172a);
+  padding: 4px;
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+}
+
+.cc-toggle-pill {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm, 6px);
+  border: none;
+  background: transparent;
+  color: var(--text-muted, #94a3b8);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cc-toggle-pill:hover {
+  color: var(--text-primary, #ffffff);
+}
+
+.cc-toggle-pill--active {
+  background: var(--accent-blue, #0066ff);
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0, 102, 255, 0.35);
+}
+
+.cc-coupon-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cc-preset-chip {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
+  color: var(--text-secondary, #cbd5e1);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cc-preset-chip:hover {
+  background: rgba(0, 102, 255, 0.15);
+  border-color: rgba(0, 102, 255, 0.4);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.cc-date-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.cc-date-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--text-muted, #94a3b8);
+  pointer-events: none;
+}

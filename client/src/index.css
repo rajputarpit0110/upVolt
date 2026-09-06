@@ -1,0 +1,291 @@
+@import './styles/adminModals.css';
+
+/* =========================================================
+   CampusCircuit Global Design System & Theming
+   Themes: Dark (Flagship Tech), Light (Crisp), Eye Care (Warm Parchment)
+   ========================================================= */
+
+:root {
+  /* Fonts */
+  --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Common radii */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* WhatsApp Brand Color */
+  --color-whatsapp: #25D366;
+  --color-whatsapp-hover: #20BA5A;
+  --color-whatsapp-bg: rgba(37, 211, 102, 0.12);
+}
+
+/* =========================================================
+   THEME 1: DARK THEME (Refined Modern Tech / Obsidian & Slate)
+   ========================================================= */
+[data-theme="dark"],
+:root:not([data-theme]) {
+  color-scheme: dark;
+  --bg-main: #0A0E17;           /* Deep Obsidian Indigo-Slate */
+  --bg-secondary: #0F1626;      /* Slate-900 / App Navigation */
+  --bg-surface: #131D31;        /* Elevated Surface / Form Elements */
+  --bg-card: #111A2E;           /* Clean Bento Card Surface */
+  --bg-card-hover: #16233B;     /* Interactive Hover Surface */
+  --bg-glass: rgba(15, 22, 38, 0.85);
+  --bg-input: #0B101D;
+  --bg-subtle: rgba(255, 255, 255, 0.04);
+  
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-subtle: rgba(255, 255, 255, 0.04);
+  --border-hover: rgba(96, 165, 250, 0.35);
+  --border-glow: rgba(59, 130, 246, 0.2);
+
+  --text-primary: #F8FAFC;      /* Clean White-Slate */
+  --text-secondary: #94A3B8;    /* Readable Slate-400 */
+  --text-muted: #64748B;        /* Muted Slate-500 */
+  --text-inverted: #0A0E17;
+
+  /* Refined Electric Sapphire & Indigo Accent (Not neon arcade cyan) */
+  --accent-primary: #2563EB;
+  --accent-primary-hover: #1D4ED8;
+  --accent-cyan: #38BDF8;       /* Clean Sky Blue instead of #00E5FF */
+  --accent-blue: #3B82F6;
+  --accent-glow: 0 4px 18px rgba(37, 99, 235, 0.28);
+
+  /* Curated Status Badges */
+  --badge-bestseller-bg: rgba(16, 185, 129, 0.12);
+  --badge-bestseller-text: #34D399;
+  --badge-popular-bg: rgba(59, 130, 246, 0.12);
+  --badge-popular-text: #60A5FA;
+  --badge-new-bg: rgba(139, 92, 246, 0.12);
+  --badge-new-text: #A78BFA;
+  --badge-hot-bg: rgba(244, 63, 94, 0.12);
+  --badge-hot-text: #FB7185;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 16px -2px rgba(0, 0, 0, 0.5), 0 2px 6px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12px 32px -4px rgba(0, 0, 0, 0.6), 0 4px 12px -2px rgba(0, 0, 0, 0.35);
+  --shadow-glow: 0 0 30px rgba(59, 130, 246, 0.15);
+}
+
+/* =========================================================
+   THEME 2: LIGHT THEME (Crisp, High Contrast)
+   ========================================================= */
+[data-theme="light"] {
+  color-scheme: light;
+  --bg-main: #F8FAFC;
+  --bg-secondary: #F1F5F9;
+  --bg-surface: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F8FAFC;
+  --bg-glass: rgba(255, 255, 255, 0.85);
+  --bg-input: #F1F5F9;
+  --bg-subtle: rgba(0, 0, 0, 0.03);
+
+  --border-color: #E2E8F0;
+  --border-subtle: #EDF2F7;
+  --border-hover: rgba(37, 99, 235, 0.4);
+  --border-glow: rgba(37, 99, 235, 0.15);
+
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
+  --text-inverted: #FFFFFF;
+
+  --accent-primary: #2563EB;
+  --accent-primary-hover: #1D4ED8;
+  --accent-cyan: #0284C7;
+  --accent-blue: #1E40AF;
+  --accent-glow: 0 4px 20px rgba(37, 99, 235, 0.25);
+
+  --badge-bestseller-bg: #DCFCE7;
+  --badge-bestseller-text: #15803D;
+  --badge-popular-bg: #E0F2FE;
+  --badge-popular-text: #0369A1;
+  --badge-new-bg: #F3E8FF;
+  --badge-new-text: #7E22CE;
+  --badge-hot-bg: #FEE2E2;
+  --badge-hot-text: #B91C1C;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 14px 32px rgba(0, 0, 0, 0.09);
+  --shadow-glow: 0 8px 25px rgba(37, 99, 235, 0.12);
+}
+
+/* =========================================================
+   THEME 3: EYE CARE THEME (Warm Soothing Paper Parchment)
+   ========================================================= */
+[data-theme="eyecare"] {
+  color-scheme: light;
+  --bg-main: #F4EFE6;
+  --bg-secondary: #EBE4D6;
+  --bg-surface: #FCFAF6;
+  --bg-card: #FAF6EE;
+  --bg-card-hover: #F2ECDE;
+  --bg-glass: rgba(244, 239, 230, 0.88);
+  --bg-input: #EDE6D8;
+  --bg-subtle: rgba(70, 55, 35, 0.04);
+
+  --border-color: #DDD4C3;
+  --border-subtle: #E8E0D2;
+  --border-hover: rgba(45, 106, 79, 0.4);
+  --border-glow: rgba(45, 106, 79, 0.15);
+
+  --text-primary: #2C261E;
+  --text-secondary: #5C5243;
+  --text-muted: #8C806F;
+  --text-inverted: #FCFAF6;
+
+  --accent-primary: #2D6A4F;
+  --accent-primary-hover: #21513C;
+  --accent-cyan: #3B7A57;
+  --accent-blue: #1B4332;
+  --accent-glow: 0 4px 18px rgba(45, 106, 79, 0.22);
+
+  --badge-bestseller-bg: #E3EDE6;
+  --badge-bestseller-text: #20533C;
+  --badge-popular-bg: #EAE5D9;
+  --badge-popular-text: #504434;
+  --badge-new-bg: #EAE6DF;
+  --badge-new-text: #4C463F;
+  --badge-hot-bg: #F4DFD8;
+  --badge-hot-text: #963521;
+
+  --shadow-sm: 0 1px 3px rgba(60, 48, 30, 0.05);
+  --shadow-md: 0 6px 18px rgba(60, 48, 30, 0.08);
+  --shadow-lg: 0 12px 30px rgba(60, 48, 30, 0.1);
+  --shadow-glow: 0 8px 25px rgba(45, 106, 79, 0.15);
+}
+
+/* =========================================================
+   BASE RESET & TYPOGRAPHY
+   ========================================================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input, textarea, select {
+  font-family: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary);
+}
+
+/* Utility Containers */
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.container-wide {
+  width: 100%;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* Glassmorphic Panel */
+.glass-panel {
+  background: var(--bg-glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color);
+}
+
+/* Circuit decorative gradient text */
+.gradient-text-blue {
+  background: linear-gradient(135deg, #60A5FA 0%, #38BDF8 50%, #818CF8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-theme="light"] .gradient-text-blue {
+  background: linear-gradient(135deg, #0284C7 0%, #2563EB 50%, #1D4ED8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-theme="eyecare"] .gradient-text-blue {
+  background: linear-gradient(135deg, #2D6A4F 0%, #1B4332 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+

@@ -1,0 +1,22 @@
+import { Hono } from 'hono';
+import {
+  getProducts,
+  getProductById,
+  createProduct,
+  deleteProduct,
+  seedProducts
+} from '../controllers/productController.js';
+import { protect, authorize } from '../middlewares/auth.js';
+import { adaptHandler } from '../utils/honoAdapter.js';
+
+const router = new Hono();
+
+router.get('/', adaptHandler(getProducts));
+router.get('/:id', adaptHandler(getProductById));
+
+// Protected routes: Only Admin and Master Admin can add or delete products
+router.post('/', protect, authorize('admin', 'master_admin'), adaptHandler(createProduct));
+router.delete('/:id', protect, authorize('admin', 'master_admin'), adaptHandler(deleteProduct));
+router.post('/seed', protect, authorize('admin', 'master_admin'), adaptHandler(seedProducts));
+
+export default router;

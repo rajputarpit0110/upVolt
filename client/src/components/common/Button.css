@@ -1,0 +1,154 @@
+/* Button styles */
+.cc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-family: var(--font-body);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  border: 1px solid transparent;
+  user-select: none;
+  position: relative;
+  white-space: nowrap;
+  padding: 10px 20px;
+  font-size: 0.92rem;
+  gap: 8px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.cc-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Sizes */
+.cc-btn--sm {
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  gap: 6px;
+  border-radius: var(--radius-sm);
+}
+
+.cc-btn--md {
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  gap: 8px;
+  border-radius: var(--radius-md);
+}
+
+.cc-btn--lg {
+  padding: 14px 28px;
+  font-size: 1.05rem;
+  gap: 10px;
+  border-radius: var(--radius-lg);
+}
+
+.cc-btn--full {
+  width: 100%;
+}
+
+/* Variants */
+.cc-btn--primary {
+  background: var(--accent-primary);
+  color: #FFFFFF;
+  box-shadow: var(--shadow-sm);
+}
+
+.cc-btn--primary:hover:not(:disabled) {
+  background: var(--accent-primary-hover);
+  transform: translateY(-1.5px);
+  box-shadow: var(--accent-glow);
+}
+
+.cc-btn--glow {
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  color: #FFFFFF;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+}
+
+.cc-btn--glow:hover:not(:disabled) {
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.45);
+}
+
+.cc-btn--secondary {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.cc-btn--secondary:hover:not(:disabled) {
+  background: var(--bg-card-hover);
+  border-color: var(--border-hover);
+  transform: translateY(-1.5px);
+}
+
+.cc-btn--outline {
+  background: transparent;
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.cc-btn--outline:hover:not(:disabled) {
+  background: var(--bg-subtle);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.cc-btn--ghost {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.cc-btn--ghost:hover:not(:disabled) {
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+}
+
+/* WhatsApp button styling */
+.cc-btn--whatsapp {
+  background: rgba(16, 185, 129, 0.1);
+  color: #34D399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.cc-btn--whatsapp:hover:not(:disabled) {
+  background: rgba(16, 185, 129, 0.18);
+  border-color: rgba(16, 185, 129, 0.5);
+  color: #6EE7B7;
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.25);
+}
+
+/* Spinner */
+.cc-btn__spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-right: 6px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cc-btn__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -1,0 +1,581 @@
+.cc-mentors-section {
+  padding: 60px 0 70px;
+  position: relative;
+}
+
+.cc-mentors-header {
+  max-width: 760px;
+  margin: 0 auto 44px;
+  text-align: center;
+}
+
+.cc-mentors-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(0, 163, 255, 0.1);
+  border: 1px solid var(--border-glow);
+  color: var(--accent-cyan);
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 5px 14px;
+  border-radius: var(--radius-full);
+  margin-bottom: 14px;
+}
+
+.cc-mentors-title {
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+
+.cc-mentors-subtitle {
+  font-size: 0.98rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Mentors Grid (Legacy fallback) */
+.cc-mentors-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+}
+
+/* ==========================================================================
+   1. LEAD MENTOR CARD (Feature Layout with Photo)
+   ========================================================================== */
+.cc-lead-mentor-wrap {
+  max-width: 860px;
+  margin: 0 auto 46px;
+}
+
+.cc-lead-mentor-card {
+  display: flex;
+  flex-direction: row;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-top: 3px solid var(--accent-cyan);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28), 0 0 25px rgba(0, 163, 255, 0.12);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
+  position: relative;
+}
+
+.cc-lead-mentor-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-glow);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.38), 0 0 32px rgba(0, 163, 255, 0.22);
+}
+
+.cc-lead-mentor-img-col {
+  flex: 0 0 280px;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-surface);
+}
+
+.cc-lead-mentor-img-wrap {
+  width: 100%;
+  height: 100%;
+  min-height: 270px;
+  position: relative;
+}
+
+.cc-lead-mentor-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transition: transform 0.4s ease;
+}
+
+.cc-lead-mentor-card:hover .cc-lead-mentor-img {
+  transform: scale(1.04);
+}
+
+.cc-lead-mentor-content {
+  flex: 1;
+  padding: 30px 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.cc-lead-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.cc-lead-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(0, 196, 255, 0.16), rgba(0, 136, 255, 0.1));
+  border: 1px solid var(--accent-cyan);
+  color: var(--accent-cyan);
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+}
+
+.cc-mentor-status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+
+.cc-lead-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.cc-lead-name {
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.cc-lead-bio {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.62;
+  margin-bottom: 22px;
+}
+
+.cc-lead-connect-row {
+  border-top: 1px solid var(--border-color);
+  padding-top: 16px;
+  margin-top: auto;
+}
+
+/* ==========================================================================
+   2. THREE GENERAL MENTORS (Underneath - NO PHOTOS)
+   ========================================================================== */
+.cc-general-mentors-block {
+  position: relative;
+  margin-top: 10px;
+}
+
+.cc-general-mentors-header {
+  margin-bottom: 24px;
+}
+
+.cc-general-mentors-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.cc-general-mentors-divider-line {
+  flex: 1;
+  max-width: 140px;
+  height: 1px;
+  background: var(--border-color);
+}
+
+.cc-general-mentors-divider-text {
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+}
+
+.cc-general-mentors-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.cc-general-mentor-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  border-top: 3px solid var(--accent-primary);
+  background: var(--bg-card);
+  padding: 24px 22px 20px;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
+}
+
+.cc-general-mentor-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--border-glow);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35), 0 0 20px rgba(0, 163, 255, 0.15);
+}
+
+.cc-general-mentor-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.cc-general-mentor-role-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: rgba(0, 163, 255, 0.08);
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(0, 163, 255, 0.2);
+}
+
+.cc-mentor-mini-status {
+  display: inline-flex;
+  align-items: center;
+}
+
+.cc-general-mentor-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* Card */
+.cc-mentor-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  border-top: 3px solid var(--accent-primary);
+  background: var(--bg-card);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
+  position: relative;
+}
+
+.cc-mentor-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--border-glow);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35), 0 0 20px rgba(0, 163, 255, 0.15);
+}
+
+/* Photo Wrapper */
+.cc-mentor-img-wrapper {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  background: var(--bg-surface);
+  overflow: hidden;
+}
+
+.cc-mentor-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transition: transform 0.4s ease;
+}
+
+.cc-mentor-card:hover .cc-mentor-img {
+  transform: scale(1.04);
+}
+
+/* Status Badge */
+.cc-mentor-status-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(10, 15, 29, 0.82);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #E2E8F0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+}
+
+.cc-mentor-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22C55E;
+  box-shadow: 0 0 8px #22C55E;
+  animation: pulseMentorDot 1.8s infinite;
+}
+
+@keyframes pulseMentorDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+/* Rating Tag */
+.cc-mentor-rating-tag {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(10, 15, 29, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #F59E0B;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 4px 9px;
+  border-radius: var(--radius-full);
+}
+
+.cc-mentor-rating-count {
+  color: #94A3B8;
+  font-weight: 500;
+  font-size: 0.68rem;
+}
+
+/* Body */
+.cc-mentor-body {
+  padding: 26px 24px 22px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.cc-mentor-name-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 8px;
+}
+
+.cc-mentor-name {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.cc-mentor-verified-icon {
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+
+.cc-mentor-role {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.cc-mentor-college {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.cc-mentor-bio {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+/* Tags */
+.cc-mentor-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.cc-mentor-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+/* Connect Section */
+.cc-mentor-connect-section {
+  border-top: 1px solid var(--border-color);
+  padding-top: 14px;
+  margin-top: auto;
+}
+
+.cc-mentor-connect-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 10px;
+}
+
+.cc-mentor-social-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* WhatsApp Button */
+.cc-mentor-btn--whatsapp {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  color: #FFFFFF;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+  border: none;
+}
+
+.cc-mentor-btn--whatsapp:hover {
+  background: linear-gradient(135deg, #20BD5A, #0F766A);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 211, 102, 0.4);
+  color: #FFFFFF;
+}
+
+/* LinkedIn Button */
+.cc-mentor-btn--linkedin {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  background: #0A66C2;
+  color: #FFFFFF;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  box-shadow: 0 4px 12px rgba(10, 102, 194, 0.25);
+  border: none;
+}
+
+.cc-mentor-btn--linkedin:hover {
+  background: #004182;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(10, 102, 194, 0.4);
+  color: #FFFFFF;
+}
+
+/* Instagram specific hover */
+.cc-mentor-icon-btn--instagram:hover {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  border-color: #dc2743;
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(220, 39, 67, 0.35);
+}
+
+/* GitHub specific hover */
+.cc-mentor-icon-btn--github:hover {
+  background: #24292E;
+  border-color: #444D56;
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(36, 41, 46, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .cc-general-mentors-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 860px) {
+  .cc-lead-mentor-card {
+    flex-direction: column;
+  }
+
+  .cc-lead-mentor-img-col {
+    flex: none;
+    width: 100%;
+    height: 300px;
+  }
+
+  .cc-lead-mentor-content {
+    padding: 24px 22px;
+  }
+
+  .cc-lead-name {
+    font-size: 1.38rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .cc-general-mentors-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .cc-lead-mentor-img-col {
+    height: 250px;
+  }
+
+  .cc-lead-mentor-content {
+    padding: 20px 18px;
+  }
+
+  .cc-mentors-title {
+    font-size: 1.8rem;
+  }
+
+  .cc-lead-top-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+/* Light & Eyecare Theme Enhancements */
+[data-theme="light"] .cc-lead-mentor-card,
+[data-theme="eyecare"] .cc-lead-mentor-card {
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .cc-general-mentor-card,
+[data-theme="eyecare"] .cc-general-mentor-card {
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+

@@ -1,0 +1,67 @@
+.cc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  letter-spacing: 0.02em;
+  border-radius: var(--radius-full);
+  line-height: 1;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  padding: 4px 9px;
+  user-select: none;
+}
+
+.cc-badge--sm {
+  font-size: 0.68rem;
+  padding: 3px 8px;
+}
+
+.cc-badge--md {
+  font-size: 0.78rem;
+  padding: 5px 12px;
+}
+
+.cc-badge__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+/* Variants */
+.cc-badge--bestseller {
+  background: var(--badge-bestseller-bg);
+  color: var(--badge-bestseller-text);
+  border: 1px solid rgba(74, 222, 128, 0.3);
+}
+
+.cc-badge--popular {
+  background: var(--badge-popular-bg);
+  color: var(--badge-popular-text);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.cc-badge--new {
+  background: var(--badge-new-bg);
+  color: var(--badge-new-text);
+  border: 1px solid rgba(192, 132, 252, 0.3);
+}
+
+.cc-badge--hot {
+  background: var(--badge-hot-bg);
+  color: var(--badge-hot-text);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+}
+
+.cc-badge--instock {
+  background: rgba(34, 197, 94, 0.12);
+  color: #22C55E;
+}
+
+.cc-badge--discount {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22C55E;
+  font-weight: 700;
+}
