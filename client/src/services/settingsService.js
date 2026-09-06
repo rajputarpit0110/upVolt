@@ -1,4 +1,6 @@
-const API_BASE = '/api/settings';
+import { API_BASE_URL, safeJson } from '../config/api';
+
+const API_BASE = `${API_BASE_URL}/api/settings`;
 
 /**
  * Fetch delivery configuration and pricing
@@ -6,7 +8,7 @@ const API_BASE = '/api/settings';
 export const fetchDeliverySettings = async () => {
   try {
     const res = await fetch(`${API_BASE}/delivery`);
-    const data = await res.json();
+    const data = await safeJson(res);
     if (res.ok && data.success) {
       return data.deliverySettings;
     }
@@ -41,7 +43,7 @@ export const updateDeliverySettings = async (settingsData) => {
     body: JSON.stringify(settingsData)
   });
 
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok || !data.success) {
     throw new Error(data.message || 'Failed to update delivery settings');
   }
@@ -63,7 +65,7 @@ export const DEFAULT_STATS = [
 export const fetchStatsSettings = async () => {
   try {
     const res = await fetch(`${API_BASE}/stats`);
-    const data = await res.json();
+    const data = await safeJson(res);
     if (res.ok && data.success && Array.isArray(data.stats) && data.stats.length > 0) {
       return data.stats;
     }
@@ -91,7 +93,7 @@ export const updateStatsSettings = async (stats) => {
     body: JSON.stringify({ stats })
   });
 
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok || !data.success) {
     throw new Error(data.message || 'Failed to update homepage stats');
   }

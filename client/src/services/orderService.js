@@ -1,4 +1,6 @@
-const API_BASE = '/api/orders';
+import { API_BASE_URL, safeJson } from '../config/api';
+
+const API_BASE = `${API_BASE_URL}/api/orders`;
 
 /**
  * Place a new order
@@ -17,7 +19,7 @@ export const createOrder = async (orderData) => {
     body: JSON.stringify(orderData)
   });
 
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok || !data.success) {
     throw new Error(data.message || 'Failed to place order.');
   }
@@ -41,7 +43,7 @@ export const fetchMyOrders = async (params = {}) => {
   }
 
   const res = await fetch(`${API_BASE}/my-orders?${query.toString()}`, { headers });
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok || !data.success) {
     throw new Error(data.message || 'Failed to fetch orders.');
   }
@@ -66,7 +68,7 @@ export const fetchAllOrders = async (status = 'all', search = '') => {
   }
 
   const res = await fetch(`${API_BASE}?${query.toString()}`, { headers });
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok || !data.success) {
     throw new Error(data.message || 'Failed to fetch all orders.');
   }
@@ -93,7 +95,7 @@ export const updateOrderStatus = async (orderId, status, note = '') => {
     body: JSON.stringify({ status, note })
   });
 
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok || !data.success) {
     throw new Error(data.message || 'Failed to update order status.');
   }

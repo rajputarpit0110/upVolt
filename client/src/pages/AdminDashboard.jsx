@@ -8,6 +8,7 @@ import { fetchMentors, deleteMentor } from '../services/mentorService';
 import { fetchCoupons, deleteCoupon } from '../services/couponService';
 import { fetchReels, deleteReel } from '../services/reelService';
 import { fetchDeliverySettings, updateDeliverySettings, fetchStatsSettings, updateStatsSettings, DEFAULT_STATS } from '../services/settingsService';
+import { API_BASE_URL, safeJson } from '../config/api';
 import { renderStatIcon } from '../components/home/StatsBar';
 import { AddProductModal } from '../components/product/AddProductModal';
 import { AddMentorModal } from '../components/admin/AddMentorModal';
@@ -595,7 +596,7 @@ export const AdminDashboard = () => {
     setAdminLoginLoading(true);
 
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -604,7 +605,7 @@ export const AdminDashboard = () => {
         })
       });
 
-      const data = await res.json();
+      const data = await safeJson(res);
       if (!res.ok || !data.success) {
         throw new Error(data.message || 'Invalid admin credentials');
       }

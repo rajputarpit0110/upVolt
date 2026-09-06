@@ -1,6 +1,7 @@
 import { PRODUCTS } from '../data/mockProducts';
+import { API_BASE_URL, safeJson } from '../config/api';
 
-const API_BASE = '/api/products';
+const API_BASE = `${API_BASE_URL}/api/products`;
 
 /**
  * Fetch all products from the backend database (with fallback to mock data)
@@ -17,12 +18,8 @@ export const fetchProducts = async (params = {}) => {
     const queryString = query.toString() ? `?${query.toString()}` : '';
     const res = await fetch(`${API_BASE}${queryString}`);
 
-    if (!res.ok) {
-      throw new Error(`Server returned ${res.status}`);
-    }
-
-    const data = await res.json();
-    if (data && data.products && data.products.length > 0) {
+    const data = await safeJson(res);
+    if (res.ok && data && data.products && data.products.length > 0) {
       return {
         products: data.products,
         count: data.count || data.products.length,
@@ -43,9 +40,8 @@ export const fetchProducts = async (params = {}) => {
 export const fetchProductById = async (id) => {
   try {
     const res = await fetch(`${API_BASE}/${id}`);
-    if (!res.ok) throw new Error(`Server returned ${res.status}`);
-    const data = await res.json();
-    if (data && data.product) {
+    const data = await safeJson(res);
+    if (res.ok && data && data.product) {
       return data.product;
     }
     return PRODUCTS.find(p => p._id === id || p.id === id || p.sku === id) || null;
@@ -73,7 +69,7 @@ export const createProduct = async (productData, token) => {
     body: JSON.stringify(productData)
   });
 
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok || !data.success) {
     throw new Error(data.message || 'Failed to save product to database');
   }
@@ -98,7 +94,7 @@ export const deleteProduct = async (id, token) => {
     headers
   });
 
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok || !data.success) {
     throw new Error(data.message || 'Failed to delete product');
   }
@@ -120,5 +116,5 @@ export const syncProductsCatalog = async (token) => {
     method: 'POST',
     headers
   });
-  return res.json();
+  return safeJson(res);
 };

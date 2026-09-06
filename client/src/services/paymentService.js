@@ -1,4 +1,6 @@
-const API_BASE = '/api/payments';
+import { API_BASE_URL, safeJson } from '../config/api';
+
+const API_BASE = `${API_BASE_URL}/api/payments`;
 
 // Helper to load Razorpay Checkout SDK script dynamically if needed
 export const loadRazorpayScript = () => {
@@ -18,7 +20,7 @@ export const loadRazorpayScript = () => {
 export const fetchRazorpayKey = async () => {
   try {
     const res = await fetch(`${API_BASE}/razorpay/key`);
-    const data = await res.json();
+    const data = await safeJson(res);
     return data.keyId || 'rzp_test_CampusCircuitDev';
   } catch (err) {
     console.warn('Failed to fetch Razorpay key from API, using default:', err);
@@ -33,7 +35,7 @@ export const createRazorpayOrder = async (amount, currency = 'INR', receipt = nu
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ amount, currency, receipt })
   });
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok || !data.success) {
     throw new Error(data.message || 'Failed to initialize payment gateway.');
   }
@@ -53,7 +55,7 @@ export const verifyRazorpayPayment = async (verificationPayload) => {
     headers,
     body: JSON.stringify(verificationPayload)
   });
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok || !data.success) {
     throw new Error(data.message || 'Payment signature verification failed.');
   }

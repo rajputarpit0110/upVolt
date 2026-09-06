@@ -1,6 +1,7 @@
 import { MENTORS } from '../data/mentorsData';
+import { API_BASE_URL, safeJson } from '../config/api';
 
-const API_BASE = '/api/mentors';
+const API_BASE = `${API_BASE_URL}/api/mentors`;
 
 /**
  * Fetch all mentors from the backend database (with fallback to local mentor data)
@@ -8,12 +9,8 @@ const API_BASE = '/api/mentors';
 export const fetchMentors = async () => {
   try {
     const res = await fetch(API_BASE);
-    if (!res.ok) {
-      throw new Error(`Server returned ${res.status}`);
-    }
-
-    const data = await res.json();
-    if (data && data.mentors && data.mentors.length > 0) {
+    const data = await safeJson(res);
+    if (res.ok && data && data.mentors && data.mentors.length > 0) {
       return {
         mentors: data.mentors,
         count: data.count || data.mentors.length,
@@ -45,7 +42,7 @@ export const createMentor = async (mentorData, token) => {
     body: JSON.stringify(mentorData)
   });
 
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok || !data.success) {
     throw new Error(data.message || 'Failed to save mentor to database');
   }
@@ -70,7 +67,7 @@ export const deleteMentor = async (id, token) => {
     headers
   });
 
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok || !data.success) {
     throw new Error(data.message || 'Failed to delete mentor');
   }

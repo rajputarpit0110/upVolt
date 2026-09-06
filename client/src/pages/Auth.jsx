@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/common/Button';
 import { Mail, Lock, User as UserIcon, GraduationCap, ArrowRight, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react';
+import { API_BASE_URL, safeJson } from '../config/api';
 import './Auth.css';
 
 export const Auth = () => {
@@ -25,14 +26,17 @@ export const Auth = () => {
     setLoading(true);
 
     try {
-      const endpoint = isRegister ? '/api/auth/register' : '/api/auth/login';
+      const endpoint = isRegister
+        ? `${API_BASE_URL}/api/auth/register`
+        : `${API_BASE_URL}/api/auth/login`;
+
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
 
-      const data = await res.json();
+      const data = await safeJson(res);
       if (!res.ok || !data.success) {
         throw new Error(data.message || 'Authentication failed');
       }

@@ -1,4 +1,6 @@
-const API_BASE = '/api/coupons';
+import { API_BASE_URL, safeJson } from '../config/api';
+
+const API_BASE = `${API_BASE_URL}/api/coupons`;
 
 /**
  * Fetch all coupons (Admin protected)
@@ -12,7 +14,7 @@ export const fetchCoupons = async (token) => {
   }
 
   const res = await fetch(API_BASE, { headers });
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok || !data.success) {
     throw new Error(data.message || 'Failed to fetch coupons');
   }
@@ -37,7 +39,7 @@ export const createCoupon = async (couponData, token) => {
     body: JSON.stringify(couponData)
   });
 
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok || !data.success) {
     throw new Error(data.message || 'Failed to create coupon');
   }
@@ -61,7 +63,7 @@ export const deleteCoupon = async (id, token) => {
     headers
   });
 
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok || !data.success) {
     throw new Error(data.message || 'Failed to delete coupon');
   }
@@ -80,7 +82,7 @@ export const validateCouponCode = async (code, cartSubtotal) => {
     body: JSON.stringify({ code, cartSubtotal })
   });
 
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok || !data.success) {
     throw new Error(data.message || 'Invalid coupon');
   }

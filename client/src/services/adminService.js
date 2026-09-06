@@ -1,4 +1,6 @@
-const API_BASE = '/api/admin';
+import { API_BASE_URL, safeJson } from '../config/api';
+
+const API_BASE = `${API_BASE_URL}/api/admin`;
 
 /**
  * Fetch audit logs (Restricted to Master Admin)
@@ -16,7 +18,7 @@ export const fetchAuditLogs = async (params = {}) => {
   }
 
   const res = await fetch(`${API_BASE}/audit-logs?${query.toString()}`, { headers });
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok || !data.success) {
     throw new Error(data.message || 'Failed to fetch audit logs.');
   }
@@ -35,7 +37,7 @@ export const fetchAdminStats = async () => {
   }
 
   const res = await fetch(`${API_BASE}/stats`, { headers });
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok || !data.success) {
     throw new Error(data.message || 'Failed to fetch admin statistics.');
   }
@@ -55,13 +57,13 @@ export const resetPassword = async (currentPassword, newPassword) => {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const res = await fetch('/api/auth/reset-password', {
+  const res = await fetch(`${API_BASE_URL}/api/auth/reset-password`, {
     method: 'POST',
     headers,
     body: JSON.stringify({ currentPassword, newPassword })
   });
 
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok || !data.success) {
     throw new Error(data.message || 'Failed to reset password.');
   }
@@ -84,8 +86,8 @@ export const fetchLiveAnalytics = async () => {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const res = await fetch('/api/analytics/live', { headers });
-  const data = await res.json();
+  const res = await fetch(`${API_BASE_URL}/api/analytics/live`, { headers });
+  const data = await safeJson(res);
   if (!res.ok || !data.success) {
     throw new Error(data.message || 'Failed to fetch live analytics.');
   }
@@ -103,15 +105,14 @@ export const resetLiveAnalytics = async () => {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const res = await fetch('/api/analytics/reset', {
+  const res = await fetch(`${API_BASE_URL}/api/analytics/reset`, {
     method: 'DELETE',
     headers
   });
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok || !data.success) {
     throw new Error(data.message || 'Failed to reset analytics.');
   }
 
   return data;
 };
-

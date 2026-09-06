@@ -1,3 +1,5 @@
+import { API_BASE_URL } from '../config/api';
+
 // Client-side live visitor heartbeat & analytics tracker
 const VISITOR_STORAGE_KEY = 'campuscircuit_visitor_id';
 
@@ -49,7 +51,7 @@ export const pingAnalytics = async (customPage) => {
       referrer: document.referrer || ''
     };
 
-    await fetch('/api/analytics/ping', {
+    await fetch(`${API_BASE_URL}/api/analytics/ping`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)

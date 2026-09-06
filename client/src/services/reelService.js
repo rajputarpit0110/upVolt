@@ -1,4 +1,6 @@
-const API_BASE = '/api/reels';
+import { API_BASE_URL, safeJson } from '../config/api';
+
+const API_BASE = `${API_BASE_URL}/api/reels`;
 
 export const DEFAULT_REELS = [
   {
@@ -49,11 +51,8 @@ export const DEFAULT_REELS = [
 export const fetchReels = async () => {
   try {
     const res = await fetch(API_BASE);
-    if (!res.ok) {
-      throw new Error(`Server returned ${res.status}`);
-    }
-    const data = await res.json();
-    if (data && data.reels && data.reels.length > 0) {
+    const data = await safeJson(res);
+    if (res.ok && data && data.reels && data.reels.length > 0) {
       return {
         reels: data.reels,
         count: data.count || data.reels.length,
@@ -83,7 +82,7 @@ export const createReel = async (reelData, token) => {
     body: JSON.stringify(reelData)
   });
 
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok) {
     throw new Error(data.message || 'Failed to create reel');
   }
@@ -105,7 +104,7 @@ export const deleteReel = async (id, token) => {
     headers
   });
 
-  const data = await res.json();
+  const data = await safeJson(res);
   if (!res.ok) {
     throw new Error(data.message || 'Failed to delete reel');
   }
