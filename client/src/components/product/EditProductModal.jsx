@@ -6,7 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import './AddProductModal.css';
 
 export const EditProductModal = ({ isOpen, onClose, product, onProductUpdated }) => {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, token } = useAuth();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -250,7 +250,7 @@ export const EditProductModal = ({ isOpen, onClose, product, onProductUpdated })
         inStock: true
       };
 
-      const savedProduct = await updateProduct(product._id || product.id, payload);
+      const savedProduct = await updateProduct(product._id || product.id, payload, token);
       setSuccess(true);
       setTimeout(() => {
         setSuccess(false);
