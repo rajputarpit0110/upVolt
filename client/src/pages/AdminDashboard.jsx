@@ -12,6 +12,7 @@ import { API_BASE_URL, safeJson } from '../config/api';
 import { renderStatIcon } from '../components/home/StatsBar';
 import { AddProductModal } from '../components/product/AddProductModal';
 import { AddMentorModal } from '../components/admin/AddMentorModal';
+import { EditMentorModal } from '../components/admin/EditMentorModal';
 import { AddCouponModal } from '../components/admin/AddCouponModal';
 import { AddReelModal } from '../components/admin/AddReelModal';
 import { DeleteConfirmModal } from '../components/common/DeleteConfirmModal';
@@ -55,7 +56,8 @@ import {
   Compass,
   Heart,
   Star,
-  Award
+  Award,
+  Edit
 } from 'lucide-react';
 import './AdminDashboard.css';
 
@@ -87,6 +89,8 @@ export const AdminDashboard = () => {
   const [mentorsLoading, setMentorsLoading] = useState(false);
   const [mentorSearch, setMentorSearch] = useState('');
   const [isAddMentorModalOpen, setIsAddMentorModalOpen] = useState(initialModal === 'addMentor');
+  const [isEditMentorModalOpen, setIsEditMentorModalOpen] = useState(false);
+  const [mentorToEdit, setMentorToEdit] = useState(null);
   const [mentorToDelete, setMentorToDelete] = useState(null);
   const [deleteMentorLoading, setDeleteMentorLoading] = useState(false);
 
@@ -1253,16 +1257,28 @@ export const AdminDashboard = () => {
                               </span>
                             </div>
                           </td>
-                          <td style={{ width: 110, textAlign: 'right' }}>
-                            <button
-                              type="button"
-                              className="cc-table-action-delete"
-                              onClick={() => setMentorToDelete(m)}
-                              title="Delete mentor (requires confirmation)"
-                            >
-                              <Trash2 size={13} />
-                              <span>Remove</span>
-                            </button>
+                          <td style={{ minWidth: 150, textAlign: 'right' }}>
+                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+                              <button
+                                type="button"
+                                className="cc-table-action-edit"
+                                onClick={() => { setMentorToEdit(m); setIsEditMentorModalOpen(true); }}
+                                title="Edit mentor"
+                                style={{ background: 'transparent', border: '1px solid var(--border-color)', color: 'var(--text-primary)', padding: '6px 12px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '0.85rem' }}
+                              >
+                                <Edit size={13} />
+                                <span>Edit</span>
+                              </button>
+                              <button
+                                type="button"
+                                className="cc-table-action-delete"
+                                onClick={() => setMentorToDelete(m)}
+                                title="Delete mentor (requires confirmation)"
+                              >
+                                <Trash2 size={13} />
+                                <span>Remove</span>
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))
@@ -2714,8 +2730,25 @@ export const AdminDashboard = () => {
       <AddMentorModal
         isOpen={isAddMentorModalOpen}
         onClose={() => setIsAddMentorModalOpen(false)}
-        onMentorAdded={() => {
-          loadMentors();
+         onMentorAdded={loadMentors}
+      />
+      
+      <EditMentorModal
+        isOpen={isEditMentorModalOpen}
+        onClose={() => {
+          setIsEditMentorModalOpen(false);
+          setMentorToEdit(null);
+        }}
+        mentor={mentorToEdit}
+        onMentorUpdated={loadMentors}
+      />
+      
+      {/* Add Coupon Modal */}
+      <AddCouponModal
+        isOpen={isAddCouponModalOpen}
+        onClose={() => setIsAddCouponModalOpen(false)}
+        onCouponAdded={() => {
+          loadCoupons();
           loadAuditLogs();
         }}
       />
@@ -2735,15 +2768,6 @@ export const AdminDashboard = () => {
         loading={deleteMentorLoading}
       />
 
-      {/* Add Coupon Modal */}
-      <AddCouponModal
-        isOpen={isAddCouponModalOpen}
-        onClose={() => setIsAddCouponModalOpen(false)}
-        onCouponAdded={() => {
-          loadCoupons();
-          loadAuditLogs();
-        }}
-      />
 
       {/* GitHub-Style Delete Confirmation Modal for Coupons */}
       <DeleteConfirmModal
