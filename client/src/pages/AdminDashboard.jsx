@@ -11,6 +11,7 @@ import { fetchDeliverySettings, updateDeliverySettings, fetchStatsSettings, upda
 import { API_BASE_URL, safeJson } from '../config/api';
 import { renderStatIcon } from '../components/home/StatsBar';
 import { AddProductModal } from '../components/product/AddProductModal';
+import { EditProductModal } from '../components/product/EditProductModal';
 import { AddMentorModal } from '../components/admin/AddMentorModal';
 import { EditMentorModal } from '../components/admin/EditMentorModal';
 import { AddCouponModal } from '../components/admin/AddCouponModal';
@@ -81,6 +82,8 @@ export const AdminDashboard = () => {
   const [productsLoading, setProductsLoading] = useState(false);
   const [productSearch, setProductSearch] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(initialModal === 'addProduct');
+  const [isEditProductModalOpen, setIsEditProductModalOpen] = useState(false);
+  const [productToEdit, setProductToEdit] = useState(null);
   const [productToDelete, setProductToDelete] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
@@ -1104,6 +1107,15 @@ export const AdminDashboard = () => {
                             </Link>
                             <button
                               type="button"
+                              className="cc-action-sm-btn"
+                              onClick={() => { setProductToEdit(p); setIsEditProductModalOpen(true); }}
+                              title="Edit component"
+                              style={{ color: 'var(--text-primary)' }}
+                            >
+                              <Edit size={14} />
+                            </button>
+                            <button
+                              type="button"                              
                               className="cc-action-sm-btn cc-action-sm-btn--danger"
                               onClick={() => handleDeleteProduct(p)}
                               title="Delete component"
@@ -2709,7 +2721,18 @@ export const AdminDashboard = () => {
           loadAuditLogs();
         }}
       />
-
+      {/* Edit Product Modal */}
+      <EditProductModal
+        isOpen={isEditProductModalOpen}
+        onClose={() => setIsEditProductModalOpen(false)}
+        product={productToEdit}
+        onProductUpdated={() => {
+          loadProducts();
+          loadStats();
+          loadAuditLogs();
+        }}
+      />
+      
       {/* GitHub-Style Delete Confirmation Modal */}
       <DeleteConfirmModal
         isOpen={Boolean(productToDelete)}
@@ -2730,7 +2753,7 @@ export const AdminDashboard = () => {
       <AddMentorModal
         isOpen={isAddMentorModalOpen}
         onClose={() => setIsAddMentorModalOpen(false)}
-         onMentorAdded={loadMentors}
+        onMentorAdded={loadMentors}
       />
       
       <EditMentorModal
