@@ -53,7 +53,7 @@ export const WhatsAppFloatingBtn = () => {
               {PRIORITY_BUYING_NUMBERS.map((line, idx) => (
                 <a
                   key={idx}
-                  href={getWhatsAppLink(`Hi upVolt! I want to order/buy components directly via ${line.display}. Please share availability and fast delivery details.`, line.raw)}
+                  href={getWhatsAppLink(`Hi upVolt! I want to order/buy components directly. Please share availability and fast delivery details.`, line.raw)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`cc-whatsapp-line-card ${idx === 0 ? 'cc-whatsapp-line-card--founder' : ''}`}
