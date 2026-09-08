@@ -236,6 +236,113 @@ export const createMentor = async (req, res) => {
   }
 };
 
+// PUT /api/mentors/:id - Update a mentor (Protected: Admin / Master Admin)
+export const updateMentor = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      name,
+      role,
+      college,
+      bio,
+      image,
+      specialties,
+      projectsGuided,
+      rating,
+      whatsapp,
+      linkedin,
+      instagram,
+      github
+    } = req.body;
+    
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: 'Invalid mentor ID.' });
+    }
+    
+    const mentor = await Mentor.findById(id);
+    if (!mentor) {
+      return res.status(404).json({ success: false, message: 'Mentor not found.' });
+    }
+    
+    const trimmedName = name?.trim();
+    const trimmedBio = bio?.trim();
+    
+    if (!trimmedName || !trimmedBio) {
+      return res.status(400).json({
+        success: false,
+        message: 'Mentor Name and description/bio are required.'
+      });
+    }
+    
+    // Process specialties
+    let specialtiesList = mentor.specialties;
+    if (Array.isArray(specialties)) {
+      specialtiesList = specialties.map(s => s.trim()).filter(Boolean);
+    } else if (typeof specialties === 'string' && specialties.trim()) {
+      specialtiesList = specialties.split(',').map(s => s.trim()).filter(Boolean);
+    }
+    
+    // Process social links
+    const socialLinks = {
+      whatsapp: whatsapp !== undefined ? formatWhatsAppUrl(whatsapp, trimmedName) : mentor.socialLinks.whatsapp,
+      linkedin: linkedin !== undefined ? linkedin.trim() : mentor.socialLinks.linkedin,
+      instagram: instagram !== undefined ? instagram.trim() : mentor.socialLinks.instagram,
+      github: github !== undefined ? github.trim() : mentor.socialLinks.github
+    };
+    
+    mentor.name = trimmedName;
+    mentor.bio = trimmedBio;
+    if (role !== undefined) mentor.role = role.trim();
+    if (college !== undefined) mentor.college = college.trim();
+    if (image !== undefined) mentor.image = image.trim();
+    if (projectsGuided !== undefined) mentor.projectsGuided = projectsGuided.trim();
+    if (rating !== undefined) mentor.rating = Number(rating);
+    mentor.specialties = specialtiesList;
+    mentor.socialLinks = socialLinks;
+    
+    const updatedMentor = await mentor.save();
+    
+    const adminUser = req.user || {
+      _id: new mongoose.Types.ObjectId(),
+      name: 'CampusCircuit Admin',
+      email: 'admin@campuscircuit.com',
+      role: 'admin'
+    };
+    
+    try {
+      await AuditLog.create({
+        action: 'MENTOR_UPDATED',
+        adminId: adminUser._id,
+        adminName: adminUser.name,
+        adminEmail: adminUser.email,
+        adminRole: adminUser.role || 'admin',
+        targetType: 'Mentor',
+        targetId: updatedMentor._id.toString(),
+        targetName: updatedMentor.name,
+        details: {
+          role: updatedMentor.role,
+          college: updatedMentor.college,
+          specialties: updatedMentor.specialties
+        }
+      });
+    } catch (auditErr) {
+      console.warn('Failed to write mentor update audit log:', auditErr.message);
+    }
+    
+    res.status(200).json({
+      success: true,
+      message: `Mentor "${updatedMentor.name}" updated successfully.`,
+      mentor: updatedMentor
+    });
+  } catch (error) {
+    console.error('Error updating mentor:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
 // DELETE /api/mentors/:id - Delete a mentor (Protected: Admin / Master Admin)
 export const deleteMentor = async (req, res) => {
   try {
