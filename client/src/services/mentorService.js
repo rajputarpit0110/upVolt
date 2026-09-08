@@ -51,6 +51,29 @@ export const createMentor = async (mentorData, token) => {
 };
 
 /**
+ * Update an existing mentor (Protected: Admin only)
+ * @param {string} id
+ * @param {Object} mentorData
+ * @param {string} [token]
+ */
+export const updateMentor = async (id, mentorData, token) => {
+  const headers = { 'Content-Type': 'application/json' };
+  const effectiveToken = token || localStorage.getItem('campuscircuit_token');
+  if (effectiveToken) {
+    headers['Authorization'] = `Bearer ${effectiveToken}`;
+  }
+  const res = await fetch(`${API_BASE}/${id}`, {
+    method: 'PUT',
+    headers,
+    body: JSON.stringify(mentorData)
+  });
+  const data = await safeJson(res);
+  if (!res.ok || !data.success) {
+    throw new Error(data.message || 'Failed to update mentor in database');
+  }
+  return data.mentor;
+};
+/**
  * Delete a mentor by ID (Protected: Admin only)
  * @param {string} id
  * @param {string} [token]
