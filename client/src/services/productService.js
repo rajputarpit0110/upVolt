@@ -78,6 +78,33 @@ export const createProduct = async (productData, token) => {
 };
 
 /**
+ * Update an existing product in MongoDB (Protected: Admin only)
+ * @param {string} id
+ * @param {Object} productData
+ * @param {string} [token]
+ */
+export const updateProduct = async (id, productData, token) => {
+  const headers = { 'Content-Type': 'application/json' };
+  const effectiveToken = token || localStorage.getItem('UPVOLT_token');
+  if (effectiveToken) {
+    headers['Authorization'] = `Bearer ${effectiveToken}`;
+  }
+  
+  const res = await fetch(`${API_BASE}/${id}`, {
+    method: 'PUT',
+    headers,
+    body: JSON.stringify(productData)
+  });
+  
+  const data = await safeJson(res);
+  if (!res.ok || !data.success) {
+    throw new Error(data.message || 'Failed to update product in database');
+  }
+  
+  return data.product;
+};
+
+/**
  * Delete a product by ID or SKU (Protected: Admin only)
  * @param {string} id
  * @param {string} [token]
