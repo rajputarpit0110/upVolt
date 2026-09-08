@@ -22,7 +22,7 @@ export const AnnouncementBar = () => {
 
         <div className="announcement-bar__center">
           <a
-            href={getWhatsAppLink('Hi CampusCircuit! I need quick project help.')}
+            href={getWhatsAppLink('Hi UPVOLT! I need quick project help.')}
             target="_blank"
             rel="noopener noreferrer"
             className="announcement-link"
