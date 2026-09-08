@@ -259,6 +259,131 @@ export const createProduct = async (req, res) => {
   }
 };
 
+// PUT update product (Protected: Admin or Master Admin)
+export const updateProduct = async (req, res) => {
+  try {
+    const isConnected = mongoose.connection.readyState === 1;
+    if (!isConnected) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database connection unavailable.'
+      });
+    }
+    
+    const { id } = req.params;
+    let product = null;
+    
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      product = await Product.findById(id);
+    }
+    if (!product) {
+      product = await Product.findOne({ sku: id });
+    }
+    
+    if (!product) {
+      return res.status(404).json({ success: false, message: 'Product not found.' });
+    }
+    
+    const {
+      name,
+      category,
+      price,
+      originalPrice,
+      rating,
+      badge,
+      inStock,
+      sku,
+      image,
+      images,
+      description,
+      specifications,
+      tags,
+      perfectFor
+    } = req.body;
+    
+    if (!name || !category || !price) {
+      return res.status(400).json({
+        success: false,
+        message: 'Product name, category, and price are required.'
+      });
+    }
+    
+    // Process multiple images
+    let imageList = product.images;
+    if (Array.isArray(images) && images.length > 0) {
+      imageList = images.map(img => img.trim()).filter(Boolean);
+    } else if (typeof images === 'string' && images.trim()) {
+      imageList = images.split(/[\n,]+/).map(img => img.trim()).filter(Boolean);
+    }
+    
+    const primaryImage = image && image.trim()
+      ? image.trim()
+      : (imageList.length > 0 ? imageList[0] : product.image);
+    
+    if (imageList.length > 0 && !imageList.includes(primaryImage)) {
+      imageList.unshift(primaryImage);
+    }
+    
+    product.name = name.trim();
+    product.category = category.trim();
+    product.price = Number(price);
+    product.originalPrice = originalPrice ? Number(originalPrice) : undefined;
+    if (rating !== undefined) product.rating = Number(rating);
+    product.badge = badge === "" ? null : (badge || product.badge);
+    if (inStock !== undefined) product.inStock = Boolean(inStock);
+    if (sku && sku.trim()) product.sku = sku.trim();
+    product.image = primaryImage;
+    product.images = imageList;
+    if (description !== undefined) product.description = description.trim();
+    if (specifications !== undefined) product.specifications = specifications;
+    if (tags !== undefined) product.tags = Array.isArray(tags) ? tags : (tags ? tags.split(',').map(t => t.trim()) : []);
+    if (perfectFor !== undefined) product.perfectFor = Array.isArray(perfectFor) ? perfectFor : (perfectFor ? perfectFor.split(',').map(p => p.trim()) : []);
+    
+    const updatedProduct = await product.save();
+    
+    const adminUser = req.user || {
+      _id: new mongoose.Types.ObjectId(),
+      name: 'System Admin',
+      email: 'admin@UPVOLT.com',
+      role: 'admin'
+    };
+    
+    try {
+      await AuditLog.create({
+        action: 'PRODUCT_UPDATED',
+        adminId: adminUser._id,
+        adminName: adminUser.name,
+        adminEmail: adminUser.email,
+        adminRole: adminUser.role || 'admin',
+        adminUsername: adminUser.username || (adminUser.email ? adminUser.email.split('@')[0] : 'admin'),
+        targetType: 'Product',
+        targetId: updatedProduct._id.toString(),
+        targetName: updatedProduct.name,
+        details: {
+          sku: updatedProduct.sku,
+          price: updatedProduct.price,
+          category: updatedProduct.category,
+          updatedByUsername: adminUser.username || 'admin'
+        }
+      });
+    } catch (auditErr) {
+      console.warn('Failed to write audit log entry:', auditErr.message);
+    }
+    
+    res.status(200).json({
+      success: true,
+      message: 'Product updated successfully',
+      product: updatedProduct
+    });
+  } catch (error) {
+    console.error('Error updating product:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
 // DELETE product (Protected: Admin or Master Admin)
 export const deleteProduct = async (req, res) => {
   try {
