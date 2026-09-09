@@ -87,7 +87,7 @@ export const RazorpayModal = ({
           }}>
             {/* Generate a dynamic UPI QR Code using an open API */}
             <img 
-              src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=${upiId}&pn=upVolt&am=${amount}&cu=INR`} 
+              src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`upi://pay?pa=${upiId}&pn=upVolt&am=${amount}&cu=INR`)}`}
               alt="UPI Payment QR Code" 
               style={{ width: '200px', height: '200px', display: 'block' }}
             />
