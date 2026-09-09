@@ -46,7 +46,7 @@ export const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchDropdownOpen, setSearchDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [allProducts, setAllProducts] = useState(PRODUCTS);
+  const [allProducts, setAllProducts] = useState([]);
 
   const desktopSearchRef = useRef(null);
   const mobileSearchRef = useRef(null);
