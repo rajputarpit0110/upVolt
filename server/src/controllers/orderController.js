@@ -214,3 +214,53 @@ export const updateOrderStatus = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// DELETE /api/orders/:id - Delete an order (Admin / Master Admin)
+export const deleteOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const order = await Order.findOne({
+      $or: [
+        { _id: id.match(/^[0-9a-fA-F]{24}$/) ? id : null },
+        { orderId: id }
+      ]
+    });
+    
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found.' });
+    }
+    
+    await Order.findByIdAndDelete(order._id);
+    
+    // Log deletion to AuditLog
+    if (req.user) {
+      try {
+        await AuditLog.create({
+          action: 'ORDER_DELETED',
+          adminId: req.user._id,
+          adminName: req.user.name,
+          adminEmail: req.user.email,
+          adminRole: req.user.role,
+          targetType: 'Order',
+          targetId: order.orderId,
+          targetName: `Order #${order.orderId}`,
+          details: {
+            customerName: order.customerName,
+            totalAmount: order.totalAmount
+          }
+        });
+      } catch (auditErr) {
+        console.warn('Failed to write order deletion audit log:', auditErr.message);
+      }
+    }
+    
+    res.status(200).json({
+      success: true,
+      message: `Order #${order.orderId} deleted successfully.`
+    });
+  } catch (error) {
+    console.error('Delete order error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
