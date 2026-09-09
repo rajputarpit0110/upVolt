@@ -78,13 +78,13 @@ const getInitialMentors = () => [
 const formatWhatsAppUrl = (phoneOrUrl, mentorName) => {
   if (!phoneOrUrl) {
     const defaultNum = process.env.MENTOR_DEFAULT_WHATSAPP || '919876543210';
-    return `https://wa.me/${defaultNum}?text=${encodeURIComponent(`Hi ${mentorName}! I need guidance on hardware projects via CampusCircuit.`)}`;
+    return `https://wa.me/${defaultNum}?text=${encodeURIComponent(`Hi ${mentorName}! I need guidance on hardware projects via UPVOLT.`)}`;
   }
   if (phoneOrUrl.startsWith('http://') || phoneOrUrl.startsWith('https://')) {
     return phoneOrUrl;
   }
   const cleanPhone = phoneOrUrl.replace(/\D/g, '');
-  return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(`Hi ${mentorName}! I need guidance on hardware projects via CampusCircuit.`)}`;
+  return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(`Hi ${mentorName}! I need guidance on hardware projects via UPVOLT.`)}`;
 };
 
 // GET /api/mentors - Get all mentors (auto-seeds if empty)
