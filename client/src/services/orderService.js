@@ -109,7 +109,7 @@ export const updateOrderStatus = async (orderId, status, note = '') => {
  */
 export const deleteOrder = async (orderId) => {
   const headers = {};
-  const token = localStorage.getItem('UPVOLT_token');
+  const token = localStorage.getItem('campuscircuit_token');
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
