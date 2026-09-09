@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { fetchProducts, deleteProduct } from '../services/productService';
-import { fetchAllOrders, updateOrderStatus } from '../services/orderService';
+import { fetchAllOrders, updateOrderStatus, deleteOrder } from '../services/orderService';
 import { fetchAuditLogs, fetchAdminStats, resetPassword, fetchLiveAnalytics, resetLiveAnalytics } from '../services/adminService';
 import { fetchMentors, deleteMentor } from '../services/mentorService';
 import { fetchCoupons, deleteCoupon } from '../services/couponService';
@@ -118,6 +118,8 @@ export const AdminDashboard = () => {
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [orderStatusFilter, setOrderStatusFilter] = useState('all');
   const [orderSearch, setOrderSearch] = useState('');
+  const [orderToDelete, setOrderToDelete] = useState(null);
+  const [deleteOrderLoading, setDeleteOrderLoading] = useState(false);
 
   // Audit Logs state (Visible to all 3 Admins)
   const [auditLogs, setAuditLogs] = useState([]);
@@ -568,6 +570,30 @@ export const AdminDashboard = () => {
         type: 'error',
         text: err.message || 'Failed to update order status.'
       });
+    }
+  };
+
+  const handleConfirmDeleteOrder = async () => {
+    if (!orderToDelete) return;
+    setDeleteOrderLoading(true);
+
+    try {
+      await deleteOrder(orderToDelete._id || orderToDelete.orderId);
+      setActionNotice({
+        type: 'success',
+        text: `Order #${orderToDelete.orderId} deleted successfully.`
+      });
+      setOrderToDelete(null);
+      loadOrders();
+      loadStats();
+      loadAuditLogs();
+    } catch (err) {
+      setActionNotice({
+        type: 'error',
+        text: err.message || 'Failed to delete order.'
+      });
+    } finally {
+      setDeleteOrderLoading(false);
     }
   };
 
@@ -1115,7 +1141,7 @@ export const AdminDashboard = () => {
                               <Edit size={14} />
                             </button>
                             <button
-                              type="button"                              
+                              type="button"
                               className="cc-action-sm-btn cc-action-sm-btn--danger"
                               onClick={() => handleDeleteProduct(p)}
                               title="Delete component"
@@ -1696,7 +1722,7 @@ export const AdminDashboard = () => {
                     <th>Items</th>
                     <th>Total</th>
                     <th>Current Status</th>
-                    <th>Change Status</th>
+                    <th style={{ textAlign: 'right' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1767,18 +1793,29 @@ export const AdminDashboard = () => {
                               {order.orderStatus?.toUpperCase()}
                             </Badge>
                           </td>
-                          <td>
-                            <select
-                              className="cc-input cc-select cc-status-select"
-                              value={order.orderStatus}
-                              onChange={(e) => handleStatusChange(order.orderId, e.target.value)}
-                            >
-                              <option value="pending">Pending</option>
-                              <option value="processing">Processing</option>
-                              <option value="shipped">Shipped</option>
-                              <option value="completed">Completed</option>
-                              <option value="cancelled">Cancelled</option>
-                            </select>
+                          <td style={{ textAlign: 'right' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}>
+                              <select
+                                className="cc-input cc-select cc-status-select"
+                                style={{ width: 'auto', minWidth: 120 }}
+                                value={order.orderStatus}
+                                onChange={(e) => handleStatusChange(order.orderId, e.target.value)}
+                              >
+                                <option value="pending">Pending</option>
+                                <option value="processing">Processing</option>
+                                <option value="shipped">Shipped</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                              </select>
+                              <button
+                                type="button"
+                                className="cc-action-sm-btn cc-action-sm-btn--danger"
+                                onClick={() => setOrderToDelete(order)}
+                                title="Delete Order"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       );
@@ -2732,7 +2769,7 @@ export const AdminDashboard = () => {
           loadAuditLogs();
         }}
       />
-      
+
       {/* GitHub-Style Delete Confirmation Modal */}
       <DeleteConfirmModal
         isOpen={Boolean(productToDelete)}
@@ -2755,7 +2792,7 @@ export const AdminDashboard = () => {
         onClose={() => setIsAddMentorModalOpen(false)}
         onMentorAdded={loadMentors}
       />
-      
+
       <EditMentorModal
         isOpen={isEditMentorModalOpen}
         onClose={() => {
@@ -2765,7 +2802,7 @@ export const AdminDashboard = () => {
         mentor={mentorToEdit}
         onMentorUpdated={loadMentors}
       />
-      
+
       {/* Add Coupon Modal */}
       <AddCouponModal
         isOpen={isAddCouponModalOpen}
@@ -2829,6 +2866,21 @@ export const AdminDashboard = () => {
         itemType="reel"
         loading={deleteReelLoading}
       />
+
+      {/* GitHub-Style Delete Confirmation Modal for Orders */}
+      <DeleteConfirmModal
+        isOpen={Boolean(orderToDelete)}
+        onClose={() => {
+          if (!deleteOrderLoading) setOrderToDelete(null);
+        }}
+        onConfirm={handleConfirmDeleteOrder}
+        itemName={`Order #${orderToDelete?.orderId || ''}`}
+        itemSku={`Customer: ${orderToDelete?.customerName || ''}`}
+        itemCategory={`Total: ₹${orderToDelete?.totalAmount || ''}`}
+        itemType="order"
+        loading={deleteOrderLoading}
+      />
     </div>
   );
 };
+
