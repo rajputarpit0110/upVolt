@@ -16,7 +16,7 @@ export const Shop = () => {
   const categoryParam = searchParams.get('category');
   const searchParam = searchParams.get('search');
 
-  const [products, setProducts] = useState(PRODUCTS);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dataSource, setDataSource] = useState('loading');
   const [selectedCategory, setSelectedCategory] = useState(categoryParam || 'All');
