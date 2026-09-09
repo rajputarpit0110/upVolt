@@ -11,7 +11,7 @@ import { fetchProducts } from '../services/productService';
 import { PRODUCTS } from '../data/mockProducts';
 
 export const Home = () => {
-  const [products, setProducts] = useState(PRODUCTS);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     fetchProducts().then(({ products: liveProducts }) => {
