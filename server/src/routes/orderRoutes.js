@@ -3,7 +3,8 @@ import {
   createOrder,
   getMyOrders,
   getAllOrders,
-  updateOrderStatus
+  updateOrderStatus,
+  deleteOrder
 } from '../controllers/orderController.js';
 import { protect, authorize } from '../middlewares/auth.js';
 import { adaptHandler } from '../utils/honoAdapter.js';
@@ -17,5 +18,6 @@ router.get('/my-orders', adaptHandler(getMyOrders));
 // Admin endpoints
 router.get('/', protect, authorize('admin', 'master_admin'), adaptHandler(getAllOrders));
 router.put('/:id/status', protect, authorize('admin', 'master_admin'), adaptHandler(updateOrderStatus));
+router.delete('/:id', protect, authorize('admin', 'master_admin'), adaptHandler(deleteOrder));
 
 export default router;
