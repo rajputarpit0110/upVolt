@@ -61,7 +61,7 @@ export const ProductDetail = () => {
 
   const [product, setProduct] = useState(null);
   const [activeImage, setActiveImage] = useState(null);
-  const [allProducts, setAllProducts] = useState(PRODUCTS);
+  const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('how-to-use');
