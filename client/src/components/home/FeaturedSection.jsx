@@ -4,7 +4,7 @@ import { ProductCard } from '../product/ProductCard';
 import { ArrowRight } from 'lucide-react';
 import './FeaturedSection.css';
 
-export const FeaturedSection = ({ products = [] }) => {
+export const FeaturedSection = ({ products = [], loading = false }) => {
   // Show first 5 or all featured products
   const displayProducts = products.slice(0, 5);
 
@@ -22,14 +22,21 @@ export const FeaturedSection = ({ products = [] }) => {
           </Link>
         </div>
 
-        <div className="cc-featured-grid">
-          {displayProducts.map((product, index) => (
-            <ProductCard
-              key={product._id || product.id || product.sku || `featured-${index}`}
-              product={product}
-            />
-          ))}
-        </div>
+        {loading && products.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px 0', width: '100%' }}>
+            <div className="animate-spin" style={{ width: 32, height: 32, margin: '0 auto 16px', border: '3px solid rgba(0,163,255,0.2)', borderTopColor: 'var(--accent-primary)', borderRadius: '50%' }} />
+            <h3 style={{ margin: 0, fontSize: '1.2rem', color: 'var(--text-primary)' }}>Loading components...</h3>
+          </div>
+        ) : (
+          <div className="cc-featured-grid">
+            {displayProducts.map((product, index) => (
+              <ProductCard
+                key={product._id || product.id || product.sku || `featured-${index}`}
+                product={product}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
