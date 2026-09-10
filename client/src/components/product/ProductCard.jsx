@@ -57,7 +57,7 @@ export const ProductCard = ({ product }) => {
       <Link to={`/product/${id}`} className="cc-product-card__image-link">
         <div className="cc-product-card__image-box">
           <img
-            src={product.image || '/logo-circuit.svg'}
+            src={product.image || (product.images && product.images.length > 0 ? product.images[0] : null) || '/logo-circuit.svg'}
             alt={product.name}
             className="cc-product-card__img"
             loading="lazy"
