@@ -157,7 +157,14 @@ export const createProduct = async (req, res) => {
       description,
       specifications,
       tags,
-      perfectFor
+      perfectFor,
+      youtubeUrl,
+      researchUrl,
+      datasheetUrl,
+      documentationUrl,
+      howToUse,
+      whereToUse,
+      safetyPrecautions
     } = req.body;
 
     if (!name || !category || !price) {
@@ -225,6 +232,13 @@ export const createProduct = async (req, res) => {
       specifications: specifications || {},
       tags: Array.isArray(tags) ? tags : (tags ? tags.split(',').map(t => t.trim()) : ['Electronics', category]),
       perfectFor: Array.isArray(perfectFor) ? perfectFor : (perfectFor ? perfectFor.split(',').map(p => p.trim()) : ['College Labs', 'DIY Prototyping']),
+      youtubeUrl: youtubeUrl || null,
+      researchUrl: researchUrl || null,
+      datasheetUrl: datasheetUrl || null,
+      documentationUrl: documentationUrl || null,
+      howToUse: howToUse || {},
+      whereToUse: whereToUse || [],
+      safetyPrecautions: safetyPrecautions || [],
       addedBy: adminUser._id,
       addedByName: publicAddedByName,
       addedByEmail: publicAddedByEmail,
@@ -310,7 +324,14 @@ export const updateProduct = async (req, res) => {
       description,
       specifications,
       tags,
-      perfectFor
+      perfectFor,
+      youtubeUrl,
+      researchUrl,
+      datasheetUrl,
+      documentationUrl,
+      howToUse,
+      whereToUse,
+      safetyPrecautions
     } = req.body;
 
     if (!name || !category || !price) {
@@ -361,6 +382,14 @@ export const updateProduct = async (req, res) => {
     if (specifications !== undefined) product.specifications = specifications;
     if (tags !== undefined) product.tags = Array.isArray(tags) ? tags : (tags ? tags.split(',').map(t => t.trim()) : []);
     if (perfectFor !== undefined) product.perfectFor = Array.isArray(perfectFor) ? perfectFor : (perfectFor ? perfectFor.split(',').map(p => p.trim()) : []);
+    
+    if (youtubeUrl !== undefined) product.youtubeUrl = youtubeUrl;
+    if (researchUrl !== undefined) product.researchUrl = researchUrl;
+    if (datasheetUrl !== undefined) product.datasheetUrl = datasheetUrl;
+    if (documentationUrl !== undefined) product.documentationUrl = documentationUrl;
+    if (howToUse !== undefined) product.howToUse = howToUse;
+    if (whereToUse !== undefined) product.whereToUse = whereToUse;
+    if (safetyPrecautions !== undefined) product.safetyPrecautions = safetyPrecautions;
 
     const updatedProduct = await product.save();
 
