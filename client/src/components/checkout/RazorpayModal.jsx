@@ -22,8 +22,6 @@ export const RazorpayModal = ({
   customerEmail,
   customerPhone
 }) => {
-  if (!isOpen) return null;
-
   const [activeTab, setActiveTab] = useState('upi');
   const [selectedUpi, setSelectedUpi] = useState('gpay');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -32,6 +30,8 @@ export const RazorpayModal = ({
     expiry: '',
     cvv: ''
   });
+
+  if (!isOpen) return null;
 
   const handlePay = () => {
     setIsProcessing(true);
@@ -55,7 +55,7 @@ export const RazorpayModal = ({
               <span className="cc-rzp-logo-text">R</span>
             </div>
             <div className="cc-rzp-merchant">
-              <h4>CampusCircuit</h4>
+              <h4>upVolt</h4>
               <span>Hardware &amp; IoT Project Store</span>
             </div>
           </div>

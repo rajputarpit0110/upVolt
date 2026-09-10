@@ -1,8 +1,8 @@
+import 'dotenv/config';
 import { Hono } from 'hono';
 import { serve } from '@hono/node-server';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
-import dotenv from 'dotenv';
 import { connectDB } from './config/db.js';
 
 import productRoutes from './routes/productRoutes.js';
@@ -15,9 +15,11 @@ import paymentRoutes from './routes/paymentRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
 import reelRoutes from './routes/reelRoutes.js';
 import settingsRoutes from './routes/settingsRoutes.js';
+import messageRoutes from './routes/messageRoutes.js';
+import uploadRoutes from './routes/uploadRoutes.js';
+import categoryRoutes from './routes/categoryRoutes.js';
+import { serveStatic } from '@hono/node-server/serve-static';
 import { initKeepAlive } from './utils/keepAlive.js';
-
-dotenv.config();
 
 const app = new Hono();
 const PORT = Number(process.env.PORT) || 5001;
@@ -46,7 +48,7 @@ app.use('*', logger());
 const healthHandler = (c) => {
   return c.json({
     status: 'success',
-    message: 'upVolt / CampusCircuit API is running smoothly',
+    message: 'upVolt API is running smoothly',
     timestamp: new Date().toISOString(),
     uptime: `${Math.floor(process.uptime())}s`,
     environment: process.env.NODE_ENV || 'production'
@@ -84,6 +86,10 @@ app.route('/api/payments', paymentRoutes);
 app.route('/api/analytics', analyticsRoutes);
 app.route('/api/reels', reelRoutes);
 app.route('/api/settings', settingsRoutes);
+app.route('/api/messages', messageRoutes);
+app.route('/api/upload', uploadRoutes);
+app.route('/api/categories', categoryRoutes);
+app.use('/uploads/*', serveStatic({ root: './public' }));
 
 // Start server
 const startServer = async () => {
@@ -92,7 +98,7 @@ const startServer = async () => {
     fetch: app.fetch,
     port: PORT
   }, (info) => {
-    console.log(`🚀 CampusCircuit Server active on http://localhost:${info.port}`);
+    console.log(`🚀 upVolt Server active on http://localhost:${info.port}`);
     // Initialize automated 10-minute keep-alive pinger for Render & Cloud servers
     initKeepAlive(info.port);
   });

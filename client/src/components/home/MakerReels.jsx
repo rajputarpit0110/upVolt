@@ -262,7 +262,7 @@ export const MakerReels = () => {
                   </Link>
 
                   <a
-                    href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi CampusCircuit! I watched the reel on "${activeModalReel.title}" and want guidance/components for this project.`)}`}
+                    href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi upVolt! I watched the reel on "${activeModalReel.title}" and want guidance/components for this project.`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="cc-btn cc-btn--whatsapp"

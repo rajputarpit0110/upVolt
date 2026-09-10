@@ -285,7 +285,7 @@ export const Cart = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <WhatsAppIcon size={16} color="#25D366" />
                       <div style={{ textAlign: 'left' }}>
-                        <span style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--text-primary)', display: 'block' }}>
+                        <span style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--text-primary)', display: 'block', whiteSpace: 'nowrap' }}>
                           {line.display}
                         </span>
                         <span style={{ fontSize: '0.7rem', color: idx === 0 ? 'var(--color-whatsapp)' : 'var(--text-muted)', fontWeight: 600 }}>
@@ -300,7 +300,8 @@ export const Cart = () => {
                       background: idx === 0 ? 'rgba(16, 185, 129, 0.12)' : 'var(--bg-main)',
                       padding: '2px 7px',
                       borderRadius: 10,
-                      border: idx === 0 ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--border-color)'
+                      border: idx === 0 ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--border-color)',
+                      whiteSpace: 'nowrap'
                     }}>
                       {line.tag}
                     </span>

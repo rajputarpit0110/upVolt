@@ -1,6 +1,6 @@
 export const WHATSAPP_NUMBER = '919919919344';
-export const WHATSAPP_DISPLAY = '+91 9919919344';
-export const FOUNDER_PHONE = '+91 9919919344';
+export const WHATSAPP_DISPLAY = '+91 99199 19344';
+export const FOUNDER_PHONE = '+91 99199 19344';
 export const WHATSAPP_GROUP_LINK = 'https://chat.whatsapp.com/IPzZTg8DGAcHOg5qnaa9v3?mode=gi_t';
 export const OFFICIAL_EMAIL = 'support.upvolt@gmail.com';
 export const OFFICIAL_INSTAGRAM = 'https://www.instagram.com/upvolt_in/';
@@ -9,7 +9,7 @@ export const OFFICIAL_LINKEDIN = 'https://www.linkedin.com/company/upvolt-in/';
 export const PRIORITY_BUYING_NUMBERS = [
   {
     raw: '919919919344',
-    display: '+91 9919919344',
+    display: '+91 99199 19344',
     label: 'Founder',
     tag: 'Priority 1 (Founder)',
     isFounder: true

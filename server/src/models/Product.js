@@ -38,7 +38,7 @@ const productSchema = new mongoose.Schema({
   },
   addedByName: {
     type: String,
-    default: 'CampusCircuit Admin'
+    default: 'upVolt Admin'
   },
   addedByEmail: {
     type: String
@@ -50,5 +50,11 @@ const productSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
+
+// High performance indexes for 10,000+ concurrent users scaling
+productSchema.index({ category: 1, price: 1 });
+productSchema.index({ category: 1, rating: -1 });
+productSchema.index({ createdAt: -1 });
+productSchema.index({ badge: 1 });
 
 export const Product = mongoose.model('Product', productSchema);

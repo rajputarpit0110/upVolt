@@ -58,7 +58,7 @@ export const fetchProductById = async (id) => {
  */
 export const createProduct = async (productData, token) => {
   const headers = { 'Content-Type': 'application/json' };
-  const effectiveToken = token || localStorage.getItem('campuscircuit_token');
+  const effectiveToken = token || localStorage.getItem('upvolt_token') || localStorage.getItem('campuscircuit_token');
   if (effectiveToken) {
     headers['Authorization'] = `Bearer ${effectiveToken}`;
   }
@@ -85,7 +85,7 @@ export const createProduct = async (productData, token) => {
  */
 export const updateProduct = async (id, productData, token) => {
   const headers = { 'Content-Type': 'application/json' };
-  const effectiveToken = token || localStorage.getItem('UPVOLT_token');
+  const effectiveToken = token || localStorage.getItem('upvolt_token') || localStorage.getItem('campuscircuit_token');
   if (effectiveToken) {
     headers['Authorization'] = `Bearer ${effectiveToken}`;
   }
@@ -111,7 +111,7 @@ export const updateProduct = async (id, productData, token) => {
  */
 export const deleteProduct = async (id, token) => {
   const headers = {};
-  const effectiveToken = token || localStorage.getItem('campuscircuit_token');
+  const effectiveToken = token || localStorage.getItem('upvolt_token') || localStorage.getItem('campuscircuit_token');
   if (effectiveToken) {
     headers['Authorization'] = `Bearer ${effectiveToken}`;
   }

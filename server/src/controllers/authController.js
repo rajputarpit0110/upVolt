@@ -33,8 +33,23 @@ export const loginUser = async (req, res) => {
     if (!user && !cleanInput.includes('@')) {
       user = await User.findOne({
         $or: [
+          { email: `${cleanInput}@upvolt.com` },
+          { email: `${cleanInput}@upvolt.in` },
           { email: `${cleanInput}@campuscircuit.com` },
           { email: new RegExp(`^${cleanInput}@`, 'i') }
+        ]
+      });
+    }
+
+    // Also check by username prefix if an email was typed
+    if (!user && cleanInput.includes('@')) {
+      const prefix = cleanInput.split('@')[0];
+      user = await User.findOne({
+        $or: [
+          { username: prefix },
+          { email: `${prefix}@upvolt.com` },
+          { email: `${prefix}@upvolt.in` },
+          { email: `${prefix}@campuscircuit.com` }
         ]
       });
     }
@@ -56,16 +71,20 @@ export const loginUser = async (req, res) => {
 
     const token = generateToken(user._id);
 
+    const cleanName = user.name ? user.name.replace(/CampusCircuit/gi, 'upVolt') : user.name;
+    const cleanCollege = user.college ? user.college.replace(/CampusCircuit/gi, 'upVolt') : user.college;
+    const cleanEmail = user.email ? user.email.replace(/@campuscircuit\.com/gi, '@upvolt.com') : user.email;
+
     res.status(200).json({
       success: true,
       token,
       user: {
         _id: user._id,
-        name: user.name,
-        email: user.email,
+        name: cleanName,
+        email: cleanEmail,
         username: user.username || user.email.split('@')[0],
         role: user.role,
-        college: user.college
+        college: cleanCollege
       }
     });
   } catch (error) {
@@ -123,9 +142,16 @@ export const registerUser = async (req, res) => {
 
 // GET /api/auth/me
 export const getMe = async (req, res) => {
+  const u = req.user ? {
+    ...(req.user.toObject ? req.user.toObject() : req.user),
+    name: req.user.name ? req.user.name.replace(/CampusCircuit/gi, 'upVolt') : req.user.name,
+    college: req.user.college ? req.user.college.replace(/CampusCircuit/gi, 'upVolt') : req.user.college,
+    email: req.user.email ? req.user.email.replace(/@campuscircuit\.com/gi, '@upvolt.com') : req.user.email
+  } : req.user;
+
   res.status(200).json({
     success: true,
-    user: req.user
+    user: u
   });
 };
 

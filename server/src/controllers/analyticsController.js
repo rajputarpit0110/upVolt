@@ -108,7 +108,7 @@ export const pingVisitor = async (req, res) => {
         $inc: { totalVisits: 1 },
         $setOnInsert: { firstSeen: now }
       },
-      { upsert: true, new: true }
+      { upsert: true, returnDocument: 'after' }
     );
 
     // Real live users count (active within last 2 minutes)

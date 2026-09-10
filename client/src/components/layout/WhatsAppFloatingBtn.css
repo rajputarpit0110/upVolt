@@ -121,7 +121,7 @@
 
 /* Interactive Popover Menu */
 .cc-whatsapp-popover {
-  width: 320px;
+  width: 340px;
   max-width: calc(100vw - 36px);
   margin-bottom: 14px;
   background: var(--bg-card);
@@ -241,6 +241,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
 }
 
 .cc-whatsapp-line-icon {
@@ -259,6 +260,7 @@
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.2;
+  white-space: nowrap;
 }
 
 .cc-whatsapp-line-desc {
@@ -281,6 +283,7 @@
   padding: 2px 7px;
   border-radius: 10px;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .cc-whatsapp-popover__footer {

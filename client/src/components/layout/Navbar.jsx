@@ -36,6 +36,18 @@ const highlightMatch = (text, query) => {
   );
 };
 
+// Helper for clean, non-AI uppercase user initials
+const getUserInitials = (userData) => {
+  if (!userData) return 'U';
+  const name = userData.name || userData.username || userData.email || 'User';
+  const clean = name.replace(/^@/, '').trim();
+  const parts = clean.split(/\s+/);
+  if (parts.length >= 2 && parts[0] && parts[1]) {
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+  return clean.charAt(0).toUpperCase() || 'U';
+};
+
 export const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -392,12 +404,19 @@ export const Navbar = () => {
           {/* User Account */}
           <Link
             to={user ? "/profile" : "/login"}
-            className="cc-action-icon cc-action-icon--user"
-            title={user ? `Profile (${user.name})` : "Student Login"}
+            className={`cc-action-icon ${user ? 'cc-action-icon--user' : ''}`}
+            title={user ? `Profile (${user.name || user.username || 'Account'})` : "Student Login"}
             aria-label="Account"
           >
             {user ? (
-              <div className="cc-avatar-circle">{user.name?.charAt(0) || 'U'}</div>
+              <div className="cc-nav-avatar">
+                {user.avatar || user.image ? (
+                  <img src={user.avatar || user.image} alt={user.name || 'User'} className="cc-nav-avatar-img" />
+                ) : (
+                  <span>{getUserInitials(user)}</span>
+                )}
+                <span className="cc-avatar-status-dot" title="Online" />
+              </div>
             ) : (
               <User size={20} />
             )}

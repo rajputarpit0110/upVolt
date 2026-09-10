@@ -14,12 +14,12 @@ const getInitialMentors = () => [
     projectsGuided: '420+ student projects',
     rating: 4.9,
     socialLinks: {
-      whatsapp: `https://wa.me/${process.env.MENTOR_1_WHATSAPP || process.env.MENTOR_DEFAULT_WHATSAPP || '919876543210'}?text=${encodeURIComponent('Hi Arjun! I need guidance on an Embedded Systems & IoT project with CampusCircuit.')}`,
-      linkedin: process.env.MENTOR_1_LINKEDIN || process.env.MENTOR_DEFAULT_LINKEDIN || 'https://www.linkedin.com/company/campuscircuit',
-      instagram: process.env.MENTOR_1_INSTAGRAM || process.env.MENTOR_DEFAULT_INSTAGRAM || 'https://www.instagram.com/campuscircuit',
-      github: process.env.MENTOR_1_GITHUB || process.env.MENTOR_DEFAULT_GITHUB || 'https://github.com/campuscircuit'
+      whatsapp: `https://wa.me/${process.env.MENTOR_1_WHATSAPP || process.env.MENTOR_DEFAULT_WHATSAPP || '919876543210'}?text=${encodeURIComponent('Hi Arjun! I need guidance on an Embedded Systems & IoT project with upVolt.')}`,
+      linkedin: process.env.MENTOR_1_LINKEDIN || process.env.MENTOR_DEFAULT_LINKEDIN || 'https://www.linkedin.com/company/upvolt',
+      instagram: process.env.MENTOR_1_INSTAGRAM || process.env.MENTOR_DEFAULT_INSTAGRAM || 'https://www.instagram.com/upvolt',
+      github: process.env.MENTOR_1_GITHUB || process.env.MENTOR_DEFAULT_GITHUB || 'https://github.com/upvolt'
     },
-    addedByName: 'CampusCircuit Core'
+    addedByName: 'upVolt Core'
   },
   {
     name: process.env.MENTOR_2_NAME || 'Priya Patel',
@@ -31,12 +31,12 @@ const getInitialMentors = () => [
     projectsGuided: '380+ student robots',
     rating: 4.9,
     socialLinks: {
-      whatsapp: `https://wa.me/${process.env.MENTOR_2_WHATSAPP || process.env.MENTOR_DEFAULT_WHATSAPP || '919876543210'}?text=${encodeURIComponent('Hi Priya! I need mentorship on my Robotics / Autonomous Rover project with CampusCircuit.')}`,
-      linkedin: process.env.MENTOR_2_LINKEDIN || process.env.MENTOR_DEFAULT_LINKEDIN || 'https://www.linkedin.com/company/campuscircuit',
-      instagram: process.env.MENTOR_2_INSTAGRAM || process.env.MENTOR_DEFAULT_INSTAGRAM || 'https://www.instagram.com/campuscircuit',
-      github: process.env.MENTOR_2_GITHUB || process.env.MENTOR_DEFAULT_GITHUB || 'https://github.com/campuscircuit'
+      whatsapp: `https://wa.me/${process.env.MENTOR_2_WHATSAPP || process.env.MENTOR_DEFAULT_WHATSAPP || '919876543210'}?text=${encodeURIComponent('Hi Priya! I need mentorship on my Robotics / Autonomous Rover project with upVolt.')}`,
+      linkedin: process.env.MENTOR_2_LINKEDIN || process.env.MENTOR_DEFAULT_LINKEDIN || 'https://www.linkedin.com/company/upvolt',
+      instagram: process.env.MENTOR_2_INSTAGRAM || process.env.MENTOR_DEFAULT_INSTAGRAM || 'https://www.instagram.com/upvolt',
+      github: process.env.MENTOR_2_GITHUB || process.env.MENTOR_DEFAULT_GITHUB || 'https://github.com/upvolt'
     },
-    addedByName: 'CampusCircuit Core'
+    addedByName: 'upVolt Core'
   },
   {
     name: process.env.MENTOR_3_NAME || 'Vikram Aditya',
@@ -49,11 +49,11 @@ const getInitialMentors = () => [
     rating: 5.0,
     socialLinks: {
       whatsapp: `https://wa.me/${process.env.MENTOR_3_WHATSAPP || process.env.MENTOR_DEFAULT_WHATSAPP || '919876543210'}?text=${encodeURIComponent('Hi Vikram! I want help building a Smart Home / IoT Cloud automation dashboard.')}`,
-      linkedin: process.env.MENTOR_3_LINKEDIN || process.env.MENTOR_DEFAULT_LINKEDIN || 'https://www.linkedin.com/company/campuscircuit',
-      instagram: process.env.MENTOR_3_INSTAGRAM || process.env.MENTOR_DEFAULT_INSTAGRAM || 'https://www.instagram.com/campuscircuit',
-      github: process.env.MENTOR_3_GITHUB || process.env.MENTOR_DEFAULT_GITHUB || 'https://github.com/campuscircuit'
+      linkedin: process.env.MENTOR_3_LINKEDIN || process.env.MENTOR_DEFAULT_LINKEDIN || 'https://www.linkedin.com/company/upvolt',
+      instagram: process.env.MENTOR_3_INSTAGRAM || process.env.MENTOR_DEFAULT_INSTAGRAM || 'https://www.instagram.com/upvolt',
+      github: process.env.MENTOR_3_GITHUB || process.env.MENTOR_DEFAULT_GITHUB || 'https://github.com/upvolt'
     },
-    addedByName: 'CampusCircuit Core'
+    addedByName: 'upVolt Core'
   },
   {
     name: process.env.MENTOR_4_NAME || 'Ananya Iyer',
@@ -66,11 +66,11 @@ const getInitialMentors = () => [
     rating: 4.8,
     socialLinks: {
       whatsapp: `https://wa.me/${process.env.MENTOR_4_WHATSAPP || process.env.MENTOR_DEFAULT_WHATSAPP || '919876543210'}?text=${encodeURIComponent('Hi Ananya! I need assistance designing a custom PCB schematic & layout for my prototype.')}`,
-      linkedin: process.env.MENTOR_4_LINKEDIN || process.env.MENTOR_DEFAULT_LINKEDIN || 'https://www.linkedin.com/company/campuscircuit',
-      instagram: process.env.MENTOR_4_INSTAGRAM || process.env.MENTOR_DEFAULT_INSTAGRAM || 'https://www.instagram.com/campuscircuit',
-      github: process.env.MENTOR_4_GITHUB || process.env.MENTOR_DEFAULT_GITHUB || 'https://github.com/campuscircuit'
+      linkedin: process.env.MENTOR_4_LINKEDIN || process.env.MENTOR_DEFAULT_LINKEDIN || 'https://www.linkedin.com/company/upvolt',
+      instagram: process.env.MENTOR_4_INSTAGRAM || process.env.MENTOR_DEFAULT_INSTAGRAM || 'https://www.instagram.com/upvolt',
+      github: process.env.MENTOR_4_GITHUB || process.env.MENTOR_DEFAULT_GITHUB || 'https://github.com/upvolt'
     },
-    addedByName: 'CampusCircuit Core'
+    addedByName: 'upVolt Core'
   }
 ];
 
@@ -143,7 +143,7 @@ export const createMentor = async (req, res) => {
 
     const trimmedName = name?.trim();
     const trimmedBio = bio?.trim();
-    const safeRole = role?.trim() || 'CampusCircuit Mentor';
+    const safeRole = role?.trim() || 'upVolt Mentor';
     const safeCollege = college?.trim() || 'Hardware & IoT Guide';
 
     if (!trimmedName || !trimmedBio) {
@@ -155,14 +155,14 @@ export const createMentor = async (req, res) => {
 
     const adminUser = req.user || {
       _id: new mongoose.Types.ObjectId(),
-      name: 'CampusCircuit Admin',
-      email: 'admin@campuscircuit.com',
+      name: 'upVolt Admin',
+      email: 'admin@upvolt.in',
       role: 'admin'
     };
 
     // For master admin, mask name so stealth admin isolation is preserved
-    const publicAddedByName = adminUser.role === 'master_admin' ? 'CampusCircuit Lead' : adminUser.name;
-    const publicAddedByEmail = adminUser.role === 'master_admin' ? 'lead@campuscircuit.com' : adminUser.email;
+    const publicAddedByName = adminUser.role === 'master_admin' ? 'upVolt Lead' : adminUser.name;
+    const publicAddedByEmail = adminUser.role === 'master_admin' ? 'lead@upvolt.in' : adminUser.email;
 
     // Process specialties
     let specialtiesList = [];
@@ -179,9 +179,9 @@ export const createMentor = async (req, res) => {
     // Process social links
     const socialLinks = {
       whatsapp: formatWhatsAppUrl(whatsapp, trimmedName),
-      linkedin: linkedin?.trim() || process.env.MENTOR_DEFAULT_LINKEDIN || 'https://www.linkedin.com/company/campuscircuit',
-      instagram: instagram?.trim() || process.env.MENTOR_DEFAULT_INSTAGRAM || 'https://www.instagram.com/campuscircuit',
-      github: github?.trim() || process.env.MENTOR_DEFAULT_GITHUB || 'https://github.com/campuscircuit'
+      linkedin: linkedin?.trim() || process.env.MENTOR_DEFAULT_LINKEDIN || 'https://www.linkedin.com/company/upvolt',
+      instagram: instagram?.trim() || process.env.MENTOR_DEFAULT_INSTAGRAM || 'https://www.instagram.com/upvolt',
+      github: github?.trim() || process.env.MENTOR_DEFAULT_GITHUB || 'https://github.com/upvolt'
     };
 
     const newMentor = new Mentor({
@@ -304,8 +304,8 @@ export const updateMentor = async (req, res) => {
     
     const adminUser = req.user || {
       _id: new mongoose.Types.ObjectId(),
-      name: 'CampusCircuit Admin',
-      email: 'admin@campuscircuit.com',
+      name: 'upVolt Admin',
+      email: 'admin@upvolt.in',
       role: 'admin'
     };
     
@@ -362,8 +362,8 @@ export const deleteMentor = async (req, res) => {
 
     const adminUser = req.user || {
       _id: new mongoose.Types.ObjectId(),
-      name: 'CampusCircuit Admin',
-      email: 'admin@campuscircuit.com',
+      name: 'upVolt Admin',
+      email: 'admin@upvolt.in',
       role: 'admin'
     };
 

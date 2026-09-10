@@ -45,13 +45,31 @@ const YouTubeIcon = ({ size = 18, className = '' }) => (
   </svg>
 );
 
-const getYouTubeEmbedUrl = (url) => {
-  if (!url) return null;
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-  const match = url.match(regExp);
-  return (match && match[2].length === 11)
-    ? `https://www.youtube.com/embed/${match[2]}?rel=0&modestbranding=1`
-    : null;
+export const getYouTubeEmbedUrl = (url) => {
+  if (!url || typeof url !== 'string') return null;
+  const clean = url.trim();
+
+  // If user pasted an iframe tag
+  const iframeMatch = clean.match(/src=["']([^"']+)["']/i);
+  const targetUrl = iframeMatch ? iframeMatch[1] : clean;
+
+  // Direct embed match
+  const embedMatch = targetUrl.match(/youtube(?:-nocookie)?\.com\/embed\/([a-zA-Z0-9_-]{11})/i);
+  if (embedMatch) return `https://www.youtube.com/embed/${embedMatch[1]}?rel=0&modestbranding=1`;
+
+  // Standard watch, shorts, live, youtu.be (desktop & mobile)
+  const regExp = /(?:youtu\.be\/|(?:(?:m|www)\.)?youtube(?:-nocookie)?\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/|live\/))([a-zA-Z0-9_-]{11})/i;
+  const match = targetUrl.match(regExp);
+  if (match && match[1]) {
+    return `https://www.youtube.com/embed/${match[1]}?rel=0&modestbranding=1`;
+  }
+
+  // Bare 11-char ID
+  if (/^[a-zA-Z0-9_-]{11}$/.test(targetUrl)) {
+    return `https://www.youtube.com/embed/${targetUrl}?rel=0&modestbranding=1`;
+  }
+
+  return null;
 };
 
 export const ProductDetail = () => {
@@ -186,6 +204,10 @@ export const ProductDetail = () => {
                 src={activeImage || product.image}
                 alt={product.name}
                 className="cc-detail-main-img"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = '/logo-circuit.svg';
+                }}
                 style={{
                   transformOrigin: isZoomed ? `${zoomPos.x}% ${zoomPos.y}%` : 'center center',
                   transform: isZoomed ? 'scale(2.35)' : 'scale(1)'
@@ -401,75 +423,45 @@ export const ProductDetail = () => {
               <span className="cc-detail-whatsapp-sub">Instant confirmation • Cash on Delivery or UPI Available</span>
 
               {/* Priority Direct Buying Lines (Students can buy from any) */}
-              <div style={{
-                marginTop: 14,
-                paddingTop: 12,
-                borderTop: '1px solid rgba(37, 211, 102, 0.25)',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 8,
-                width: '100%'
-              }}>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  fontSize: '0.78rem',
-                  fontWeight: 700,
-                  color: 'var(--text-secondary)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.04em'
-                }}>
-                  <span>⚡ Priority Direct Buying Lines:</span>
-                  <span style={{ color: 'var(--color-whatsapp)', fontSize: '0.72rem', fontWeight: 600 }}>Fast Response</span>
+              <div className="cc-detail-priority-box">
+                <div className="cc-detail-priority-header">
+                  <div className="cc-detail-priority-title">
+                    <span className="cc-detail-priority-bolt">⚡</span>
+                    <span>Priority Direct Buying Lines:</span>
+                  </div>
+                  <div className="cc-detail-priority-status">
+                    <span className="cc-detail-priority-dot" />
+                    <span>Fast Response</span>
+                  </div>
                 </div>
 
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-                  gap: 8
-                }}>
+                <div className="cc-detail-priority-grid">
                   {PRIORITY_BUYING_NUMBERS.map((line, idx) => (
                     <a
                       key={idx}
                       href={getProductWhatsAppLink(product, line.raw)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        gap: 8,
-                        padding: '8px 12px',
-                        background: idx === 0 ? 'rgba(37, 211, 102, 0.14)' : 'var(--bg-surface)',
-                        border: idx === 0 ? '1px solid rgba(37, 211, 102, 0.45)' : '1px solid var(--border-color)',
-                        borderRadius: 'var(--radius-md)',
-                        textDecoration: 'none',
-                        transition: 'all 0.15s ease'
-                      }}
+                      className={`cc-detail-priority-card ${idx === 0 ? 'cc-detail-priority-card--founder' : ''}`}
                       title={`Buy ${product.name} directly via ${line.label}`}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                        <WhatsAppIcon size={16} color="#25D366" />
-                        <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
-                          <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                            {line.display}
-                          </span>
-                          <span style={{ fontSize: '0.68rem', color: idx === 0 ? 'var(--color-whatsapp)' : 'var(--text-muted)', fontWeight: 600 }}>
-                            {line.label}
-                          </span>
+                      <div className="cc-detail-priority-card-top">
+                        <div className="cc-detail-priority-card-label">
+                          <WhatsAppIcon size={14} color="#25D366" />
+                          <span>{line.label}</span>
                         </div>
+                        <span className={`cc-detail-priority-pill ${idx === 0 ? 'cc-detail-priority-pill--founder' : ''}`}>
+                          {idx === 0 ? 'Priority 1' : `Priority ${idx + 1}`}
+                        </span>
                       </div>
-                      <span style={{
-                        fontSize: '0.65rem',
-                        fontWeight: 700,
-                        padding: '2px 6px',
-                        borderRadius: '99px',
-                        background: idx === 0 ? 'var(--color-whatsapp)' : 'rgba(255, 255, 255, 0.08)',
-                        color: idx === 0 ? '#fff' : 'var(--text-secondary)'
-                      }}>
-                        {idx === 0 ? 'Priority 1 (Founder)' : `Priority ${idx + 1}`}
-                      </span>
+
+                      <div className="cc-detail-priority-number">
+                        {line.display}
+                      </div>
+
+                      <div className="cc-detail-priority-hint">
+                        {idx === 0 ? 'Founder Line • Instant Reply' : 'Direct Dispatch Desk'}
+                      </div>
                     </a>
                   ))}
                 </div>
@@ -512,7 +504,7 @@ export const ProductDetail = () => {
               onClick={() => setActiveTab('where-to-use')}
             >
               <Compass size={16} />
-              <span>Where to Use ({product.whereToUse?.length || 3} Projects)</span>
+              <span>Where to Use {product.whereToUse && product.whereToUse.length > 0 ? `(${product.whereToUse.length} Projects)` : ''}</span>
             </button>
 
             <button
@@ -669,6 +661,23 @@ export const ProductDetail = () => {
                     </ul>
                   </div>
                 )}
+
+                {/* Fallback overview if no specific steps/video provided yet */}
+                {!product.youtubeUrl && !product.howToUse?.overview && (!product.howToUse?.steps || product.howToUse.steps.length === 0) && !product.howToUse?.pinoutSummary && !product.howToUse?.sampleCode && (!product.safetyPrecautions || product.safetyPrecautions.length === 0) && (
+                  <div className="cc-guide-overview-card">
+                    <div className="cc-guide-overview-badge">
+                      <Wrench size={15} />
+                      <span>Quick Setup & Getting Started</span>
+                    </div>
+                    <p className="cc-guide-overview-text">
+                      {product.description || `Standard operating guide for ${product.name}. Connect to regulated DC power matching component voltage specifications, verify pin orientations before energizing, and interface with your microcontroller according to standard wiring conventions.`}
+                    </p>
+                    <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', gap: 10, fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
+                      <Sparkles size={16} style={{ color: 'var(--color-primary)', flexShrink: 0 }} />
+                      <span>Need tailored circuit schematics or starter code for this module? Connect with our campus engineering mentors on WhatsApp.</span>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -696,11 +705,11 @@ export const ProductDetail = () => {
                   </div>
                 ) : (
                   <div className="cc-ideas-content">
-                    <h3>Recommended Engineering Projects:</h3>
+                    <h3>Recommended Applications for {product.name}:</h3>
                     <ul className="cc-ideas-list">
-                      <li><strong>Smart IoT Weather Station:</strong> Read temperature & humidity, post sensor metrics to ThingSpeak cloud via Wi-Fi.</li>
-                      <li><strong>Hostel Room Access System:</strong> Combine with RFID RC522 to automatically unlock door upon scanning student ID card.</li>
-                      <li><strong>Automated Irrigation / Plant Monitor:</strong> Trigger water pump whenever soil moisture drops below calibrated threshold.</li>
+                      <li><strong>College Mini & Major Capstone Projects:</strong> Seamlessly integrate {product.name} into embedded circuit designs, sensor networks, and thesis demos.</li>
+                      <li><strong>Sensor & Actuator Interfacing:</strong> Interface with Arduino, ESP32, STM32, or Raspberry Pi microcontrollers using standard GPIO/I2C buses.</li>
+                      <li><strong>Smart IoT & Automation Systems:</strong> Deploy in smart campus automation, wireless telemetry, or robotics control systems.</li>
                     </ul>
                   </div>
                 )}
@@ -746,7 +755,7 @@ export const ProductDetail = () => {
                       <div className="cc-doc-icon-wrap cc-doc-icon-wrap--red">
                         <FileText size={24} />
                       </div>
-                      <span className="cc-doc-tag">PDF Datasheet</span>
+                      <span className="cc-doc-tag">{product.datasheetUrl ? 'Verified Datasheet' : 'Search Datasheet'}</span>
                     </div>
                     <h4 className="cc-doc-title">Official Manufacturer Datasheet</h4>
                     <p className="cc-doc-desc">
@@ -759,7 +768,7 @@ export const ProductDetail = () => {
                       className="cc-doc-action-btn"
                     >
                       <Download size={15} />
-                      <span>Download Official Datasheet</span>
+                      <span>{product.datasheetUrl ? 'Open Official Datasheet' : 'Search Datasheet Online'}</span>
                     </a>
                   </div>
 
@@ -769,7 +778,7 @@ export const ProductDetail = () => {
                       <div className="cc-doc-icon-wrap cc-doc-icon-wrap--blue">
                         <BookOpen size={24} />
                       </div>
-                      <span className="cc-doc-tag">Research Citation</span>
+                      <span className="cc-doc-tag">{product.researchUrl ? 'Academic Paper' : 'Research Citations'}</span>
                     </div>
                     <h4 className="cc-doc-title">Academic & IEEE Research Paper</h4>
                     <p className="cc-doc-desc">
@@ -782,7 +791,7 @@ export const ProductDetail = () => {
                       className="cc-doc-action-btn"
                     >
                       <ExternalLink size={15} />
-                      <span>View Research Publication</span>
+                      <span>{product.researchUrl ? 'Open Research Publication' : 'Search Research Papers'}</span>
                     </a>
                   </div>
 
@@ -792,7 +801,7 @@ export const ProductDetail = () => {
                       <div className="cc-doc-icon-wrap cc-doc-icon-wrap--purple">
                         <Code2 size={24} />
                       </div>
-                      <span className="cc-doc-tag">Open Source Code</span>
+                      <span className="cc-doc-tag">{product.documentationUrl ? 'GitHub / Docs' : 'Developer Library'}</span>
                     </div>
                     <h4 className="cc-doc-title">Official Driver & GitHub Library</h4>
                     <p className="cc-doc-desc">
@@ -805,7 +814,7 @@ export const ProductDetail = () => {
                       className="cc-doc-action-btn"
                     >
                       <ExternalLink size={15} />
-                      <span>View Documentation & Code</span>
+                      <span>{product.documentationUrl ? 'Open Documentation & Code' : 'Search GitHub Libraries'}</span>
                     </a>
                   </div>
                 </div>

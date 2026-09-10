@@ -1,15 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CATEGORIES } from '../data/mockProducts';
+import { fetchCategories } from '../services/categoryService';
 import { fetchProducts } from '../services/productService';
 import { ArrowRight } from 'lucide-react';
 
 export const Categories = () => {
+  const [categories, setCategories] = useState(CATEGORIES);
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
+    fetchCategories().then((res) => {
+      if (res && res.categories && res.categories.length > 0) {
+        setCategories(res.categories);
+      }
+    }).catch(err => {
+      console.warn('Failed to load categories:', err);
+    });
+
     fetchProducts().then(({ products: liveItems }) => {
       if (liveItems) setProducts(liveItems);
+    }).catch(err => {
+      console.warn('Failed to load products:', err);
     });
   }, []);
 
@@ -26,13 +38,14 @@ export const Categories = () => {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 24 }}>
-          {CATEGORIES.map((cat) => {
+          {categories.map((cat) => {
             const liveCount = products.filter(p => p.category === cat.name).length;
-            const displayCount = liveCount > 0 ? `${liveCount} in stock` : `${cat.count}+ components`;
+            const countToUse = liveCount > 0 ? liveCount : (cat.productCount ?? cat.count ?? 0);
+            const displayCount = countToUse > 0 ? `${countToUse} components` : 'Browse components';
 
             return (
               <Link
-                key={cat.id}
+                key={cat._id || cat.id}
                 to={`/shop?category=${encodeURIComponent(cat.name)}`}
                 className="glass-panel"
                 style={{
@@ -46,7 +59,7 @@ export const Categories = () => {
               >
                 <div style={{ width: '100%', height: 180, overflow: 'hidden', background: 'var(--bg-surface)' }}>
                   <img
-                    src={cat.image}
+                    src={cat.image || '/images/realistic/arduino_uno.jpg'}
                     alt={cat.name}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />

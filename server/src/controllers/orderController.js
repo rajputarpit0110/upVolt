@@ -170,7 +170,7 @@ export const updateOrderStatus = async (req, res) => {
       order.paymentStatus = 'completed';
     }
 
-    const publicAdminName = req.user?.role === 'master_admin' ? 'CampusCircuit Support' : (req.user ? req.user.name : 'Admin');
+    const publicAdminName = req.user?.role === 'master_admin' ? 'upVolt Support' : (req.user ? req.user.name : 'Admin');
     order.statusHistory.push({
       status: status.toLowerCase(),
       changedAt: new Date(),

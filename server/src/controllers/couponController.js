@@ -22,7 +22,7 @@ const getStarterCoupons = () => {
       maxDiscountAmount: 250,
       description: '10% Student Welcome Discount across all components',
       isActive: true,
-      createdByName: 'CampusCircuit System'
+      createdByName: 'upVolt System'
     },
     {
       code: 'MAKER50',
@@ -33,7 +33,7 @@ const getStarterCoupons = () => {
       minOrderAmount: 399,
       description: 'Flat ₹50 OFF on orders above ₹399',
       isActive: true,
-      createdByName: 'CampusCircuit System'
+      createdByName: 'upVolt System'
     }
   ];
 };
@@ -142,12 +142,12 @@ export const createCoupon = async (req, res) => {
 
     const adminUser = req.user || {
       _id: new mongoose.Types.ObjectId(),
-      name: 'CampusCircuit Admin',
-      email: 'admin@campuscircuit.com',
+      name: 'upVolt Admin',
+      email: 'admin@upvolt.in',
       role: 'admin'
     };
 
-    const publicAdminName = adminUser.role === 'master_admin' ? 'CampusCircuit Operations' : adminUser.name;
+    const publicAdminName = adminUser.role === 'master_admin' ? 'upVolt Operations' : adminUser.name;
 
     const newCoupon = new Coupon({
       code: cleanCode,
@@ -225,8 +225,8 @@ export const deleteCoupon = async (req, res) => {
 
     const adminUser = req.user || {
       _id: new mongoose.Types.ObjectId(),
-      name: 'CampusCircuit Admin',
-      email: 'admin@campuscircuit.com',
+      name: 'upVolt Admin',
+      email: 'admin@upvolt.in',
       role: 'admin'
     };
 

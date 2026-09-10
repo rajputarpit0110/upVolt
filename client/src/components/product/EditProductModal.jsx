@@ -1,13 +1,16 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { X, Plus, Sparkles, CheckCircle, AlertCircle, Loader2, Image as ImageIcon, Trash2, ShieldAlert, Upload, Link as LinkIcon, Star } from 'lucide-react';
 import { CATEGORIES } from '../../data/mockProducts';
 import { updateProduct } from '../../services/productService';
+import { fetchCategories } from '../../services/categoryService';
+import { uploadMediaFiles } from '../../services/uploadService';
 import { useAuth } from '../../context/AuthContext';
 import './AddProductModal.css';
 
 export const EditProductModal = ({ isOpen, onClose, product, onProductUpdated }) => {
   const { user, isAdmin, token } = useAuth();
 
+  const [categories, setCategories] = useState(CATEGORIES);
   const [formData, setFormData] = useState({
     name: '',
     category: CATEGORIES[0]?.name || 'Development Boards',
@@ -24,10 +27,21 @@ export const EditProductModal = ({ isOpen, onClose, product, onProductUpdated })
     datasheetUrl: '',
     documentationUrl: '',
     howToUseOverview: '',
+    howToUseStepsStr: '',
     whereToUseStr: ''
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
+    if (isOpen) {
+      fetchCategories().then(res => {
+        if (res && res.categories && res.categories.length > 0) {
+          setCategories(res.categories);
+        }
+      }).catch(err => console.warn('Failed to load categories in edit modal:', err));
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
     if (product) {
       setFormData({
         name: product.name || '',
@@ -45,6 +59,7 @@ export const EditProductModal = ({ isOpen, onClose, product, onProductUpdated })
         datasheetUrl: product.datasheetUrl || '',
         documentationUrl: product.documentationUrl || '',
         howToUseOverview: product.howToUse?.overview || '',
+        howToUseStepsStr: product.howToUse?.steps ? product.howToUse.steps.join('\n') : '',
         whereToUseStr: product.whereToUse ? product.whereToUse.map(u => `${u.title}: ${u.description}`).join('\n') : ''
       });
       setImages(product.images || [product.image].filter(Boolean));
@@ -130,10 +145,13 @@ export const EditProductModal = ({ isOpen, onClose, product, onProductUpdated })
     }
 
     try {
-      const processedList = await Promise.all(validFiles.map(compressImageFile));
-      setImages(prev => [...prev, ...processedList]);
+      const uploadedUrls = await uploadMediaFiles(validFiles);
+      if (uploadedUrls.length > 0) {
+        setImages(prev => [...prev, ...uploadedUrls]);
+      }
     } catch (err) {
-      setError('Failed to process image files from device.');
+      console.error('File upload failed in EditProductModal:', err);
+      setError(err.message || 'Failed to upload image files to server/CDN.');
     } finally {
       setUploadingFiles(false);
       if (fileInputRef.current) {
@@ -219,6 +237,10 @@ export const EditProductModal = ({ isOpen, onClose, product, onProductUpdated })
         ? formData.perfectForStr.split(',').map(p => p.trim()).filter(Boolean)
         : [];
 
+      const steps = formData.howToUseStepsStr?.trim()
+        ? formData.howToUseStepsStr.split('\n').map(s => s.trim()).filter(Boolean)
+        : (product.howToUse?.steps || undefined);
+
       const payload = {
         name: formData.name.trim(),
         category: formData.category,
@@ -232,13 +254,15 @@ export const EditProductModal = ({ isOpen, onClose, product, onProductUpdated })
         specifications,
         tags,
         perfectFor,
-        youtubeUrl: formData.youtubeUrl.trim() || undefined,
-        researchUrl: formData.researchUrl.trim() || undefined,
-        datasheetUrl: formData.datasheetUrl.trim() || undefined,
-        documentationUrl: formData.documentationUrl.trim() || undefined,
-        howToUse: formData.howToUseOverview.trim() ? {
-          overview: formData.howToUseOverview.trim()
-        } : undefined,
+        youtubeUrl: formData.youtubeUrl.trim() || null,
+        researchUrl: formData.researchUrl.trim() || null,
+        datasheetUrl: formData.datasheetUrl.trim() || null,
+        documentationUrl: formData.documentationUrl.trim() || null,
+        howToUse: (formData.howToUseOverview.trim() || (steps && steps.length > 0)) ? {
+          ...(product.howToUse || {}),
+          overview: formData.howToUseOverview.trim() || undefined,
+          steps: steps && steps.length > 0 ? steps : undefined
+        } : null,
         whereToUse: formData.whereToUseStr.trim() ? formData.whereToUseStr.split('\n').filter(Boolean).map(item => {
           const parts = item.split(':');
           return {
@@ -246,7 +270,7 @@ export const EditProductModal = ({ isOpen, onClose, product, onProductUpdated })
             description: parts.slice(1).join(':')?.trim() || 'Practical engineering use case',
             category: 'Engineering Project'
           };
-        }) : undefined,
+        }) : [],
         inStock: true
       };
 
@@ -331,8 +355,8 @@ export const EditProductModal = ({ isOpen, onClose, product, onProductUpdated })
                 value={formData.category}
                 onChange={handleChange}
               >
-                {CATEGORIES.map(cat => (
-                  <option key={cat.id} value={cat.name}>{cat.name}</option>
+                {categories.map(cat => (
+                  <option key={cat._id || cat.id} value={cat.name}>{cat.name}</option>
                 ))}
               </select>
             </div>
@@ -583,63 +607,111 @@ export const EditProductModal = ({ isOpen, onClose, product, onProductUpdated })
             </div>
           </div>
 
-          {/* Educational Resources & Links */}
+          {/* Video Tutorial Link */}
           <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: 16, marginTop: 8 }}>
+            <div className="cc-form-group">
+              <label className="cc-form-label" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ color: '#EF4444', fontWeight: 'bold' }}>▶</span>
+                <span>YouTube Video Tutorial Link (Optional)</span>
+              </label>
+              <input
+                type="url"
+                name="youtubeUrl"
+                className="cc-input"
+                placeholder="e.g., https://www.youtube.com/watch?v=... or https://youtu.be/..."
+                value={formData.youtubeUrl}
+                onChange={handleChange}
+              />
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 4, display: 'block' }}>
+                Yeh link product ke "How to Use & Video" tab me playable YouTube player banayega.
+              </span>
+            </div>
+          </div>
+
+          {/* Research & Datasheet Links (Alag Alag Options) */}
+          <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: 16, marginTop: 12 }}>
             <h4 style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>
-              Educational Resources, Video Tutorial & Research (Optional)
+              Research & Datasheet Documentation Links (Alag-Alag Cards ke Links)
             </h4>
 
-            <div className="cc-form-row">
-              <div className="cc-form-group flex-1">
-                <label className="cc-form-label">YouTube Tutorial URL</label>
-                <input
-                  type="url"
-                  name="youtubeUrl"
-                  className="cc-input"
-                  placeholder="https://www.youtube.com/watch?v=..."
-                  value={formData.youtubeUrl}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="cc-form-group flex-1">
-                <label className="cc-form-label">Manufacturer Datasheet URL</label>
-                <input
-                  type="url"
-                  name="datasheetUrl"
-                  className="cc-input"
-                  placeholder="https://example.com/datasheet.pdf"
-                  value={formData.datasheetUrl}
-                  onChange={handleChange}
-                />
-              </div>
+            {/* Option 1: Official Manufacturer Datasheet */}
+            <div className="cc-form-group" style={{ marginBottom: 14 }}>
+              <label className="cc-form-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700 }}>
+                  <span style={{ color: '#EF4444' }}>📄</span>
+                  <span>1. Official Manufacturer Datasheet URL (PDF)</span>
+                </span>
+                <span style={{ fontSize: '0.75rem', color: '#EF4444', background: 'rgba(239, 68, 68, 0.1)', padding: '2px 8px', borderRadius: 4, fontWeight: 600 }}>
+                  Card 1: Verified Datasheet
+                </span>
+              </label>
+              <input
+                type="url"
+                name="datasheetUrl"
+                className="cc-input"
+                placeholder="https://example.com/datasheet.pdf (IC / Sensor manufacturer official PDF)"
+                value={formData.datasheetUrl}
+                onChange={handleChange}
+              />
+              <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: 3, display: 'block' }}>
+                UI ke pehle card ("Official Manufacturer Datasheet") ke "Open Official Datasheet" button par yeh link open hoga.
+              </span>
             </div>
 
-            <div className="cc-form-row">
-              <div className="cc-form-group flex-1">
-                <label className="cc-form-label">Research Paper / Citation Link</label>
-                <input
-                  type="url"
-                  name="researchUrl"
-                  className="cc-input"
-                  placeholder="https://ieeexplore.ieee.org/document/..."
-                  value={formData.researchUrl}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="cc-form-group flex-1">
-                <label className="cc-form-label">GitHub / Documentation URL</label>
-                <input
-                  type="url"
-                  name="documentationUrl"
-                  className="cc-input"
-                  placeholder="https://docs.arduino.cc/..."
-                  value={formData.documentationUrl}
-                  onChange={handleChange}
-                />
-              </div>
+            {/* Option 2: Academic & IEEE Research Paper */}
+            <div className="cc-form-group" style={{ marginBottom: 14 }}>
+              <label className="cc-form-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700 }}>
+                  <span style={{ color: '#3B82F6' }}>📖</span>
+                  <span>2. Academic & IEEE Research Paper URL</span>
+                </span>
+                <span style={{ fontSize: '0.75rem', color: '#3B82F6', background: 'rgba(59, 130, 246, 0.1)', padding: '2px 8px', borderRadius: 4, fontWeight: 600 }}>
+                  Card 2: Academic Paper
+                </span>
+              </label>
+              <input
+                type="url"
+                name="researchUrl"
+                className="cc-input"
+                placeholder="https://ieeexplore.ieee.org/document/... (IEEE / Google Scholar research paper)"
+                value={formData.researchUrl}
+                onChange={handleChange}
+              />
+              <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: 3, display: 'block' }}>
+                UI ke doosre card ("Academic & IEEE Research Paper") ke "Open Research Publication" button par yeh link open hoga.
+              </span>
             </div>
+
+            {/* Option 3: GitHub & Developer Docs */}
+            <div className="cc-form-group" style={{ marginBottom: 14 }}>
+              <label className="cc-form-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700 }}>
+                  <span style={{ color: '#8B5CF6' }}>💻</span>
+                  <span>3. GitHub Library & Driver Documentation URL</span>
+                </span>
+                <span style={{ fontSize: '0.75rem', color: '#8B5CF6', background: 'rgba(139, 92, 246, 0.1)', padding: '2px 8px', borderRadius: 4, fontWeight: 600 }}>
+                  Card 3: GitHub / Docs
+                </span>
+              </label>
+              <input
+                type="url"
+                name="documentationUrl"
+                className="cc-input"
+                placeholder="https://github.com/username/repository (Arduino / ESP32 driver repo)"
+                value={formData.documentationUrl}
+                onChange={handleChange}
+              />
+              <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: 3, display: 'block' }}>
+                UI ke teesre card ("Official Driver & GitHub Library") ke "Open Documentation & Code" button par yeh link open hoga.
+              </span>
+            </div>
+          </div>
+
+          {/* How & Where to Use Guide */}
+          <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: 16, marginTop: 12 }}>
+            <h4 style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>
+              Component Setup Guide & Practical Use Cases (Optional)
+            </h4>
 
             <div className="cc-form-group">
               <label className="cc-form-label">How to Use (Brief Overview)</label>
@@ -649,6 +721,18 @@ export const EditProductModal = ({ isOpen, onClose, product, onProductUpdated })
                 className="cc-input cc-textarea"
                 placeholder="e.g., Connect to PC via micro-USB, wire sensors to I2C pins, and upload code in Arduino IDE..."
                 value={formData.howToUseOverview}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="cc-form-group" style={{ marginTop: 6 }}>
+              <label className="cc-form-label">How to Use (Step-by-Step Instructions, one step per line)</label>
+              <textarea
+                name="howToUseStepsStr"
+                rows={2}
+                className="cc-input cc-textarea cc-mono"
+                placeholder={"1. Plug in USB cable to PC\n2. Open Arduino IDE and select board\n3. Click upload"}
+                value={formData.howToUseStepsStr}
                 onChange={handleChange}
               />
             </div>

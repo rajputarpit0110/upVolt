@@ -18,6 +18,10 @@ export const Profile = () => {
     navigate('/');
   };
 
+  const cleanName = user.name ? user.name.replace(/CampusCircuit/gi, 'upVolt') : 'Student';
+  const cleanEmail = user.email ? user.email.replace(/@campuscircuit\.com/gi, '@upvolt.com') : '';
+  const cleanCollege = user.college ? user.college.replace(/CampusCircuit/gi, 'upVolt') : 'Engineering Institute';
+
   return (
     <div className="cc-page cc-profile-page" style={{ padding: '40px 0 80px' }}>
       <div className="container" style={{ maxWidth: 800 }}>
@@ -27,11 +31,25 @@ export const Profile = () => {
 
         <div className="glass-panel" style={{ padding: 36, borderRadius: 'var(--radius-xl)', display: 'flex', flexDirection: 'column', gap: 28 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-            <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'linear-gradient(135deg, var(--accent-primary), #00E5FF)', color: '#070B14', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.8rem', fontWeight: 800 }}>
-              {user.name?.charAt(0) || 'S'}
+            <div style={{
+              width: 64,
+              height: 64,
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #1E40AF 0%, #2563EB 55%, #0284C7 100%)',
+              color: '#FFFFFF',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '1.6rem',
+              fontWeight: 800,
+              boxShadow: 'inset 0 0 0 2px rgba(255, 255, 255, 0.25), 0 4px 16px rgba(37, 99, 235, 0.35)',
+              letterSpacing: '0.04em',
+              userSelect: 'none'
+            }}>
+              {cleanName.charAt(0).toUpperCase() || 'U'}
             </div>
             <div>
-              <h2 style={{ fontSize: '1.4rem', fontWeight: 700 }}>{user.name}</h2>
+              <h2 style={{ fontSize: '1.4rem', fontWeight: 700 }}>{cleanName}</h2>
               <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Verified Student Builder</span>
             </div>
           </div>
@@ -41,7 +59,7 @@ export const Profile = () => {
               <Mail size={18} style={{ color: 'var(--accent-primary)' }} />
               <div>
                 <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>Email</div>
-                <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>{user.email}</div>
+                <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>{cleanEmail}</div>
               </div>
             </div>
 
@@ -49,7 +67,7 @@ export const Profile = () => {
               <GraduationCap size={18} style={{ color: 'var(--accent-primary)' }} />
               <div>
                 <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>College</div>
-                <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>{user.college || 'Engineering Institute'}</div>
+                <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>{cleanCollege}</div>
               </div>
             </div>
           </div>

@@ -61,6 +61,10 @@ export const ProductCard = ({ product }) => {
             alt={product.name}
             className="cc-product-card__img"
             loading="lazy"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = '/logo-circuit.svg';
+            }}
           />
         </div>
       </Link>

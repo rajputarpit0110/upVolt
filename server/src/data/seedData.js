@@ -519,7 +519,7 @@ const RAW_PRODUCTS = [
 
   // 8. PROJECT KITS
   {
-    name: 'CampusCircuit Complete 45-in-1 IoT & Sensor Starter Kit',
+    name: 'upVolt Complete 45-in-1 IoT & Sensor Starter Kit',
     category: 'Project Kits',
     price: 1899,
     originalPrice: 2899,

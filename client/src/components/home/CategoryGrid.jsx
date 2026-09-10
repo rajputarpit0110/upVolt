@@ -1,10 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { CATEGORIES } from '../../data/mockProducts';
+import { fetchCategories } from '../../services/categoryService';
 import { ArrowRight } from 'lucide-react';
 import './CategoryGrid.css';
 
 export const CategoryGrid = () => {
+  const [categories, setCategories] = useState(CATEGORIES);
+
+  useEffect(() => {
+    fetchCategories().then((res) => {
+      if (res && res.categories && res.categories.length > 0) {
+        setCategories(res.categories);
+      }
+    }).catch(err => {
+      console.warn('Failed to load categories on home grid:', err);
+    });
+  }, []);
+
   return (
     <section className="cc-category-section">
       <div className="container cc-category-section__container">
@@ -20,17 +33,17 @@ export const CategoryGrid = () => {
           </Link>
         </div>
 
-        {/* 8-Card Grid */}
+        {/* Dynamic Category Cards */}
         <div className="cc-category-grid">
-          {CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <Link
-              key={cat.id}
+              key={cat._id || cat.id}
               to={`/shop?category=${encodeURIComponent(cat.name)}`}
               className="cc-category-card"
             >
               <div className="cc-category-card__image-box">
                 <img
-                  src={cat.image}
+                  src={cat.image || '/images/realistic/arduino_uno.jpg'}
                   alt={cat.name}
                   className="cc-category-card__img"
                   loading="lazy"

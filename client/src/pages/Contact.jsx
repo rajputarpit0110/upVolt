@@ -3,17 +3,29 @@ import { Button } from '../components/common/Button';
 import { WhatsAppIcon } from '../components/common/WhatsAppIcon';
 import { InstagramIcon } from '../components/common/SocialIcons';
 import { getWhatsAppLink, WHATSAPP_DISPLAY, WHATSAPP_GROUP_LINK, PRIORITY_BUYING_NUMBERS, OFFICIAL_EMAIL, OFFICIAL_INSTAGRAM } from '../utils/constants';
-import { Mail, MapPin, Send, CheckCircle2, Users } from 'lucide-react';
+import { Mail, MapPin, Send, CheckCircle2, Users, AlertCircle, Loader2 } from 'lucide-react';
+import { submitContactMessage } from '../services/messageService';
 
 export const Contact = () => {
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
   const [sent, setSent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSent(true);
-    setTimeout(() => setSent(false), 5000);
-    setFormData({ name: '', email: '', subject: '', message: '' });
+    setSubmitting(true);
+    setError('');
+    try {
+      await submitContactMessage(formData);
+      setSent(true);
+      setTimeout(() => setSent(false), 6000);
+      setFormData({ name: '', email: '', subject: '', message: '' });
+    } catch (err) {
+      setError(err.message || 'Failed to send message. Please try again or reach out on WhatsApp.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -81,7 +93,7 @@ export const Contact = () => {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <WhatsAppIcon size={22} color="#25D366" />
                     <div>
-                      <div style={{ fontSize: '0.98rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                      <div style={{ fontSize: '0.98rem', fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>
                         {line.display}
                       </div>
                       <div style={{ fontSize: '0.74rem', color: idx === 0 ? 'var(--color-whatsapp)' : 'var(--text-muted)', fontWeight: 600 }}>
@@ -96,7 +108,8 @@ export const Contact = () => {
                     background: idx === 0 ? 'rgba(16, 185, 129, 0.14)' : 'var(--bg-main)',
                     padding: '3px 8px',
                     borderRadius: 12,
-                    border: idx === 0 ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--border-color)'
+                    border: idx === 0 ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--border-color)',
+                    whiteSpace: 'nowrap'
                   }}>
                     {line.tag}
                   </span>
@@ -251,15 +264,29 @@ export const Contact = () => {
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 style={{ background: 'var(--bg-input)', border: '1px solid var(--border-color)', padding: '12px 16px', borderRadius: 'var(--radius-md)', color: 'var(--text-primary)', outline: 'none', resize: 'vertical' }}
               />
-              <Button type="submit" variant="primary" size="lg" icon={<Send size={16} />} iconPosition="right">
-                Send Message
+              <Button
+                type="submit"
+                variant="primary"
+                size="lg"
+                disabled={submitting}
+                icon={submitting ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <Send size={16} />}
+                iconPosition="right"
+              >
+                {submitting ? 'Sending Message...' : 'Send Message'}
               </Button>
             </form>
 
+            {error && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#EF4444', background: 'rgba(239, 68, 68, 0.1)', padding: '10px 14px', borderRadius: 'var(--radius-md)', border: '1px solid rgba(239, 68, 68, 0.25)', marginTop: 14, fontSize: '0.88rem' }}>
+                <AlertCircle size={18} style={{ flexShrink: 0 }} />
+                <span>{error}</span>
+              </div>
+            )}
+
             {sent && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#22C55E', fontWeight: 600, marginTop: 14, fontSize: '0.9rem' }}>
-                <CheckCircle2 size={18} />
-                <span>Message received! Our team will respond shortly.</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#22C55E', background: 'rgba(34, 197, 94, 0.1)', padding: '10px 14px', borderRadius: 'var(--radius-md)', border: '1px solid rgba(34, 197, 94, 0.25)', marginTop: 14, fontSize: '0.9rem', fontWeight: 600 }}>
+                <CheckCircle2 size={18} style={{ flexShrink: 0 }} />
+                <span>Message received! We'll review your inquiry and get back to you shortly.</span>
               </div>
             )}
           </div>

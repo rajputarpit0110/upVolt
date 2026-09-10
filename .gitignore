@@ -41,3 +41,8 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+# Uploads & Media
+server/public/uploads/*
+!server/public/uploads/.gitkeep
+

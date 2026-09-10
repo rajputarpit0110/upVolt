@@ -4,6 +4,7 @@ import { ProductCard } from '../components/product/ProductCard';
 import { AddProductModal } from '../components/product/AddProductModal';
 import { PRODUCTS, CATEGORIES } from '../data/mockProducts';
 import { fetchProducts } from '../services/productService';
+import { fetchCategories } from '../services/categoryService';
 import { useAuth } from '../context/AuthContext';
 import { WhatsAppIcon } from '../components/common/WhatsAppIcon';
 import { PRIORITY_BUYING_NUMBERS } from '../utils/constants';
@@ -17,6 +18,7 @@ export const Shop = () => {
   const searchParam = searchParams.get('search');
 
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState(CATEGORIES);
   const [loading, setLoading] = useState(true);
   const [dataSource, setDataSource] = useState('loading');
   const [selectedCategory, setSelectedCategory] = useState(categoryParam || 'All');
@@ -30,6 +32,17 @@ export const Shop = () => {
     if (categoryParam) setSelectedCategory(categoryParam);
     if (searchParam) setSearchQuery(searchParam);
   }, [categoryParam, searchParam]);
+
+  const loadCategories = async () => {
+    try {
+      const res = await fetchCategories();
+      if (res && res.categories && res.categories.length > 0) {
+        setCategories(res.categories);
+      }
+    } catch (err) {
+      console.warn('Failed to load live categories in Shop:', err);
+    }
+  };
 
   const loadProducts = async () => {
     setLoading(true);
@@ -48,6 +61,7 @@ export const Shop = () => {
 
   useEffect(() => {
     loadProducts();
+    loadCategories();
   }, []);
 
   const handleProductAdded = (newProduct) => {
@@ -231,11 +245,11 @@ export const Shop = () => {
                   <span>All Products</span>
                   <span className="cc-filter-cat-count">{products.length}</span>
                 </button>
-                {CATEGORIES.map((cat) => {
+                {categories.map((cat) => {
                   const count = products.filter(p => p.category === cat.name).length;
                   return (
                     <button
-                      key={cat.id}
+                      key={cat._id || cat.id}
                       type="button"
                       className={`cc-filter-cat-btn ${selectedCategory === cat.name ? 'cc-filter-cat-btn--active' : ''}`}
                       onClick={() => handleCategorySelect(cat.name)}

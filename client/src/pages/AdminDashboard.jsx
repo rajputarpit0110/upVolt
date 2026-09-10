@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { fetchProducts, deleteProduct } from '../services/productService';
+import { fetchCategories, deleteCategory } from '../services/categoryService';
 import { fetchAllOrders, updateOrderStatus } from '../services/orderService';
 import { fetchAuditLogs, fetchAdminStats, resetPassword, fetchLiveAnalytics, resetLiveAnalytics } from '../services/adminService';
 import { fetchMentors, deleteMentor } from '../services/mentorService';
@@ -16,6 +17,8 @@ import { AddMentorModal } from '../components/admin/AddMentorModal';
 import { EditMentorModal } from '../components/admin/EditMentorModal';
 import { AddCouponModal } from '../components/admin/AddCouponModal';
 import { AddReelModal } from '../components/admin/AddReelModal';
+import { AddCategoryModal } from '../components/admin/AddCategoryModal';
+import { EditCategoryModal } from '../components/admin/EditCategoryModal';
 import { DeleteConfirmModal } from '../components/common/DeleteConfirmModal';
 import { WhatsAppIcon, LinkedInIcon, InstagramIcon, GitHubIcon } from '../components/common/SocialIcons';
 import { Badge } from '../components/common/Badge';
@@ -58,7 +61,9 @@ import {
   Heart,
   Star,
   Award,
-  Edit
+  Edit,
+  Layers,
+  Image as ImageIcon
 } from 'lucide-react';
 import './AdminDashboard.css';
 
@@ -86,6 +91,16 @@ export const AdminDashboard = () => {
   const [productToEdit, setProductToEdit] = useState(null);
   const [productToDelete, setProductToDelete] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  // Categories state
+  const [categories, setCategories] = useState([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(false);
+  const [categorySearch, setCategorySearch] = useState('');
+  const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(initialModal === 'addCategory');
+  const [isEditCategoryModalOpen, setIsEditCategoryModalOpen] = useState(false);
+  const [categoryToEdit, setCategoryToEdit] = useState(null);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
+  const [deleteCategoryLoading, setDeleteCategoryLoading] = useState(false);
 
   // Mentors state
   const [mentors, setMentors] = useState([]);
@@ -306,6 +321,19 @@ export const AdminDashboard = () => {
     }
   };
 
+  // Load categories
+  const loadCategories = async () => {
+    setCategoriesLoading(true);
+    try {
+      const res = await fetchCategories({ all: 'true' });
+      setCategories(res.categories || []);
+    } catch (err) {
+      console.warn('Failed to load categories:', err);
+    } finally {
+      setCategoriesLoading(false);
+    }
+  };
+
   // Load orders
   const loadOrders = async () => {
     setOrdersLoading(true);
@@ -415,6 +443,7 @@ export const AdminDashboard = () => {
   useEffect(() => {
     if (isAdmin) {
       loadProducts();
+      loadCategories();
       loadOrders();
       loadMentors();
       loadCoupons();
@@ -432,6 +461,12 @@ export const AdminDashboard = () => {
   }, [isAdmin]);
 
   useEffect(() => {
+    if (isAdmin && activeTab === 'products') {
+      loadProducts();
+    }
+    if (isAdmin && activeTab === 'categories') {
+      loadCategories();
+    }
     if (isAdmin && activeTab === 'orders') {
       loadOrders();
     }
@@ -550,6 +585,35 @@ export const AdminDashboard = () => {
       throw err;
     } finally {
       setDeleteReelLoading(false);
+    }
+  };
+
+  const handleDeleteCategory = (cat) => {
+    setCategoryToDelete(cat);
+  };
+
+  const handleConfirmDeleteCategory = async () => {
+    if (!categoryToDelete) return;
+    setDeleteCategoryLoading(true);
+
+    try {
+      await deleteCategory(categoryToDelete._id, '', token);
+      setActionNotice({
+        type: 'success',
+        text: `Category "${categoryToDelete.name}" deleted successfully.`
+      });
+      setCategoryToDelete(null);
+      loadCategories();
+      loadProducts();
+      loadAuditLogs();
+    } catch (err) {
+      setActionNotice({
+        type: 'error',
+        text: err.message || 'Failed to delete category.'
+      });
+      throw err;
+    } finally {
+      setDeleteCategoryLoading(false);
     }
   };
 
@@ -906,6 +970,15 @@ export const AdminDashboard = () => {
 
           <button
             type="button"
+            className={`cc-admin-tab-btn ${activeTab === 'categories' ? 'cc-admin-tab-btn--active' : ''}`}
+            onClick={() => setActiveTab('categories')}
+          >
+            <Layers size={17} />
+            <span>Categories ({categories.length})</span>
+          </button>
+
+          <button
+            type="button"
             className={`cc-admin-tab-btn ${activeTab === 'liveTraffic' ? 'cc-admin-tab-btn--active' : ''}`}
             onClick={() => {
               setActiveTab('liveTraffic');
@@ -1050,7 +1123,7 @@ export const AdminDashboard = () => {
                     <th>Component</th>
                     <th>Category</th>
                     <th>Price</th>
-                    <th>Images</th>
+                    <th style={{ minWidth: 130 }}>Images</th>
                     <th>SKU</th>
                     <th>Added By</th>
                     <th style={{ textAlign: 'right' }}>Actions</th>
@@ -1058,7 +1131,10 @@ export const AdminDashboard = () => {
                 </thead>
                 <tbody>
                   {filteredProducts.map((p) => {
-                    const multiCount = p.images?.length || 1;
+                    const rawImageList = (Array.isArray(p.images) && p.images.length > 0)
+                      ? p.images
+                      : (p.image ? [p.image] : []);
+                    const multiCount = rawImageList.length || 1;
                     return (
                       <tr key={p._id || p.sku}>
                         <td>
@@ -1080,9 +1156,39 @@ export const AdminDashboard = () => {
                           {p.originalPrice && <del style={{ marginLeft: 6, color: 'var(--text-muted)', fontSize: '0.8rem' }}>₹{p.originalPrice}</del>}
                         </td>
                         <td>
-                          <span className="cc-img-count-badge">
-                            {multiCount} {multiCount === 1 ? 'image' : 'images'}
-                          </span>
+                          <div className="cc-admin-img-cell">
+                            {rawImageList.length > 0 && (
+                              <div className="cc-admin-img-stack" title={`${multiCount} ${multiCount === 1 ? 'image' : 'images'}`}>
+                                {rawImageList.slice(0, 3).map((imgUrl, idx) => (
+                                  <div
+                                    key={idx}
+                                    className="cc-admin-img-thumb-wrap"
+                                    style={{
+                                      zIndex: 10 - idx,
+                                      marginLeft: idx === 0 ? 0 : -8
+                                    }}
+                                  >
+                                    <img
+                                      src={imgUrl || '/images/realistic/arduino_uno.jpg'}
+                                      alt=""
+                                      className="cc-admin-img-thumb"
+                                      onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = '/images/realistic/arduino_uno.jpg';
+                                      }}
+                                    />
+                                  </div>
+                                ))}
+                                {rawImageList.length > 3 && (
+                                  <span className="cc-admin-img-more-badge">+{rawImageList.length - 3}</span>
+                                )}
+                              </div>
+                            )}
+                            <span className={`cc-img-count-badge ${multiCount > 1 ? 'cc-img-count-badge--multi' : ''}`}>
+                              <ImageIcon size={12} />
+                              <span>{multiCount} {multiCount === 1 ? 'image' : 'images'}</span>
+                            </span>
+                          </div>
                         </td>
                         <td><code>{p.sku}</code></td>
                         <td>
@@ -1129,6 +1235,190 @@ export const AdminDashboard = () => {
                   })}
                 </tbody>
               </table>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: CATEGORIES MANAGEMENT */}
+        {activeTab === 'categories' && (
+          <div className="cc-admin-tab-content">
+            <div className="cc-admin-toolbar glass-panel">
+              <div className="cc-search-box" style={{ maxWidth: 360 }}>
+                <Search size={16} className="cc-search-icon" />
+                <input
+                  type="text"
+                  placeholder="Search categories..."
+                  value={categorySearch}
+                  onChange={(e) => setCategorySearch(e.target.value)}
+                  className="cc-search-input"
+                />
+              </div>
+
+              <div style={{ display: 'flex', gap: 10 }}>
+                <button
+                  type="button"
+                  className="cc-btn cc-btn--outline cc-btn--sm"
+                  onClick={loadCategories}
+                  disabled={categoriesLoading}
+                  title="Reload categories"
+                >
+                  <RefreshCw size={14} className={categoriesLoading ? 'cc-spinner' : ''} />
+                  <span>Refresh</span>
+                </button>
+                <button
+                  type="button"
+                  className="cc-btn cc-btn--primary cc-btn--sm"
+                  onClick={() => setIsAddCategoryModalOpen(true)}
+                >
+                  <Plus size={14} />
+                  <span>Add Category</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="glass-panel cc-admin-table-card">
+              <div className="cc-table-wrapper">
+                <table className="cc-table">
+                  <thead>
+                    <tr>
+                      <th style={{ width: 60, textAlign: 'center' }}>Order</th>
+                      <th>Category</th>
+                      <th>Description</th>
+                      <th style={{ textAlign: 'center' }}>Products</th>
+                      <th style={{ textAlign: 'center' }}>Status</th>
+                      <th>Added By</th>
+                      <th style={{ textAlign: 'right' }}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {categoriesLoading ? (
+                      <tr>
+                        <td colSpan={7} style={{ textAlign: 'center', padding: '40px 0' }}>
+                          <Loader2 size={24} className="cc-spinner" style={{ margin: '0 auto 8px', display: 'block' }} />
+                          Loading categories from database...
+                        </td>
+                      </tr>
+                    ) : categories.filter(c => {
+                        if (!categorySearch.trim()) return true;
+                        const q = categorySearch.toLowerCase();
+                        return c.name?.toLowerCase().includes(q) || c.description?.toLowerCase().includes(q);
+                      }).length === 0 ? (
+                      <tr>
+                        <td colSpan={7} style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)' }}>
+                          No categories found matching your filter.
+                        </td>
+                      </tr>
+                    ) : (
+                      categories
+                        .filter(c => {
+                          if (!categorySearch.trim()) return true;
+                          const q = categorySearch.toLowerCase();
+                          return c.name?.toLowerCase().includes(q) || c.description?.toLowerCase().includes(q);
+                        })
+                        .map((cat) => (
+                          <tr key={cat._id || cat.id}>
+                            <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--text-muted)' }}>
+                              #{cat.order ?? 1}
+                            </td>
+                            <td>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                <img
+                                  src={cat.image || '/images/realistic/arduino_uno.jpg'}
+                                  alt={cat.name}
+                                  style={{
+                                    width: 44,
+                                    height: 44,
+                                    borderRadius: 8,
+                                    objectFit: 'cover',
+                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    background: 'var(--bg-surface)'
+                                  }}
+                                />
+                                <div>
+                                  <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{cat.name}</div>
+                                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>/{cat.slug}</div>
+                                </div>
+                              </div>
+                            </td>
+                            <td style={{ maxWidth: 300 }}>
+                              <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                                {cat.description || 'No description'}
+                              </span>
+                            </td>
+                            <td style={{ textAlign: 'center' }}>
+                              <span
+                                style={{
+                                  display: 'inline-block',
+                                  padding: '3px 10px',
+                                  borderRadius: 12,
+                                  fontSize: '0.8rem',
+                                  fontWeight: 600,
+                                  background: (cat.productCount ?? 0) > 0 ? 'rgba(59, 130, 246, 0.15)' : 'rgba(148, 163, 184, 0.15)',
+                                  color: (cat.productCount ?? 0) > 0 ? '#38bdf8' : '#94a3b8'
+                                }}
+                              >
+                                {cat.productCount ?? 0} {cat.productCount === 1 ? 'item' : 'items'}
+                              </span>
+                            </td>
+                            <td style={{ textAlign: 'center' }}>
+                              <span
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 5,
+                                  padding: '3px 10px',
+                                  borderRadius: 12,
+                                  fontSize: '0.78rem',
+                                  fontWeight: 600,
+                                  background: cat.isActive !== false ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                                  color: cat.isActive !== false ? '#34d399' : '#f87171'
+                                }}
+                              >
+                                <span
+                                  style={{
+                                    width: 6,
+                                    height: 6,
+                                    borderRadius: '50%',
+                                    background: cat.isActive !== false ? '#10b981' : '#ef4444'
+                                  }}
+                                />
+                                {cat.isActive !== false ? 'Active' : 'Inactive'}
+                              </span>
+                            </td>
+                            <td>
+                              <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                                {cat.createdByName || 'Admin'}
+                              </span>
+                            </td>
+                            <td style={{ textAlign: 'right' }}>
+                              <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
+                                <button
+                                  type="button"
+                                  className="cc-action-icon-btn"
+                                  title="Edit category"
+                                  onClick={() => {
+                                    setCategoryToEdit(cat);
+                                    setIsEditCategoryModalOpen(true);
+                                  }}
+                                >
+                                  <Edit size={16} />
+                                </button>
+                                <button
+                                  type="button"
+                                  className="cc-action-icon-btn cc-action-icon-btn--danger"
+                                  title="Delete category"
+                                  onClick={() => handleDeleteCategory(cat)}
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )}
@@ -2828,6 +3118,47 @@ export const AdminDashboard = () => {
         itemCategory={reelToDelete?.components?.join(', ') || ''}
         itemType="reel"
         loading={deleteReelLoading}
+      />
+
+      {/* Add Category Modal */}
+      <AddCategoryModal
+        isOpen={isAddCategoryModalOpen}
+        onClose={() => setIsAddCategoryModalOpen(false)}
+        nextOrder={categories.length + 1}
+        onCategoryAdded={() => {
+          loadCategories();
+          loadAuditLogs();
+        }}
+      />
+
+      {/* Edit Category Modal */}
+      <EditCategoryModal
+        isOpen={isEditCategoryModalOpen}
+        onClose={() => {
+          setIsEditCategoryModalOpen(false);
+          setCategoryToEdit(null);
+        }}
+        category={categoryToEdit}
+        onCategoryUpdated={() => {
+          loadCategories();
+          loadProducts();
+          loadAuditLogs();
+        }}
+      />
+
+      {/* GitHub-Style Delete Confirmation Modal for Categories */}
+      <DeleteConfirmModal
+        isOpen={Boolean(categoryToDelete)}
+        onClose={() => {
+          if (!deleteCategoryLoading) setCategoryToDelete(null);
+        }}
+        onConfirm={handleConfirmDeleteCategory}
+        itemName={categoryToDelete?.name || ''}
+        itemSku={categoryToDelete?.slug || ''}
+        itemCategory={`Order #${categoryToDelete?.order ?? 1} • ${categoryToDelete?.productCount ?? 0} linked products`}
+        itemImage={categoryToDelete?.image || ''}
+        itemType="category"
+        loading={deleteCategoryLoading}
       />
     </div>
   );

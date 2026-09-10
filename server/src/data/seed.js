@@ -14,22 +14,22 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const ADMIN_ACCOUNTS = [
   {
-    name: 'CampusCircuit System',
-    email: 'masteradmin@campuscircuit.com',
+    name: 'upVolt System',
+    email: 'masteradmin@upvolt.com',
     passwordRaw: 'Master@123',
     role: 'master_admin',
-    college: 'CampusCircuit Operations'
+    college: 'upVolt HQ'
   },
   {
     name: 'Admin Alpha (Hardware Lead)',
-    email: 'admin1@campuscircuit.com',
+    email: 'admin1@upvolt.com',
     passwordRaw: 'Admin1@123',
     role: 'admin',
     college: 'Electronics & Comm Department'
   },
   {
     name: 'Admin Beta (Inventory Lead)',
-    email: 'admin2@campuscircuit.com',
+    email: 'admin2@upvolt.com',
     passwordRaw: 'Admin2@123',
     role: 'admin',
     college: 'Robotics Innovation Lab'
@@ -37,7 +37,7 @@ const ADMIN_ACCOUNTS = [
 ];
 
 const seedDB = async () => {
-  const uri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/campuscircuit';
+  const uri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/upvolt';
   console.log(`🔌 Connecting to MongoDB for seeding...`);
 
   try {

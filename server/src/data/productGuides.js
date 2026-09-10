@@ -699,7 +699,7 @@ void setup() {
   display.setTextSize(1);
   display.setTextColor(WHITE);
   display.setCursor(10, 20);
-  display.println("CampusCircuit IoT");
+  display.println("upVolt IoT");
   display.setCursor(10, 36);
   display.println("Status: ONLINE");
   display.display();
@@ -754,7 +754,7 @@ void setup() {
   lcd.setCursor(0, 0);
   lcd.print("Welcome Maker!");
   lcd.setCursor(0, 1);
-  lcd.print("CampusCircuit.in");
+  lcd.print("upVolt.in");
 }
 
 void loop() {}`
@@ -1000,7 +1000,7 @@ void loop() {
     youtubeUrl: 'https://www.youtube.com/watch?v=O1_s3wA9Gtc',
     researchUrl: 'https://ieeexplore.ieee.org/document/8966453',
     datasheetUrl: 'https://components101.com/modules/l298n-motor-driver-module',
-    documentationUrl: 'https://github.com/CampusCircuit/4wd-robot-chassis',
+    documentationUrl: 'https://github.com/upvolt/4wd-robot-chassis',
     howToUse: {
       overview: 'Comprehensive 4-wheel drive mobile robotics platform containing laser-cut acrylic chassis plates, 4 TT gear motors, encoder speed discs, and battery holder.',
       steps: [
@@ -1058,29 +1058,34 @@ void loop() {
     youtubeUrl: 'https://www.youtube.com/watch?v=FqY-Zc_uR8E',
     researchUrl: 'https://ieeexplore.ieee.org/document/8892408',
     datasheetUrl: 'https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf',
-    documentationUrl: 'https://github.com/CampusCircuit/smart-home-kit',
+    documentationUrl: 'https://github.com/upvolt/smart-home-kit',
     howToUse: {
       overview: 'All-in-one IoT learning kit pairing ESP32, multi-channel relays, OLED screen, gas/flame sensors, and buzzer with ready-to-flash mobile dashboard code.',
       steps: [
-        '1. Assemble miniature wooden/acrylic home structure and mount sensors at designated room positions.',
-        '2. Connect all sensors back to the central ESP32 terminal breadboard according to the included color-coded circuit map.',
-        '3. Flash the provided CampusCircuit Smart Home firmware in Arduino IDE, entering your room Wi-Fi credentials.',
-        '4. Open the web dashboard on your smartphone to monitor live environment conditions and toggle lights.'
+        '1. Connect the ESP32 to the 4-channel relay board (IN1->D18, IN2->D19, IN3->D23, IN4->D25).',
+        '2. Power the relay board with an external 5V 2A DC adapter; do not draw relay coil current from ESP32 3.3V pin.',
+        '3. Flash the provided upVolt Smart Home firmware in Arduino IDE, entering your room Wi-Fi credentials.',
+        '4. Find your ESP32 IP address from the Serial Monitor (115200 baud) and open it in any smartphone browser on the same Wi-Fi.',
+        '5. Tap any virtual appliance toggle on the local web server dashboard to switch room lights/fans.'
       ],
       pinoutSummary: 'Integrated layout: ESP32 + 4-channel opto-relay + DHT11 (GPIO 4) + MQ-2 (GPIO 34) + PIR (GPIO 27) + I2C OLED (GPIO 21/22).',
-      sampleCode: `// Smart Home Firmware Entry
+      sampleCode: `// upVolt Smart Home Automation Web Server (ESP32)
 #include <WiFi.h>
 #include <WebServer.h>
 
+const char* ssid = "YOUR_WIFI_SSID";
+const char* password = "YOUR_WIFI_PASSWORD";
+
 WebServer server(80);
+const int RELAY_PIN = 18;
 
 void handleRoot() {
-  server.send(200, "text/plain", "CampusCircuit Smart Home Server Online!");
+  server.send(200, "text/plain", "upVolt Smart Home Server Online!");
 }
 
 void setup() {
   Serial.begin(115200);
-  WiFi.begin("SSID", "PASS");
+  WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) delay(500);
   server.on("/", handleRoot);
   server.begin();
@@ -1194,7 +1199,7 @@ void loop() {
     youtubeUrl: 'https://www.youtube.com/watch?v=R5pE82_B-YQ',
     researchUrl: 'https://www.electronics-tutorials.ws/blog/breadboard-jumper-wires.html',
     datasheetUrl: 'https://components101.com/wires/dupont-jumper-wires',
-    documentationUrl: 'https://github.com/CampusCircuit/starter-guide',
+    documentationUrl: 'https://github.com/upvolt/starter-guide',
     howToUse: {
       overview: '120-piece assorted high-grade copper jumper wire ribbon cable: 40x Male-to-Male (M-M), 40x Male-to-Female (M-F), and 40x Female-to-Female (F-F) in 20cm length.',
       steps: [
@@ -1234,12 +1239,12 @@ void loop() {
   'CC-KIT-STARTER45': {
     youtubeUrl: 'https://www.youtube.com/watch?v=F3_Jb1a2EaU',
     researchUrl: 'https://ieeexplore.ieee.org/document/8920114',
-    datasheetUrl: 'https://github.com/CampusCircuit/45-in-1-sensor-kit-datasheets',
-    documentationUrl: 'https://github.com/CampusCircuit/45-in-1-sensor-kit-code',
+    datasheetUrl: 'https://github.com/upvolt/45-in-1-sensor-kit-datasheets',
+    documentationUrl: 'https://github.com/upvolt/45-in-1-sensor-kit-code',
     howToUse: {
       overview: 'The definitive all-in-one component & sensor kit for college engineering students containing 45 individual sensors, modules, and transducers in a rugged organizer case.',
       steps: [
-        '1. Match the labeled sensor module number with the included CampusCircuit quick-reference pinout cheat sheet.',
+        '1. Match the labeled sensor module number with the included upVolt quick-reference pinout cheat sheet.',
         '2. Identify whether the sensor outputs digital (HIGH/LOW) or analog (0-1023 continuous) voltages.',
         '3. Connect VCC and GND, attach signal pin to microcontroller, and open the corresponding open-source code sketch from our documentation repo.',
         '4. Observe readings on Serial Monitor and calibrate sensitivity potentiometers as necessary.'
