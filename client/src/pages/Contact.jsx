@@ -205,7 +205,7 @@ export const Contact = () => {
                 }}>
                   <InstagramIcon size={18} />
                 </span>
-                <span>@upvolt_in (Instagram)</span>
+                <span>@upvolt_india (Instagram)</span>
               </a>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: 'var(--text-secondary)', fontSize: '0.92rem' }}>
