@@ -68,7 +68,7 @@ export const Hero = () => {
             </Link>
 
             <a
-              href={getWhatsAppLink('Hi upVolt! I have a doubt about selecting components for my project.')}
+              href={getWhatsAppLink('Hi UPVOLT! I have a doubt about selecting components for my project.')}
               target="_blank"
               rel="noopener noreferrer"
             >

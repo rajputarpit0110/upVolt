@@ -185,7 +185,7 @@ export const Shop = () => {
             {PRIORITY_BUYING_NUMBERS.map((line, idx) => (
               <a
                 key={idx}
-                href={`https://wa.me/${line.raw}?text=${encodeURIComponent(`Hi upVolt! I am browsing the component catalog and would like to buy components directly via ${line.display}.`)}`}
+                href={`https://wa.me/${line.raw}?text=${encodeURIComponent(`Hi upVolt! I am browsing the component catalog and would like to buy components directly.`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{

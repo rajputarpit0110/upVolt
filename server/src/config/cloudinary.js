@@ -9,6 +9,7 @@ const __dirname = path.dirname(__filename);
 
 // Ensure .env is loaded regardless of import order
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config();
 
 const UPLOADS_DIR = path.join(__dirname, '../../public/uploads');
 
@@ -45,6 +46,33 @@ if (checkAndConfigureCloudinary()) {
 }
 
 /**
+ * Uploads a base64 string to Cloudinary
+ * @param {string} base64Image - The base64 image string starting with data:image/...
+ * @param {string} folder - The destination folder in Cloudinary
+ * @returns {Promise<string>} - The secure URL of the uploaded image
+ */
+export const uploadImageToCloudinary = async (base64Image, folder = 'upvolt') => {
+  try {
+    if (!base64Image || typeof base64Image !== 'string' || !base64Image.startsWith('data:image')) {
+      return base64Image; // Return as is if it's already a URL or empty
+    }
+
+    checkAndConfigureCloudinary();
+
+    // cloudinary.uploader.upload supports base64 strings directly
+    const result = await cloudinary.uploader.upload(base64Image, {
+      folder: folder,
+      resource_type: 'image'
+    });
+
+    return result.secure_url;
+  } catch (error) {
+    console.error('Error uploading image to Cloudinary:', error);
+    throw new Error('Failed to upload image. Please check Cloudinary configuration.');
+  }
+};
+
+/**
  * Upload a file buffer to Cloudinary (with local fallback if unconfigured or error)
  * @param {Buffer} buffer - File buffer
  * @param {Object} options - Options (folder, filename, resource_type)
@@ -58,7 +86,6 @@ export const uploadFileBuffer = (buffer, options = {}) => {
       const uploadOptions = {
         folder: options.folder || 'upvolt/products',
         resource_type: options.resource_type || 'auto',
-        // Auto optimize image quality and format
         quality: 'auto:good',
         fetch_format: 'auto',
         use_filename: true,
@@ -122,3 +149,4 @@ const saveLocally = async (buffer, options = {}) => {
 };
 
 export { cloudinary };
+export default cloudinary;

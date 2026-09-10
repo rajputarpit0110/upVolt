@@ -17,6 +17,16 @@ function AnalyticsTracker() {
 
   return null;
 }
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  
+  return null;
+}
 import { AuthProvider } from './context/AuthContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { CartProvider } from './context/CartContext';
@@ -49,6 +59,7 @@ export function App() {
         <WishlistProvider>
           <CartProvider>
             <Router>
+              <ScrollToTop />
               <Toast />
               <AnalyticsTracker />
               <div className="cc-app-shell">

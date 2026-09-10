@@ -72,7 +72,7 @@ export const Contact = () => {
               {PRIORITY_BUYING_NUMBERS.map((line, idx) => (
                 <a
                   key={idx}
-                  href={getWhatsAppLink(`Hi upVolt! I want to inquire/buy components directly through ${line.display}. Please assist me with stock and pricing.`, line.raw)}
+                  href={getWhatsAppLink(`Hi upVolt! I want to inquire/buy components directly. Please assist me with stock and pricing.`, line.raw)}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
@@ -218,7 +218,7 @@ export const Contact = () => {
                 }}>
                   <InstagramIcon size={18} />
                 </span>
-                <span>@upvolt_in (Instagram)</span>
+                <span>@upvolt_india (Instagram)</span>
               </a>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: 'var(--text-secondary)', fontSize: '0.92rem' }}>

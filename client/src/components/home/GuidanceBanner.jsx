@@ -59,7 +59,7 @@ export const GuidanceBanner = () => {
             <div className="cc-guidance-action-group">
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
                 <a
-                  href={getWhatsAppLink('Hi upVolt! I need guidance from a project expert regarding my college project idea.')}
+                  href={getWhatsAppLink('Hi UPVOLT! I need guidance from a project expert regarding my college project idea.')}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="cc-guidance-btn"

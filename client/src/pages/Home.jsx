@@ -12,12 +12,15 @@ import { PRODUCTS } from '../data/mockProducts';
 
 export const Home = () => {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchProducts().then(({ products: liveProducts }) => {
       if (liveProducts && liveProducts.length > 0) {
         setProducts(liveProducts);
       }
+    }).finally(() => {
+      setLoading(false);
     });
   }, []);
 
@@ -26,7 +29,7 @@ export const Home = () => {
       <Hero />
       <TrustStrip />
       <CategoryGrid />
-      <FeaturedSection products={products} />
+      <FeaturedSection products={products} loading={loading} />
       <MakerReels />
       <MentorsSection />
       <GuidanceBanner />

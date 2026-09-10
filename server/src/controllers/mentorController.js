@@ -1,25 +1,26 @@
 import mongoose from 'mongoose';
 import { Mentor } from '../models/Mentor.js';
 import { AuditLog } from '../models/AuditLog.js';
+import { uploadImageToCloudinary } from '../config/cloudinary.js';
 
 // Pre-seeded fallback data pulling credentials from process.env
 const getInitialMentors = () => [
   {
-    name: process.env.MENTOR_1_NAME || 'Arjun Sharma',
+    name: process.env.MENTOR_1_NAME || 'Divya Narayan',
     role: process.env.MENTOR_1_ROLE || 'Lead Embedded Systems & IoT Architect',
     college: process.env.MENTOR_1_COLLEGE || 'IIT Delhi Alum • 5+ Yrs Industry Hardware Exp',
     bio: 'Specialist in 32-bit MCUs (ESP32, STM32), FreeRTOS kernel tasks, low-power BLE sensor telemetry, and reliable wireless protocols for college capstones.',
-    image: '/images/mentors/arjun_sharma.jpg',
+    image: '/images/mentors/divya_narayan.pg',
     specialties: ['ESP32 / ESP8266', 'STM32 Architecture', 'FreeRTOS Firmware', 'BLE & MQTT'],
     projectsGuided: '420+ student projects',
     rating: 4.9,
     socialLinks: {
-      whatsapp: `https://wa.me/${process.env.MENTOR_1_WHATSAPP || process.env.MENTOR_DEFAULT_WHATSAPP || '919876543210'}?text=${encodeURIComponent('Hi Arjun! I need guidance on an Embedded Systems & IoT project with upVolt.')}`,
-      linkedin: process.env.MENTOR_1_LINKEDIN || process.env.MENTOR_DEFAULT_LINKEDIN || 'https://www.linkedin.com/company/upvolt',
-      instagram: process.env.MENTOR_1_INSTAGRAM || process.env.MENTOR_DEFAULT_INSTAGRAM || 'https://www.instagram.com/upvolt',
-      github: process.env.MENTOR_1_GITHUB || process.env.MENTOR_DEFAULT_GITHUB || 'https://github.com/upvolt'
+      whatsapp: `https://wa.me/${process.env.MENTOR_1_WHATSAPP || process.env.MENTOR_DEFAULT_WHATSAPP || '919876543210'}?text=${encodeURIComponent('Hi Divya Narayan! I need guidance on an Embedded Systems & IoT project with UPVOLT.')}`,
+      linkedin: process.env.MENTOR_1_LINKEDIN || process.env.MENTOR_DEFAULT_LINKEDIN || 'https://www.linkedin.com/company/UPVOLT',
+      instagram: process.env.MENTOR_1_INSTAGRAM || process.env.MENTOR_DEFAULT_INSTAGRAM || 'https://www.instagram.com/UPVOLT',
+      github: process.env.MENTOR_1_GITHUB || process.env.MENTOR_DEFAULT_GITHUB || 'https://github.com/UPVOLT'
     },
-    addedByName: 'upVolt Core'
+    addedByName: 'UPVOLT Core'
   },
   {
     name: process.env.MENTOR_2_NAME || 'Priya Patel',
@@ -31,12 +32,12 @@ const getInitialMentors = () => [
     projectsGuided: '380+ student robots',
     rating: 4.9,
     socialLinks: {
-      whatsapp: `https://wa.me/${process.env.MENTOR_2_WHATSAPP || process.env.MENTOR_DEFAULT_WHATSAPP || '919876543210'}?text=${encodeURIComponent('Hi Priya! I need mentorship on my Robotics / Autonomous Rover project with upVolt.')}`,
-      linkedin: process.env.MENTOR_2_LINKEDIN || process.env.MENTOR_DEFAULT_LINKEDIN || 'https://www.linkedin.com/company/upvolt',
-      instagram: process.env.MENTOR_2_INSTAGRAM || process.env.MENTOR_DEFAULT_INSTAGRAM || 'https://www.instagram.com/upvolt',
-      github: process.env.MENTOR_2_GITHUB || process.env.MENTOR_DEFAULT_GITHUB || 'https://github.com/upvolt'
+      whatsapp: `https://wa.me/${process.env.MENTOR_2_WHATSAPP || process.env.MENTOR_DEFAULT_WHATSAPP || '919876543210'}?text=${encodeURIComponent('Hi Priya! I need mentorship on my Robotics / Autonomous Rover project with UPVOLT.')}`,
+      linkedin: process.env.MENTOR_2_LINKEDIN || process.env.MENTOR_DEFAULT_LINKEDIN || 'https://www.linkedin.com/company/UPVOLT',
+      instagram: process.env.MENTOR_2_INSTAGRAM || process.env.MENTOR_DEFAULT_INSTAGRAM || 'https://www.instagram.com/UPVOLT',
+      github: process.env.MENTOR_2_GITHUB || process.env.MENTOR_DEFAULT_GITHUB || 'https://github.com/UPVOLT'
     },
-    addedByName: 'upVolt Core'
+    addedByName: 'UPVOLT Core'
   },
   {
     name: process.env.MENTOR_3_NAME || 'Vikram Aditya',
@@ -49,11 +50,11 @@ const getInitialMentors = () => [
     rating: 5.0,
     socialLinks: {
       whatsapp: `https://wa.me/${process.env.MENTOR_3_WHATSAPP || process.env.MENTOR_DEFAULT_WHATSAPP || '919876543210'}?text=${encodeURIComponent('Hi Vikram! I want help building a Smart Home / IoT Cloud automation dashboard.')}`,
-      linkedin: process.env.MENTOR_3_LINKEDIN || process.env.MENTOR_DEFAULT_LINKEDIN || 'https://www.linkedin.com/company/upvolt',
-      instagram: process.env.MENTOR_3_INSTAGRAM || process.env.MENTOR_DEFAULT_INSTAGRAM || 'https://www.instagram.com/upvolt',
-      github: process.env.MENTOR_3_GITHUB || process.env.MENTOR_DEFAULT_GITHUB || 'https://github.com/upvolt'
+      linkedin: process.env.MENTOR_3_LINKEDIN || process.env.MENTOR_DEFAULT_LINKEDIN || 'https://www.linkedin.com/company/UPVOLT',
+      instagram: process.env.MENTOR_3_INSTAGRAM || process.env.MENTOR_DEFAULT_INSTAGRAM || 'https://www.instagram.com/UPVOLT',
+      github: process.env.MENTOR_3_GITHUB || process.env.MENTOR_DEFAULT_GITHUB || 'https://github.com/UPVOLT'
     },
-    addedByName: 'upVolt Core'
+    addedByName: 'UPVOLT Core'
   },
   {
     name: process.env.MENTOR_4_NAME || 'Ananya Iyer',
@@ -66,11 +67,11 @@ const getInitialMentors = () => [
     rating: 4.8,
     socialLinks: {
       whatsapp: `https://wa.me/${process.env.MENTOR_4_WHATSAPP || process.env.MENTOR_DEFAULT_WHATSAPP || '919876543210'}?text=${encodeURIComponent('Hi Ananya! I need assistance designing a custom PCB schematic & layout for my prototype.')}`,
-      linkedin: process.env.MENTOR_4_LINKEDIN || process.env.MENTOR_DEFAULT_LINKEDIN || 'https://www.linkedin.com/company/upvolt',
-      instagram: process.env.MENTOR_4_INSTAGRAM || process.env.MENTOR_DEFAULT_INSTAGRAM || 'https://www.instagram.com/upvolt',
-      github: process.env.MENTOR_4_GITHUB || process.env.MENTOR_DEFAULT_GITHUB || 'https://github.com/upvolt'
+      linkedin: process.env.MENTOR_4_LINKEDIN || process.env.MENTOR_DEFAULT_LINKEDIN || 'https://www.linkedin.com/company/UPVOLT',
+      instagram: process.env.MENTOR_4_INSTAGRAM || process.env.MENTOR_DEFAULT_INSTAGRAM || 'https://www.instagram.com/UPVOLT',
+      github: process.env.MENTOR_4_GITHUB || process.env.MENTOR_DEFAULT_GITHUB || 'https://github.com/UPVOLT'
     },
-    addedByName: 'upVolt Core'
+    addedByName: 'UPVOLT Core'
   }
 ];
 
@@ -143,7 +144,7 @@ export const createMentor = async (req, res) => {
 
     const trimmedName = name?.trim();
     const trimmedBio = bio?.trim();
-    const safeRole = role?.trim() || 'upVolt Mentor';
+    const safeRole = role?.trim() || 'UPVOLT Mentor';
     const safeCollege = college?.trim() || 'Hardware & IoT Guide';
 
     if (!trimmedName || !trimmedBio) {
@@ -155,14 +156,14 @@ export const createMentor = async (req, res) => {
 
     const adminUser = req.user || {
       _id: new mongoose.Types.ObjectId(),
-      name: 'upVolt Admin',
-      email: 'admin@upvolt.in',
+      name: 'UPVOLT Admin',
+      email: 'admin@UPVOLT.com',
       role: 'admin'
     };
 
     // For master admin, mask name so stealth admin isolation is preserved
-    const publicAddedByName = adminUser.role === 'master_admin' ? 'upVolt Lead' : adminUser.name;
-    const publicAddedByEmail = adminUser.role === 'master_admin' ? 'lead@upvolt.in' : adminUser.email;
+    const publicAddedByName = adminUser.role === 'master_admin' ? 'UPVOLT Lead' : adminUser.name;
+    const publicAddedByEmail = adminUser.role === 'master_admin' ? 'lead@UPVOLT.com' : adminUser.email;
 
     // Process specialties
     let specialtiesList = [];
@@ -179,17 +180,20 @@ export const createMentor = async (req, res) => {
     // Process social links
     const socialLinks = {
       whatsapp: formatWhatsAppUrl(whatsapp, trimmedName),
-      linkedin: linkedin?.trim() || process.env.MENTOR_DEFAULT_LINKEDIN || 'https://www.linkedin.com/company/upvolt',
-      instagram: instagram?.trim() || process.env.MENTOR_DEFAULT_INSTAGRAM || 'https://www.instagram.com/upvolt',
-      github: github?.trim() || process.env.MENTOR_DEFAULT_GITHUB || 'https://github.com/upvolt'
+      linkedin: linkedin?.trim() || process.env.MENTOR_DEFAULT_LINKEDIN || 'https://www.linkedin.com/company/UPVOLT',
+      instagram: instagram?.trim() || process.env.MENTOR_DEFAULT_INSTAGRAM || 'https://www.instagram.com/UPVOLT',
+      github: github?.trim() || process.env.MENTOR_DEFAULT_GITHUB || 'https://github.com/UPVOLT'
     };
+
+    let mentorImage = image?.trim() || '/images/mentors/divya_narayan.png';
+    mentorImage = await uploadImageToCloudinary(mentorImage, 'upvolt/mentors');
 
     const newMentor = new Mentor({
       name: trimmedName,
       role: safeRole,
       college: safeCollege,
       bio: trimmedBio,
-      image: image?.trim() || '/images/mentors/arjun_sharma.jpg',
+      image: mentorImage,
       specialties: specialtiesList,
       projectsGuided: projectsGuided?.trim() || '50+ student projects',
       rating: rating ? Number(rating) : 4.9,
@@ -254,26 +258,26 @@ export const updateMentor = async (req, res) => {
       instagram,
       github
     } = req.body;
-    
+
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ success: false, message: 'Invalid mentor ID.' });
     }
-    
+
     const mentor = await Mentor.findById(id);
     if (!mentor) {
       return res.status(404).json({ success: false, message: 'Mentor not found.' });
     }
-    
+
     const trimmedName = name?.trim();
     const trimmedBio = bio?.trim();
-    
+
     if (!trimmedName || !trimmedBio) {
       return res.status(400).json({
         success: false,
         message: 'Mentor Name and description/bio are required.'
       });
     }
-    
+
     // Process specialties
     let specialtiesList = mentor.specialties;
     if (Array.isArray(specialties)) {
@@ -281,7 +285,7 @@ export const updateMentor = async (req, res) => {
     } else if (typeof specialties === 'string' && specialties.trim()) {
       specialtiesList = specialties.split(',').map(s => s.trim()).filter(Boolean);
     }
-    
+
     // Process social links
     const socialLinks = {
       whatsapp: whatsapp !== undefined ? formatWhatsAppUrl(whatsapp, trimmedName) : mentor.socialLinks.whatsapp,
@@ -289,26 +293,31 @@ export const updateMentor = async (req, res) => {
       instagram: instagram !== undefined ? instagram.trim() : mentor.socialLinks.instagram,
       github: github !== undefined ? github.trim() : mentor.socialLinks.github
     };
-    
+
+    let mentorImage = image !== undefined ? image.trim() : mentor.image;
+    if (mentorImage) {
+      mentorImage = await uploadImageToCloudinary(mentorImage, 'upvolt/mentors');
+    }
+
     mentor.name = trimmedName;
     mentor.bio = trimmedBio;
     if (role !== undefined) mentor.role = role.trim();
     if (college !== undefined) mentor.college = college.trim();
-    if (image !== undefined) mentor.image = image.trim();
+    if (mentorImage !== undefined) mentor.image = mentorImage;
     if (projectsGuided !== undefined) mentor.projectsGuided = projectsGuided.trim();
     if (rating !== undefined) mentor.rating = Number(rating);
     mentor.specialties = specialtiesList;
     mentor.socialLinks = socialLinks;
-    
+
     const updatedMentor = await mentor.save();
-    
+
     const adminUser = req.user || {
       _id: new mongoose.Types.ObjectId(),
-      name: 'upVolt Admin',
-      email: 'admin@upvolt.in',
+      name: 'UPVOLT Admin',
+      email: 'admin@UPVOLT.com',
       role: 'admin'
     };
-    
+
     try {
       await AuditLog.create({
         action: 'MENTOR_UPDATED',
@@ -328,7 +337,7 @@ export const updateMentor = async (req, res) => {
     } catch (auditErr) {
       console.warn('Failed to write mentor update audit log:', auditErr.message);
     }
-    
+
     res.status(200).json({
       success: true,
       message: `Mentor "${updatedMentor.name}" updated successfully.`,
@@ -362,8 +371,8 @@ export const deleteMentor = async (req, res) => {
 
     const adminUser = req.user || {
       _id: new mongoose.Types.ObjectId(),
-      name: 'upVolt Admin',
-      email: 'admin@upvolt.in',
+      name: 'UPVOLT Admin',
+      email: 'admin@UPVOLT.com',
       role: 'admin'
     };
 

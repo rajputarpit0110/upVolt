@@ -121,32 +121,27 @@ export const Checkout = () => {
     };
 
     try {
-      const verifyRes = await verifyRazorpayPayment({
-        razorpay_order_id: response.razorpay_order_id || currentRzpOrderId,
-        razorpay_payment_id: response.razorpay_payment_id,
-        razorpay_signature: response.razorpay_signature || 'verified_dev',
-        orderData: payload
-      });
+      // Manual verification: we bypass verifyRazorpayPayment and directly create the order
+      payload.razorpayPaymentId = response.razorpay_payment_id; // This stores the UTR ID
+      payload.paymentStatus = 'pending'; // Requires manual confirmation
 
-      if (verifyRes.success && verifyRes.order) {
-        setPlacedOrderId(verifyRes.order.orderId);
-        setOrderComplete(true);
+      const savedOrder = await createOrder(payload);
 
-        try {
-          confetti({
-            particleCount: 140,
-            spread: 90,
-            origin: { y: 0.6 }
-          });
-        } catch {}
+      setPlacedOrderId(savedOrder.orderId);
+      setOrderComplete(true);
 
-        clearCart();
-      } else {
-        setPaymentError('Payment verification failed. Please reach out to support.');
-      }
+      try {
+        confetti({
+          particleCount: 140,
+          spread: 90,
+          origin: { y: 0.6 }
+        });
+      } catch { }
+
+      clearCart();
     } catch (verifyErr) {
-      console.error('Payment verification failed:', verifyErr);
-      setPaymentError(verifyErr.message || 'Payment signature verification failed.');
+      console.error('Order creation failed:', verifyErr);
+      setPaymentError(verifyErr.message || 'Failed to place order after payment. Please contact support with your UTR.');
     } finally {
       setIsSubmitting(false);
     }
@@ -203,7 +198,7 @@ export const Checkout = () => {
             spread: 80,
             origin: { y: 0.6 }
           });
-        } catch {}
+        } catch { }
 
         clearCart();
       } catch (err) {
@@ -218,71 +213,10 @@ export const Checkout = () => {
       return;
     }
 
-    // Flow 2: Online Payment via Razorpay Gateway
-    try {
-      // Step A: Initialize Razorpay order on backend
-      const rzpOrderData = await createRazorpayOrder(totalAmount);
-      const { orderId: rzpOrderId, amount: rzpAmount, keyId } = rzpOrderData;
-      setCurrentRzpOrderId(rzpOrderId);
-
-      // Step B: If live/test registered key is present and script loaded, attempt official SDK
-      let officialLaunched = false;
-      try {
-        await loadRazorpayScript();
-        if (window.Razorpay && keyId && !keyId.includes('CampusCircuitDev')) {
-          const options = {
-            key: keyId,
-            amount: rzpAmount,
-            currency: 'INR',
-            name: 'upVolt',
-            description: 'Hardware Components & IoT Projects Order',
-            image: '/logo-circuit.svg',
-            order_id: rzpOrderId,
-            prefill: {
-              name: address.fullName,
-              email: user?.email || '',
-              contact: address.phone
-            },
-            notes: {
-              address: address.address,
-              college: address.collegeName || 'N/A',
-              hostel: address.hostelName || 'N/A',
-              room: address.roomNo || 'N/A',
-              deliverySpeed: deliveryType === 'fast' ? 'Fast Express Delivery' : 'Normal Standard Delivery'
-            },
-            theme: { color: '#2563EB' },
-            handler: (response) => handleRazorpaySuccess(response, orderPayload),
-            modal: {
-              ondismiss: () => {
-                setIsSubmitting(false);
-                setPaymentError('Payment was cancelled. Your order has not been placed. You can select another method or retry.');
-              }
-            }
-          };
-
-          const rzpInstance = new window.Razorpay(options);
-          rzpInstance.on('payment.failed', function (failResp) {
-            setIsSubmitting(false);
-            setPaymentError(`Payment failed: ${failResp.error?.description || 'Transaction unsuccessful'}. Your order was not placed.`);
-          });
-          rzpInstance.open();
-          officialLaunched = true;
-          setIsSubmitting(false);
-        }
-      } catch (officialErr) {
-        console.warn('Official Razorpay modal open failed, using built-in Razorpay checkout modal:', officialErr);
-      }
-
-      // Step C: If official SDK not loaded or in development mode, open built-in Razorpay Modal
-      if (!officialLaunched) {
-        setIsSubmitting(false);
-        setIsRzpModalOpen(true);
-      }
-    } catch (err) {
-      console.error('Razorpay initialization error:', err);
-      setIsSubmitting(false);
-      setPaymentError(err.message || 'Could not open online payment gateway.');
-    }
+    // Flow 2: Manual Online Payment via UPI QR Code
+    // Bypass Razorpay Initialization and directly open the manual modal
+    setIsSubmitting(false);
+    setIsRzpModalOpen(true);
   };
 
   if (orderComplete) {
@@ -736,7 +670,7 @@ export const Checkout = () => {
 
                 <div className="cc-payment-security-note">
                   <Lock size={14} />
-                  <span>256-Bit SSL Encrypted &amp; Verified by Razorpay Secure Checkout</span>
+                  <span>Payments are processed securely via direct UPI transfer.</span>
                 </div>
 
                 <div className="cc-checkout-form-footer">
@@ -749,7 +683,7 @@ export const Checkout = () => {
                       </span>
                     ) : (
                       paymentMethod === 'online'
-                        ? `Pay with Razorpay (₹${totalAmount}) →`
+                        ? `Proceed to Pay (₹${totalAmount}) →`
                         : `Confirm COD Order (₹${totalAmount})`
                     )}
                   </Button>

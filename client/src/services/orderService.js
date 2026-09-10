@@ -102,3 +102,27 @@ export const updateOrderStatus = async (orderId, status, note = '') => {
 
   return data.order;
 };
+
+/**
+ * Delete an order (Admin / Master Admin)
+ * @param {string} orderId - e.g. 'CC-363654' or _id
+ */
+export const deleteOrder = async (orderId) => {
+  const headers = {};
+  const token = localStorage.getItem('campuscircuit_token');
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
+  const res = await fetch(`${API_BASE}/${orderId}`, {
+    method: 'DELETE',
+    headers
+  });
+  
+  const data = await safeJson(res);
+  if (!res.ok || !data.success) {
+    throw new Error(data.message || 'Failed to delete order.');
+  }
+  
+  return data;
+};
