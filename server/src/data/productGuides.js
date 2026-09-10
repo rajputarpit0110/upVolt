@@ -1,6 +1,6 @@
 export const PRODUCT_GUIDES = {
   'CC-DEV-ESP32': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=k_D_Qu0cgu8',
+    youtubeUrl: 'https://www.youtube.com/watch?v=aLEKiGNfHZw',
     researchUrl: 'https://ieeexplore.ieee.org/document/8703358',
     datasheetUrl: 'https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf',
     documentationUrl: 'https://docs.espressif.com/projects/esp-idf/en/latest/esp32/',
@@ -58,7 +58,7 @@ void loop() {
   },
 
   'CC-DEV-UNO3': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=d8_xXNcGYgo',
+    youtubeUrl: 'https://www.youtube.com/watch?v=fJWR7dBuc18',
     researchUrl: 'https://www.researchgate.net/publication/341999805_Arduino_Based_Automated_System_Design_and_Implementation',
     datasheetUrl: 'https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-7810-Automotive-Microcontrollers-ATmega328P_Datasheet.pdf',
     documentationUrl: 'https://docs.arduino.cc/hardware/uno-rev3/',
@@ -161,7 +161,7 @@ except KeyboardInterrupt:
   },
 
   'CC-DEV-PICO2040': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=mD_g2_T2O1c',
+    youtubeUrl: 'https://www.youtube.com/watch?v=fJWR7dBuc18',
     researchUrl: 'https://ieeexplore.ieee.org/document/9623821',
     datasheetUrl: 'https://datasheets.raspberrypi.com/pico/pico-datasheet.pdf',
     documentationUrl: 'https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html',
@@ -207,7 +207,7 @@ while True:
   },
 
   'CC-DEV-ESP8266': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=71bX6Yw_f_U',
+    youtubeUrl: 'https://www.youtube.com/watch?v=aLEKiGNfHZw',
     researchUrl: 'https://ieeexplore.ieee.org/document/8301777',
     datasheetUrl: 'https://www.espressif.com/sites/default/files/documentation/0a-esp8266ex_datasheet_en.pdf',
     documentationUrl: 'https://arduino-esp8266.readthedocs.io/en/latest/',
@@ -257,7 +257,7 @@ void loop() {}`
   },
 
   'CC-SEN-HCSR04': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=ZejQOX69K5M',
+    youtubeUrl: 'https://www.youtube.com/watch?v=6F1B_N6LuKw',
     researchUrl: 'https://ieeexplore.ieee.org/document/8977660',
     datasheetUrl: 'https://www.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf',
     documentationUrl: 'https://github.com/Martinsos/arduino-lib-hc-sr04',
@@ -318,7 +318,7 @@ void loop() {
   },
 
   'CC-SEN-DHT11': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=wXWp_hM4jT8',
+    youtubeUrl: 'https://www.youtube.com/watch?v=OogldLc9uYc',
     researchUrl: 'https://ieeexplore.ieee.org/document/8777519',
     datasheetUrl: 'https://www.mouser.com/datasheet/2/758/DHT11-Technical-Data-Sheet-Translated-Version-1143054.pdf',
     documentationUrl: 'https://github.com/adafruit/DHT-sensor-library',
@@ -383,7 +383,7 @@ void loop() {
   },
 
   'CC-SEN-PIR501': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=6FeXAPqlPio',
+    youtubeUrl: 'https://www.youtube.com/watch?v=CT4iyc1sFHI',
     researchUrl: 'https://ieeexplore.ieee.org/document/8663189',
     datasheetUrl: 'https://www.mpja.com/download/31227sc.pdf',
     documentationUrl: 'https://docs.arduino.cc/tutorials/generic/pir-sensor/',
@@ -439,7 +439,7 @@ void loop() {
   },
 
   'CC-SEN-MQ2': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=F3_Jb1a2EaU',
+    youtubeUrl: 'https://www.youtube.com/watch?v=lZuryylOZUk',
     researchUrl: 'https://ieeexplore.ieee.org/document/8982463',
     datasheetUrl: 'https://www.pololu.com/file/0J309/MQ2.pdf',
     documentationUrl: 'https://github.com/miguel5612/MQSensorsLib',
@@ -493,7 +493,7 @@ void loop() {
   },
 
   'CC-SEN-MPU6050': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=M9lZ5Qy5S2w',
+    youtubeUrl: 'https://www.youtube.com/watch?v=fJWR7dBuc18',
     researchUrl: 'https://ieeexplore.ieee.org/document/9084883',
     datasheetUrl: 'https://invensense.tdk.com/wp-content/uploads/2015/02/MPU-6000-Datasheet1.pdf',
     documentationUrl: 'https://github.com/ElectronicCats/mpu6050',
@@ -553,7 +553,7 @@ void loop() {
   },
 
   'CC-SEN-SOILM': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=udmJyncDvw0',
+    youtubeUrl: 'https://www.youtube.com/watch?v=DgCP-3rSHCY',
     researchUrl: 'https://ieeexplore.ieee.org/document/9253457',
     datasheetUrl: 'https://media.digikey.com/pdf/data%20sheets/dfrobot%20pdfs/sen0193_web.pdf',
     documentationUrl: 'https://github.com/DFRobot/DFRobot_SoilMoistureSensor',
@@ -608,7 +608,7 @@ void loop() {
   },
 
   'CC-MOD-RC522': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=d_kH1_o80wU',
+    youtubeUrl: 'https://www.youtube.com/watch?v=cFK87MJ96A8',
     researchUrl: 'https://ieeexplore.ieee.org/document/8929712',
     datasheetUrl: 'https://www.nxp.com/docs/en/data-sheet/MFRC522.pdf',
     documentationUrl: 'https://github.com/miguelbalboa/rfid',
@@ -671,7 +671,7 @@ void loop() {
   },
 
   'CC-MOD-OLED96': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=7_bWjB876-Q',
+    youtubeUrl: 'https://www.youtube.com/watch?v=CvqHkXeXN3M',
     researchUrl: 'https://ieeexplore.ieee.org/document/8389445',
     datasheetUrl: 'https://cdn-shop.adafruit.com/datasheets/SSD1306.pdf',
     documentationUrl: 'https://github.com/adafruit/Adafruit_SSD1306',
@@ -730,7 +730,7 @@ void loop() {}`
   },
 
   'CC-MOD-LCD1602': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=P_3kLpW_Vl0',
+    youtubeUrl: 'https://www.youtube.com/watch?v=CvqHkXeXN3M',
     researchUrl: 'https://ieeexplore.ieee.org/document/8697693',
     datasheetUrl: 'https://www.sparkfun.com/datasheets/LCD/HD44780.pdf',
     documentationUrl: 'https://github.com/johnrickman/LiquidCrystal_I2C',
@@ -782,7 +782,7 @@ void loop() {}`
   },
 
   'CC-MOD-RELAY4': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=LLMQsmw7xPo',
+    youtubeUrl: 'https://www.youtube.com/watch?v=xnpSEK-5hfM',
     researchUrl: 'https://ieeexplore.ieee.org/document/8821867',
     datasheetUrl: 'https://www.circuitbasics.com/wp-content/uploads/2015/11/SRD-05VDC-SL-C-Datasheet.pdf',
     documentationUrl: 'https://docs.arduino.cc/tutorials/generic/relay-module/',
@@ -832,7 +832,7 @@ void loop() {
   },
 
   'CC-DRV-L298N': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=dyjo_ggEtVU',
+    youtubeUrl: 'https://www.youtube.com/watch?v=fJWR7dBuc18',
     researchUrl: 'https://ieeexplore.ieee.org/document/8906958',
     datasheetUrl: 'https://www.sparkfun.com/datasheets/Robotics/L298_H_Bridge.pdf',
     documentationUrl: 'https://dronebotworkshop.com/l298n-motor-driver-arduino/',
@@ -890,7 +890,7 @@ void loop() {
   },
 
   'CC-MOT-SG90': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=kU_LhW_O-68',
+    youtubeUrl: 'https://www.youtube.com/watch?v=fJWR7dBuc18',
     researchUrl: 'https://ieeexplore.ieee.org/document/8925431',
     datasheetUrl: 'http://www.towerpro.com.tw/product/sg90-7/',
     documentationUrl: 'https://docs.arduino.cc/learn/electronics/servo-motors/',
@@ -945,7 +945,7 @@ void loop() {
   },
 
   'CC-MOT-STEPPER': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=0qwrnUeSpYQ',
+    youtubeUrl: 'https://www.youtube.com/watch?v=fJWR7dBuc18',
     researchUrl: 'https://ieeexplore.ieee.org/document/8907865',
     datasheetUrl: 'https://components101.com/motors/28byj-48-stepper-motor',
     documentationUrl: 'https://www.arduino.cc/reference/en/libraries/stepper/',
@@ -997,7 +997,7 @@ void loop() {
   },
 
   'CC-KIT-4WDCAR': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=O1_s3wA9Gtc',
+    youtubeUrl: 'https://www.youtube.com/watch?v=fJWR7dBuc18',
     researchUrl: 'https://ieeexplore.ieee.org/document/8966453',
     datasheetUrl: 'https://components101.com/modules/l298n-motor-driver-module',
     documentationUrl: 'https://github.com/upvolt/4wd-robot-chassis',
@@ -1055,7 +1055,7 @@ void loop() {
   },
 
   'CC-KIT-SMARTHOME': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=FqY-Zc_uR8E',
+    youtubeUrl: 'https://www.youtube.com/watch?v=iwkE_HWU-6M',
     researchUrl: 'https://ieeexplore.ieee.org/document/8892408',
     datasheetUrl: 'https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf',
     documentationUrl: 'https://github.com/upvolt/smart-home-kit',
@@ -1118,7 +1118,7 @@ void loop() {
   },
 
   'CC-PWR-MB102': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=48_O3w2wS_Q',
+    youtubeUrl: 'https://www.youtube.com/watch?v=W6mixXsn-Vc',
     researchUrl: 'https://ieeexplore.ieee.org/document/8710200',
     datasheetUrl: 'https://www.ti.com/lit/ds/symlink/ams1117.pdf',
     documentationUrl: 'https://components101.com/modules/mb102-breadboard-power-supply-module',
@@ -1157,7 +1157,7 @@ void loop() {
   },
 
   'CC-CMP-BREAD830': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=0_u6eJ6-vVo',
+    youtubeUrl: 'https://www.youtube.com/watch?v=W6mixXsn-Vc',
     researchUrl: 'https://www.instructables.com/How-to-Use-a-Breadboard/',
     datasheetUrl: 'https://cdn-learn.adafruit.com/downloads/pdf/breadboards-for-beginners.pdf',
     documentationUrl: 'https://docs.arduino.cc/learn/electronics/breadboard-basics/',
@@ -1196,7 +1196,7 @@ void loop() {
   },
 
   'CC-CAB-DUPONT120': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=R5pE82_B-YQ',
+    youtubeUrl: 'https://www.youtube.com/watch?v=W6mixXsn-Vc',
     researchUrl: 'https://www.electronics-tutorials.ws/blog/breadboard-jumper-wires.html',
     datasheetUrl: 'https://components101.com/wires/dupont-jumper-wires',
     documentationUrl: 'https://github.com/upvolt/starter-guide',
@@ -1237,7 +1237,7 @@ void loop() {
   },
 
   'CC-KIT-STARTER45': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=F3_Jb1a2EaU',
+    youtubeUrl: 'https://www.youtube.com/watch?v=fJWR7dBuc18',
     researchUrl: 'https://ieeexplore.ieee.org/document/8920114',
     datasheetUrl: 'https://github.com/upvolt/45-in-1-sensor-kit-datasheets',
     documentationUrl: 'https://github.com/upvolt/45-in-1-sensor-kit-code',

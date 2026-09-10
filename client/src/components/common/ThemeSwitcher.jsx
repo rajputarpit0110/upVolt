@@ -21,28 +21,28 @@ export const ThemeSwitcher = () => {
 
   const getThemeIcon = () => {
     switch (theme) {
-      case THEMES.LIGHT:
-        return <Sun size={18} className="theme-icon theme-icon--light" />;
+      case THEMES.DARK:
+        return <Moon size={18} className="theme-icon theme-icon--dark" />;
       case THEMES.EYECARE:
         return <Eye size={18} className="theme-icon theme-icon--eyecare" />;
-      case THEMES.DARK:
+      case THEMES.LIGHT:
       default:
-        return <Moon size={18} className="theme-icon theme-icon--dark" />;
+        return <Sun size={18} className="theme-icon theme-icon--light" />;
     }
   };
 
   const options = [
     {
-      id: THEMES.DARK,
-      label: 'Dark',
-      desc: 'Easy on the eyes (Flagship)',
-      icon: <Moon size={16} />
-    },
-    {
       id: THEMES.LIGHT,
       label: 'Light',
-      desc: 'Clean & bright daylight',
+      desc: 'Clean & bright daylight (Default)',
       icon: <Sun size={16} />
+    },
+    {
+      id: THEMES.DARK,
+      label: 'Dark',
+      desc: 'Easy on the eyes',
+      icon: <Moon size={16} />
     },
     {
       id: THEMES.EYECARE,

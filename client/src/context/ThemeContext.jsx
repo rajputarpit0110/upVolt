@@ -10,23 +10,23 @@ export const THEMES = {
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
-    const saved = localStorage.getItem('campuscircuit_theme');
+    const saved = localStorage.getItem('upvolt_theme');
     if (saved && Object.values(THEMES).includes(saved)) {
       return saved;
     }
-    return THEMES.DARK; // Default flagship theme
+    return THEMES.LIGHT; // Default theme: Light
   });
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('campuscircuit_theme', theme);
+    localStorage.setItem('upvolt_theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {
     setTheme(prev => {
-      if (prev === THEMES.DARK) return THEMES.LIGHT;
-      if (prev === THEMES.LIGHT) return THEMES.EYECARE;
-      return THEMES.DARK;
+      if (prev === THEMES.LIGHT) return THEMES.DARK;
+      if (prev === THEMES.DARK) return THEMES.EYECARE;
+      return THEMES.LIGHT;
     });
   };
 

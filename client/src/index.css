@@ -32,8 +32,7 @@
 /* =========================================================
    THEME 1: DARK THEME (Refined Modern Tech / Obsidian & Slate)
    ========================================================= */
-[data-theme="dark"],
-:root:not([data-theme]) {
+[data-theme="dark"] {
   color-scheme: dark;
   --bg-main: #0A0E17;           /* Deep Obsidian Indigo-Slate */
   --bg-secondary: #0F1626;      /* Slate-900 / App Navigation */
@@ -80,7 +79,8 @@
 /* =========================================================
    THEME 2: LIGHT THEME (Crisp, High Contrast)
    ========================================================= */
-[data-theme="light"] {
+[data-theme="light"],
+:root:not([data-theme]) {
   color-scheme: light;
   --bg-main: #F8FAFC;
   --bg-secondary: #F1F5F9;
