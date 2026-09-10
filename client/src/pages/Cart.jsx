@@ -220,7 +220,7 @@ export const Cart = () => {
                 variant="primary"
                 size="lg"
                 fullWidth
-                onClick={() => navigate('/checkout')}
+                onClick={() => navigate('/checkout', { state: { couponCode: couponApplied ? couponCode : '', discountAmount } })}
                 icon={<ArrowRight size={18} />}
                 iconPosition="right"
               >
