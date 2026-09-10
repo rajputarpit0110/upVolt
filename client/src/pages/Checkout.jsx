@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link, useSearchParams } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { createOrder } from '../services/orderService';
@@ -34,6 +34,9 @@ export const Checkout = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const location = useLocation();
+
+  const { couponCode = '', discountAmount = 0 } = location.state || {};
 
   const testStepParam = Number(searchParams.get('testStep'));
   const [step, setStep] = useState(testStepParam || 1);
@@ -82,7 +85,7 @@ export const Checkout = () => {
   const fastFee = Number(deliverySettings.fastDeliveryFee ?? 99);
 
   const shippingFee = deliveryType === 'fast' ? fastFee : normalFee;
-  const totalAmount = cartSubtotal + shippingFee;
+  const totalAmount = Math.max(0, cartSubtotal + shippingFee - discountAmount);
 
   const handleInputChange = (e) => {
     setAddress({ ...address, [e.target.name]: e.target.value });
@@ -116,6 +119,8 @@ export const Checkout = () => {
       deliveryType,
       subtotal: cartSubtotal,
       shippingFee,
+      discountAmount,
+      couponCode,
       totalAmount,
       paymentMethod: 'online'
     };
@@ -181,6 +186,8 @@ export const Checkout = () => {
       deliveryType,
       subtotal: cartSubtotal,
       shippingFee,
+      discountAmount,
+      couponCode,
       totalAmount,
       paymentMethod
     };
@@ -721,6 +728,12 @@ export const Checkout = () => {
                   {shippingFee === 0 ? 'FREE' : `₹${shippingFee}`}
                 </span>
               </div>
+              {discountAmount > 0 && (
+                <div className="cc-checkout-row cc-checkout-row--discount" style={{ color: '#10B981', fontWeight: 600 }}>
+                  <span>Discount ({couponCode})</span>
+                  <span>- ₹{discountAmount}</span>
+                </div>
+              )}
               <div className="cc-checkout-row cc-checkout-row--final">
                 <span>Total</span>
                 <span>₹{totalAmount}</span>
