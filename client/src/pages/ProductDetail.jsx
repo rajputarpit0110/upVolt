@@ -147,6 +147,7 @@ export const ProductDetail = () => {
   }
 
   const isWishlisted = isInWishlist(product._id || product.id);
+  const primaryImage = product.image || (product.images && product.images.length > 0 ? product.images[0] : '/logo-circuit.svg');
   const relatedProducts = allProducts.filter(
     p => p.category === product.category && (p._id !== product._id && p.id !== product.id)
   ).slice(0, 4);
