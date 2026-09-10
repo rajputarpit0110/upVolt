@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { Product } from '../models/Product.js';
 import { AuditLog } from '../models/AuditLog.js';
 import { INITIAL_PRODUCTS } from '../data/seedData.js';
+import { uploadImageToCloudinary } from '../config/cloudinary.js';
 
 // GET all products with filtering & sorting
 export const getProducts = async (req, res) => {
@@ -174,13 +175,24 @@ export const createProduct = async (req, res) => {
       imageList = images.split(/[\n,]+/).map(img => img.trim()).filter(Boolean);
     }
 
-    const primaryImage = image && image.trim() 
-      ? image.trim() 
+    let primaryImage = image && image.trim()
+      ? image.trim()
       : (imageList.length > 0 ? imageList[0] : '/images/arduino.svg');
 
     if (!imageList.includes(primaryImage)) {
       imageList.unshift(primaryImage);
     }
+
+    // Upload to Cloudinary if they are base64 strings
+    const uniqueImages = [...new Set(imageList)];
+    const uploadedImages = await Promise.all(
+      uniqueImages.map(img => uploadImageToCloudinary(img, 'upvolt/products'))
+    );
+    const imgMap = {};
+    uniqueImages.forEach((img, idx) => { imgMap[img] = uploadedImages[idx]; });
+
+    imageList = imageList.map(img => imgMap[img]);
+    primaryImage = imgMap[primaryImage];
 
     const cleanSku = sku && sku.trim()
       ? sku.trim()
@@ -189,13 +201,13 @@ export const createProduct = async (req, res) => {
     const adminUser = req.user || {
       _id: new mongoose.Types.ObjectId(),
       name: 'System Admin',
-      email: 'admin@campuscircuit.com',
+      email: 'admin@UPVOLT.com',
       role: 'admin'
     };
 
-    // For products added by master_admin, mask name as 'CampusCircuit Supply' so other admins never suspect a master admin
-    const publicAddedByName = adminUser.role === 'master_admin' ? 'CampusCircuit Supply' : adminUser.name;
-    const publicAddedByEmail = adminUser.role === 'master_admin' ? 'supply@campuscircuit.com' : adminUser.email;
+    // For products added by master_admin, mask name as 'UPVOLT Supply' so other admins never suspect a master admin
+    const publicAddedByName = adminUser.role === 'master_admin' ? 'UPVOLT Supply' : adminUser.name;
+    const publicAddedByEmail = adminUser.role === 'master_admin' ? 'supply@UPVOLT.com' : adminUser.email;
 
     const newProduct = new Product({
       name: name.trim(),
@@ -269,21 +281,21 @@ export const updateProduct = async (req, res) => {
         message: 'Database connection unavailable.'
       });
     }
-    
+
     const { id } = req.params;
     let product = null;
-    
+
     if (mongoose.Types.ObjectId.isValid(id)) {
       product = await Product.findById(id);
     }
     if (!product) {
       product = await Product.findOne({ sku: id });
     }
-    
+
     if (!product) {
       return res.status(404).json({ success: false, message: 'Product not found.' });
     }
-    
+
     const {
       name,
       category,
@@ -300,14 +312,14 @@ export const updateProduct = async (req, res) => {
       tags,
       perfectFor
     } = req.body;
-    
+
     if (!name || !category || !price) {
       return res.status(400).json({
         success: false,
         message: 'Product name, category, and price are required.'
       });
     }
-    
+
     // Process multiple images
     let imageList = product.images;
     if (Array.isArray(images) && images.length > 0) {
@@ -315,15 +327,26 @@ export const updateProduct = async (req, res) => {
     } else if (typeof images === 'string' && images.trim()) {
       imageList = images.split(/[\n,]+/).map(img => img.trim()).filter(Boolean);
     }
-    
-    const primaryImage = image && image.trim()
+
+    let primaryImage = image && image.trim()
       ? image.trim()
       : (imageList.length > 0 ? imageList[0] : product.image);
-    
+
     if (imageList.length > 0 && !imageList.includes(primaryImage)) {
       imageList.unshift(primaryImage);
     }
-    
+
+    // Upload to Cloudinary if they are base64 strings
+    const uniqueImages = [...new Set(imageList)];
+    const uploadedImages = await Promise.all(
+      uniqueImages.map(img => uploadImageToCloudinary(img, 'upvolt/products'))
+    );
+    const imgMap = {};
+    uniqueImages.forEach((img, idx) => { imgMap[img] = uploadedImages[idx]; });
+
+    imageList = imageList.map(img => imgMap[img]);
+    primaryImage = imgMap[primaryImage];
+
     product.name = name.trim();
     product.category = category.trim();
     product.price = Number(price);
@@ -338,16 +361,16 @@ export const updateProduct = async (req, res) => {
     if (specifications !== undefined) product.specifications = specifications;
     if (tags !== undefined) product.tags = Array.isArray(tags) ? tags : (tags ? tags.split(',').map(t => t.trim()) : []);
     if (perfectFor !== undefined) product.perfectFor = Array.isArray(perfectFor) ? perfectFor : (perfectFor ? perfectFor.split(',').map(p => p.trim()) : []);
-    
+
     const updatedProduct = await product.save();
-    
+
     const adminUser = req.user || {
       _id: new mongoose.Types.ObjectId(),
       name: 'System Admin',
       email: 'admin@UPVOLT.com',
       role: 'admin'
     };
-    
+
     try {
       await AuditLog.create({
         action: 'PRODUCT_UPDATED',
@@ -369,7 +392,7 @@ export const updateProduct = async (req, res) => {
     } catch (auditErr) {
       console.warn('Failed to write audit log entry:', auditErr.message);
     }
-    
+
     res.status(200).json({
       success: true,
       message: 'Product updated successfully',
@@ -404,7 +427,7 @@ export const deleteProduct = async (req, res) => {
     const adminUser = req.user || {
       _id: new mongoose.Types.ObjectId(),
       name: 'System Admin',
-      email: 'admin@campuscircuit.com',
+      email: 'admin@UPVOLT.com',
       role: 'admin'
     };
 
