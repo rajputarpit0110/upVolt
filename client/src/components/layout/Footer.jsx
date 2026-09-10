@@ -78,7 +78,7 @@ export const Footer = () => {
               {PRIORITY_BUYING_NUMBERS.map((line, idx) => (
                 <li key={idx}>
                   <a
-                    href={`https://wa.me/${line.raw}?text=${encodeURIComponent(`Hi upVolt! I want to buy components directly via ${line.display}.`)}`}
+                    href={`https://wa.me/${line.raw}?text=${encodeURIComponent(`Hi upVolt! I want to buy components directly.`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
