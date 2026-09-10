@@ -2067,6 +2067,11 @@ export const AdminDashboard = () => {
                               <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>
                                 {order.paymentMethod?.toUpperCase()}
                               </span>
+                              {order.paymentMethod === 'online' && order.razorpayPaymentId && (
+                                <span style={{ fontSize: '0.7rem', color: 'var(--accent-primary)', fontWeight: 500 }}>
+                                  Txn ID: {order.razorpayPaymentId}
+                               </span>
+                              )}
                               {order.deliveryType === 'fast' ? (
                                 <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#D97706', background: 'rgba(245, 158, 11, 0.12)', padding: '2px 6px', borderRadius: 4, display: 'inline-block', width: 'fit-content' }}>
                                   ⚡ Fast (₹{order.shippingFee})
