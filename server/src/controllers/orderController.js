@@ -14,7 +14,8 @@ export const createOrder = async (req, res) => {
       subtotal,
       shippingFee,
       totalAmount,
-      deliveryType
+      deliveryType,
+      razorpayPaymentId
     } = req.body;
 
     if (!customerName || !customerPhone || !shippingAddress || !shippingAddress.address || !items || items.length === 0) {
@@ -52,6 +53,7 @@ export const createOrder = async (req, res) => {
       totalAmount: calculatedTotal,
       paymentMethod: paymentMethod || 'cod',
       paymentStatus: paymentMethod === 'cod' ? 'pending' : 'completed',
+      razorpayPaymentId: razorpayPaymentId || undefined,
       orderStatus: 'pending',
       statusHistory: [
         {
