@@ -22,7 +22,7 @@ export const FOUNDERS = [
     bio: 'Passionate about embedded systems, robotics, and hands-on maker culture. Founded upVolt to eliminate the friction engineering students face in procuring authentic hardware components and building real-world projects.',
     socialLinks: {
       linkedin: 'https://www.linkedin.com/in/suyash-n-b06a142bb/',
-      instagram: 'https://www.instagram.com/upvolt_in/',
+      instagram: 'https://www.instagram.com/_.suyashh_/',
       github: 'https://github.com/Suyash0786',
       email: 'mailto:support.upvolt@gmail.com'
     },
