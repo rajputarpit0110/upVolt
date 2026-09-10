@@ -3,7 +3,7 @@ export const WHATSAPP_DISPLAY = '+91 9919919344';
 export const FOUNDER_PHONE = '+91 9919919344';
 export const WHATSAPP_GROUP_LINK = 'https://chat.whatsapp.com/IPzZTg8DGAcHOg5qnaa9v3?mode=gi_t';
 export const OFFICIAL_EMAIL = 'support.upvolt@gmail.com';
-export const OFFICIAL_INSTAGRAM = 'https://www.instagram.com/upvolt_in/';
+export const OFFICIAL_INSTAGRAM = 'https://www.instagram.com/upvolt_india/';
 export const OFFICIAL_LINKEDIN = 'https://www.linkedin.com/company/upvolt-in/';
 
 export const PRIORITY_BUYING_NUMBERS = [
