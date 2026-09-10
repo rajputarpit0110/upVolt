@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { Button } from '../components/common/Button';
@@ -16,6 +16,7 @@ import {
   Tag
 } from 'lucide-react';
 import { validateCouponCode } from '../services/couponService';
+import { fetchDeliverySettings } from '../services/settingsService';
 import './Cart.css';
 
 export const Cart = () => {
@@ -29,7 +30,24 @@ export const Cart = () => {
   const [couponMessage, setCouponMessage] = useState('');
   const [validatingCoupon, setValidatingCoupon] = useState(false);
 
-  const shippingFee = cartSubtotal >= 499 || cartSubtotal === 0 ? 0 : 49;
+  const [deliverySettings, setDeliverySettings] = useState({
+    normalDeliveryFee: 49,
+    freeDeliveryThreshold: 499
+  });
+
+  useEffect(() => {
+    fetchDeliverySettings()
+      .then(settings => {
+        if (settings) {
+          setDeliverySettings(settings);
+        }
+      })
+      .catch(err => console.warn('Failed to load delivery settings:', err));
+  }, []);
+
+  const shippingFee = cartSubtotal >= (deliverySettings.freeDeliveryThreshold ?? 499) || cartSubtotal === 0 
+    ? 0 
+    : Number(deliverySettings.normalDeliveryFee ?? 49);
   const finalTotal = Math.max(0, cartSubtotal + shippingFee - discountAmount);
 
   const handleApplyCoupon = async (e) => {
@@ -192,10 +210,10 @@ export const Cart = () => {
 
               <div className="cc-summary-row">
                 <span>Delivery / Shipping</span>
-                {shippingFee === 0 ? (
-                  <span className="cc-free-shipping">FREE (Order &gt; ₹499)</span>
+                {shippingFee === 0 && cartSubtotal > 0 ? (
+                  <span className="cc-free-shipping">FREE (Order &gt;= ₹{deliverySettings.freeDeliveryThreshold ?? 499})</span>
                 ) : (
-                  <span>₹{shippingFee}</span>
+                  <span>{cartSubtotal === 0 ? '₹0' : `₹${shippingFee}`}</span>
                 )}
               </div>
 
@@ -285,7 +303,7 @@ export const Cart = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <WhatsAppIcon size={16} color="#25D366" />
                       <div style={{ textAlign: 'left' }}>
-                        <span style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--text-primary)', display: 'block', whiteSpace: 'nowrap' }}>
+                        <span style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--text-primary)', display: 'block' }}>
                           {line.display}
                         </span>
                         <span style={{ fontSize: '0.7rem', color: idx === 0 ? 'var(--color-whatsapp)' : 'var(--text-muted)', fontWeight: 600 }}>
@@ -300,8 +318,7 @@ export const Cart = () => {
                       background: idx === 0 ? 'rgba(16, 185, 129, 0.12)' : 'var(--bg-main)',
                       padding: '2px 7px',
                       borderRadius: 10,
-                      border: idx === 0 ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--border-color)',
-                      whiteSpace: 'nowrap'
+                      border: idx === 0 ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--border-color)'
                     }}>
                       {line.tag}
                     </span>
