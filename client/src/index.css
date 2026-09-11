@@ -177,20 +177,44 @@
 }
 
 html {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
   scroll-behavior: smooth;
   font-size: 16px;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  position: relative;
   font-family: var(--font-body);
   background-color: var(--bg-main);
   color: var(--text-primary);
   line-height: 1.6;
   min-height: 100vh;
   transition: background-color var(--transition-normal), color var(--transition-normal);
-  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+#root,
+.cc-app-shell {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.cc-main-content {
+  flex: 1;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -217,8 +241,12 @@ input, textarea, select {
   font-family: inherit;
 }
 
-img {
+img, svg, video, canvas, iframe {
   max-width: 100%;
+  box-sizing: border-box;
+}
+
+img {
   height: auto;
   display: block;
 }
@@ -250,6 +278,7 @@ img {
   margin-right: auto;
   padding-left: 20px;
   padding-right: 20px;
+  box-sizing: border-box;
 }
 
 .container-wide {
@@ -259,6 +288,15 @@ img {
   margin-right: auto;
   padding-left: 20px;
   padding-right: 20px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .container,
+  .container-wide {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
 }
 
 /* Glassmorphic Panel */

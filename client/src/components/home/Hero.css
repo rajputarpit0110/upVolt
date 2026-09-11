@@ -296,20 +296,82 @@
 }
 
 @media (max-width: 640px) {
+  .cc-hero {
+    padding: 24px 0 20px;
+  }
+  .cc-hero__badge {
+    font-size: 0.68rem;
+    padding: 5px 12px;
+    text-align: center;
+    margin-bottom: 14px;
+  }
   .cc-hero__title {
-    font-size: 2.2rem;
+    font-size: 2.1rem;
+    margin-bottom: 14px;
+  }
+  .cc-hero__description {
+    font-size: 0.95rem;
+    margin-bottom: 22px;
+  }
+  .cc-hero__features {
+    gap: 12px;
+    margin-bottom: 24px;
   }
   .cc-hero__actions {
     flex-direction: column;
     width: 100%;
+    gap: 10px;
   }
   .cc-hero__actions button {
     width: 100%;
   }
   .cc-hero__visual {
-    min-height: 320px;
+    width: 100%;
+    max-width: 100%;
+    min-height: 290px;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+  .cc-hero__glow-bg {
+    width: 280px;
+    height: 280px;
   }
   .cc-hero__collage {
-    height: 300px;
+    width: 330px;
+    max-width: calc(100vw - 40px);
+    height: 270px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .cc-hero__board-card--uno {
+    width: 200px;
+    height: 150px;
+    top: 10px;
+    right: 6px;
+  }
+  .cc-hero__board-card--esp {
+    width: 180px;
+    height: 140px;
+    bottom: 10px;
+    left: 6px;
+  }
+  .cc-hero__oled-display {
+    bottom: 25px;
+    right: 25px;
+    width: 95px;
+    height: 65px;
+  }
+  .cc-hero__oled-screen {
+    font-size: 0.6rem;
+  }
+  .cc-hero__annotation--top-right {
+    top: -8px;
+    right: 4px;
+    font-size: 0.72rem;
+  }
+  .cc-hero__annotation--bottom-right {
+    bottom: -2px;
+    right: 4px;
+    font-size: 0.72rem;
   }
 }

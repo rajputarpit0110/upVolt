@@ -665,4 +665,38 @@
   .cc-brand__tagline {
     display: none;
   }
+  .cc-navbar-header {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  .cc-navbar__container {
+    gap: 8px;
+    padding-left: 12px;
+    padding-right: 12px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  .cc-brand {
+    padding: 2px 0;
+  }
+  .cc-brand__logo-img {
+    height: 32px;
+    max-width: 130px;
+  }
+  .cc-nav-actions {
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .cc-action-icon {
+    width: 35px;
+    height: 35px;
+  }
+  .cc-nav-avatar,
+  .cc-avatar-circle {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
 }

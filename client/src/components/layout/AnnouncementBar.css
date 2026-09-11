@@ -88,10 +88,28 @@
 }
 
 @media (max-width: 768px) {
-  .hide-mobile {
+  .announcement-bar {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  .hide-mobile,
+  .announcement-bar__left {
     display: none !important;
   }
   .announcement-bar__container {
     justify-content: center;
+    padding: 0 12px;
+    width: 100%;
+  }
+  .announcement-bar__center {
+    width: 100%;
+    justify-content: center;
+  }
+  .announcement-link {
+    font-size: 0.74rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 }

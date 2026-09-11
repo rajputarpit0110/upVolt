@@ -58,9 +58,118 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
+  .cc-stats-section {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 10px 0;
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+
   .cc-stats-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+    padding: 12px 6px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .cc-stat-card {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 4px;
+    padding: 0 2px;
+  }
+
+  .cc-stat-card:not(:last-child) {
+    border-right: 1px solid var(--border-color);
+  }
+
+  .cc-stat-card:not(:last-child)::after {
+    display: none;
+  }
+
+  .cc-stat-card__icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    margin-bottom: 2px;
+  }
+
+  .cc-stat-card__icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .cc-stat-card__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .cc-stat-card__number {
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  .cc-stat-card__label {
+    font-size: 0.62rem;
+    line-height: 1.25;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-align: center;
+    word-break: break-word;
+    white-space: normal;
+    margin-top: 2px;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .cc-stats-grid {
+    padding: 10px 4px;
+    gap: 2px;
+  }
+
+  .cc-stat-card {
+    padding: 0 2px;
+    gap: 3px;
+  }
+
+  .cc-stat-card__icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+  }
+
+  .cc-stat-card__icon svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .cc-stat-card__number {
+    font-size: 0.92rem;
+  }
+
+  .cc-stat-card__label {
+    font-size: 0.58rem;
+    line-height: 1.2;
   }
 }

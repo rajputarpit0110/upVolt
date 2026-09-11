@@ -516,10 +516,46 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .cc-reels-section {
+    padding: 40px 0 30px;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .cc-reels-container {
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .cc-reels-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .cc-reels-header__controls {
+    display: none;
+  }
+
+  .cc-reels-title {
+    font-size: 1.65rem;
+  }
+
+  .cc-reels-subtitle {
+    font-size: 0.88rem;
+  }
+
+  .cc-reels-carousel {
+    max-width: 100%;
+    padding: 6px 2px 18px;
+    gap: 14px;
+  }
+
   .cc-reel-card {
-    flex: 0 0 250px;
-    width: 250px;
-    height: 440px;
+    flex: 0 0 240px;
+    width: 240px;
+    height: 420px;
   }
 
   .cc-reel-modal__grid {
