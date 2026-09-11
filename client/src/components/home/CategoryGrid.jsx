@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { CATEGORIES } from '../../data/mockProducts';
 import { fetchCategories } from '../../services/categoryService';
+import { getOptimizedImageUrl } from '../../utils/imageHelper';
 import { ArrowRight } from 'lucide-react';
 import './CategoryGrid.css';
 
@@ -43,10 +44,15 @@ export const CategoryGrid = () => {
             >
               <div className="cc-category-card__image-box">
                 <img
-                  src={cat.image || '/images/realistic/arduino_uno.jpg'}
+                  src={getOptimizedImageUrl(cat.image || '/images/realistic/arduino_uno.webp', { width: 320 })}
                   alt={cat.name}
                   className="cc-category-card__img"
                   loading="lazy"
+                  decoding="async"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/images/realistic/arduino_uno.jpg';
+                  }}
                 />
               </div>
               <span className="cc-category-card__name">{cat.name}</span>

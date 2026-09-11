@@ -5,6 +5,7 @@ import { useWishlist } from '../../context/WishlistContext';
 import { Badge } from '../common/Badge';
 import { WhatsAppIcon } from '../common/WhatsAppIcon';
 import { getProductWhatsAppLink } from '../../utils/constants';
+import { getOptimizedImageUrl, getOptimizedSrcSet } from '../../utils/imageHelper';
 import { Star, Heart, ShoppingCart, ArrowRight } from 'lucide-react';
 import './ProductCard.css';
 
@@ -19,6 +20,10 @@ export const ProductCard = ({ product }) => {
   const discountPercent = product.originalPrice && product.originalPrice > product.price
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : null;
+
+  const rawImg = product.image || (product.images && product.images.length > 0 ? product.images[0] : null) || '/logo-circuit.svg';
+  const optimizedImg = getOptimizedImageUrl(rawImg, { width: 400 });
+  const srcSet = getOptimizedSrcSet(rawImg, [300, 500]);
 
   const handleAddToCart = (e) => {
     e.preventDefault();
@@ -57,10 +62,13 @@ export const ProductCard = ({ product }) => {
       <Link to={`/product/${id}`} className="cc-product-card__image-link">
         <div className="cc-product-card__image-box">
           <img
-            src={product.image || (product.images && product.images.length > 0 ? product.images[0] : null) || '/logo-circuit.svg'}
+            src={optimizedImg}
+            srcSet={srcSet}
+            sizes="(max-width: 600px) 240px, 380px"
             alt={product.name}
             className="cc-product-card__img"
             loading="lazy"
+            decoding="async"
             onError={(e) => {
               e.target.onerror = null;
               e.target.src = '/logo-circuit.svg';

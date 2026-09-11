@@ -106,6 +106,24 @@ export const fetchProductById = async (id) => {
 };
 
 /**
+ * Fetch targeted related products for a product detail view
+ * @param {string} id - Product ID or SKU
+ */
+export const fetchRelatedProducts = async (id) => {
+  try {
+    const res = await fetch(`${API_BASE}/${id}/related`);
+    const data = await safeJson(res);
+    if (res.ok && data && data.products) {
+      return data.products;
+    }
+    return [];
+  } catch (error) {
+    console.warn('API fetch related products failed:', error.message);
+    return [];
+  }
+};
+
+/**
  * Create a new product and save it into MongoDB (Protected: Admin only)
  * @param {Object} productData
  * @param {string} [token] - JWT token for Admin authorization

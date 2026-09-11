@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MENTORS } from '../../data/mentorsData';
 import { fetchMentors } from '../../services/mentorService';
 import { WhatsAppIcon, LinkedInIcon } from '../common/SocialIcons';
+import { getOptimizedImageUrl } from '../../utils/imageHelper';
 import { CheckCircle, Sparkles, Crown } from 'lucide-react';
 import './MentorsSection.css';
 
@@ -53,9 +54,11 @@ export const MentorsSection = () => {
               <div className="cc-lead-mentor-img-col">
                 <div className="cc-lead-mentor-img-wrap">
                   <img
-                    src={leadMentor.image || '/images/mentors/arjun_sharma.jpg'}
+                    src={getOptimizedImageUrl(leadMentor.image || '/images/mentors/arjun_sharma.jpg', { width: 360 })}
                     alt={leadMentor.name}
                     className="cc-lead-mentor-img"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="cc-mentor-status-badge">
                     <span className="cc-mentor-status-dot" />

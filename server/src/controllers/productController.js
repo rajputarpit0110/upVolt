@@ -220,6 +220,84 @@ export const getProductById = async (req, res) => {
   }
 };
 
+// GET related products by ID or SKU (Lightweight & Focused)
+export const getRelatedProducts = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const cacheKey = `product:related:${id}`;
+    const cachedResponse = memoryCache.get(cacheKey);
+
+    if (cachedResponse) {
+      if (typeof res.setHeader === 'function') {
+        res.setHeader('X-Cache', 'HIT');
+        res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=120');
+      }
+      return res.status(200).json(cachedResponse);
+    }
+
+    const isConnected = mongoose.connection.readyState === 1;
+    let targetCategory = '';
+    let targetId = null;
+
+    if (isConnected) {
+      const matchCriteria = [];
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        matchCriteria.push({ _id: id });
+      }
+      matchCriteria.push({ sku: id });
+      
+      const current = await Product.findOne({ $or: matchCriteria }).select('category _id').lean();
+      if (current) {
+        targetCategory = current.category;
+        targetId = current._id;
+      }
+    }
+
+    if (!targetCategory) {
+      const fallback = INITIAL_PRODUCTS.find(p => p.sku === id || p._id === id);
+      if (fallback) {
+        targetCategory = fallback.category;
+        targetId = fallback.sku;
+      }
+    }
+
+    let related = [];
+    if (isConnected && targetCategory) {
+      related = await Product.find({
+        category: targetCategory,
+        _id: { $ne: targetId }
+      })
+        .select('_id name category price originalPrice rating reviewsCount badge inStock sku image images tags')
+        .limit(4)
+        .lean();
+    }
+
+    if (related.length === 0) {
+      related = INITIAL_PRODUCTS
+        .filter(p => p.category === targetCategory && p.sku !== id)
+        .slice(0, 4);
+    }
+
+    const responsePayload = {
+      success: true,
+      count: related.length,
+      products: related
+    };
+
+    memoryCache.set(cacheKey, responsePayload, 60000);
+
+    if (typeof res.setHeader === 'function') {
+      res.setHeader('X-Cache', 'MISS');
+      res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=120');
+    }
+
+    return res.status(200).json(responsePayload);
+  } catch (error) {
+    console.error('Error fetching related products:', error);
+    res.status(500).json({ success: false, message: error.message, products: [] });
+  }
+};
+
 // POST create a new product (Protected: Admin or Master Admin)
 export const createProduct = async (req, res) => {
   try {

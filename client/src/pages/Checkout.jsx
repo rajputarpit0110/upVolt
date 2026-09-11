@@ -81,6 +81,15 @@ export const Checkout = () => {
       .catch((err) => console.warn('Failed to load delivery settings:', err));
   }, []);
 
+  // Pre-load Razorpay SDK script on-demand when user is on Checkout page
+  useEffect(() => {
+    if (paymentMethod === 'online') {
+      loadRazorpayScript().catch((err) => {
+        console.debug('Preloading Razorpay script notice:', err);
+      });
+    }
+  }, [paymentMethod]);
+
   const isNormalFree = cartSubtotal >= (deliverySettings.freeDeliveryThreshold ?? 499);
   const normalFee = isNormalFree ? 0 : Number(deliverySettings.normalDeliveryFee ?? 40);
   const fastFee = Number(deliverySettings.fastDeliveryFee ?? 99);

@@ -39,18 +39,33 @@ import { GoToHomeBtn } from './components/layout/GoToHomeBtn';
 import { WhatsAppFloatingBtn } from './components/layout/WhatsAppFloatingBtn';
 
 import { Home } from './pages/Home';
-import { Shop } from './pages/Shop';
-import { Categories } from './pages/Categories';
-import { ProductDetail } from './pages/ProductDetail';
-import { Cart } from './pages/Cart';
-import { Checkout } from './pages/Checkout';
-import { Wishlist } from './pages/Wishlist';
-import { Orders } from './pages/Orders';
-import { About } from './pages/About';
-import { Contact } from './pages/Contact';
-import { Auth } from './pages/Auth';
-import { Profile } from './pages/Profile';
-import { AdminDashboard } from './pages/AdminDashboard';
+
+// Route-level Code Splitting for Non-Initial Pages
+const Shop = React.lazy(() => import('./pages/Shop').then(m => ({ default: m.Shop })));
+const Categories = React.lazy(() => import('./pages/Categories').then(m => ({ default: m.Categories })));
+const ProductDetail = React.lazy(() => import('./pages/ProductDetail').then(m => ({ default: m.ProductDetail })));
+const Cart = React.lazy(() => import('./pages/Cart').then(m => ({ default: m.Cart })));
+const Checkout = React.lazy(() => import('./pages/Checkout').then(m => ({ default: m.Checkout })));
+const Wishlist = React.lazy(() => import('./pages/Wishlist').then(m => ({ default: m.Wishlist })));
+const Orders = React.lazy(() => import('./pages/Orders').then(m => ({ default: m.Orders })));
+const About = React.lazy(() => import('./pages/About').then(m => ({ default: m.About })));
+const Contact = React.lazy(() => import('./pages/Contact').then(m => ({ default: m.Contact })));
+const Auth = React.lazy(() => import('./pages/Auth').then(m => ({ default: m.Auth })));
+const Profile = React.lazy(() => import('./pages/Profile').then(m => ({ default: m.Profile })));
+const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
+
+const RouteLoadingFallback = () => (
+  <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{
+      width: 36,
+      height: 36,
+      borderRadius: '50%',
+      border: '3px solid rgba(0, 163, 255, 0.2)',
+      borderTopColor: 'var(--accent-primary, #00a3ff)',
+      animation: 'spin 0.8s linear infinite'
+    }} />
+  </div>
+);
 
 export function App() {
   return (
@@ -66,23 +81,25 @@ export function App() {
                 <AnnouncementBar />
                 <Navbar />
                 <main className="cc-main-content">
-                  <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/shop" element={<Shop />} />
-                    <Route path="/categories" element={<Categories />} />
-                    <Route path="/product/:id" element={<ProductDetail />} />
-                    <Route path="/cart" element={<Cart />} />
-                    <Route path="/checkout" element={<Checkout />} />
-                    <Route path="/wishlist" element={<Wishlist />} />
-                    <Route path="/orders" element={<Orders />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path="/login" element={<Auth />} />
-                    <Route path="/register" element={<Auth />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/admin" element={<AdminDashboard />} />
-                    <Route path="*" element={<Home />} />
-                  </Routes>
+                  <React.Suspense fallback={<RouteLoadingFallback />}>
+                    <Routes>
+                      <Route path="/" element={<Home />} />
+                      <Route path="/shop" element={<Shop />} />
+                      <Route path="/categories" element={<Categories />} />
+                      <Route path="/product/:id" element={<ProductDetail />} />
+                      <Route path="/cart" element={<Cart />} />
+                      <Route path="/checkout" element={<Checkout />} />
+                      <Route path="/wishlist" element={<Wishlist />} />
+                      <Route path="/orders" element={<Orders />} />
+                      <Route path="/about" element={<About />} />
+                      <Route path="/contact" element={<Contact />} />
+                      <Route path="/login" element={<Auth />} />
+                      <Route path="/register" element={<Auth />} />
+                      <Route path="/profile" element={<Profile />} />
+                      <Route path="/admin" element={<AdminDashboard />} />
+                      <Route path="*" element={<Home />} />
+                    </Routes>
+                  </React.Suspense>
                 </main>
                 <GoToHomeBtn />
                 <Footer />

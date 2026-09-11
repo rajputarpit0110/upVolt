@@ -106,20 +106,33 @@ export const Hero = () => {
 
             {/* Hardware Cards Collage */}
             <div className="cc-hero__board-card cc-hero__board-card--uno">
-              <img
-                src="/images/realistic/arduino_uno.jpg"
-                alt="Arduino Uno Board"
-                className="cc-hero__board-img"
-              />
+              <picture>
+                <source srcSet="/images/realistic/arduino_uno.webp" type="image/webp" />
+                <img
+                  src="/images/realistic/arduino_uno.jpg"
+                  alt="Arduino Uno Board"
+                  className="cc-hero__board-img"
+                  width="160"
+                  height="140"
+                  fetchPriority="high"
+                  decoding="async"
+                />
+              </picture>
               <div className="cc-hero__chip-tag">Arduino Uno R3</div>
             </div>
 
             <div className="cc-hero__board-card cc-hero__board-card--esp">
-              <img
-                src="/images/realistic/esp32.jpg"
-                alt="ESP32 Wireless MCU"
-                className="cc-hero__board-img"
-              />
+              <picture>
+                <source srcSet="/images/realistic/esp32.webp" type="image/webp" />
+                <img
+                  src="/images/realistic/esp32.jpg"
+                  alt="ESP32 Wireless MCU"
+                  className="cc-hero__board-img"
+                  width="160"
+                  height="140"
+                  decoding="async"
+                />
+              </picture>
               <div className="cc-hero__chip-tag">ESP32 Dual Core</div>
             </div>
 

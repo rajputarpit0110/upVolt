@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import {
   getProducts,
   getProductById,
+  getRelatedProducts,
   createProduct,
   updateProduct,  
   deleteProduct,
@@ -13,6 +14,7 @@ import { adaptHandler } from '../utils/honoAdapter.js';
 const router = new Hono();
 
 router.get('/', adaptHandler(getProducts));
+router.get('/:id/related', adaptHandler(getRelatedProducts));
 router.get('/:id', adaptHandler(getProductById));
 
 // Protected routes: Only Admin and Master Admin can add, edit, or delete products

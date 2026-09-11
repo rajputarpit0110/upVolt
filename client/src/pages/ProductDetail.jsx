@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { PRODUCTS } from '../data/mockProducts';
-import { fetchProductById, fetchProducts } from '../services/productService';
+import { fetchProductById, fetchRelatedProducts } from '../services/productService';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { Badge } from '../components/common/Badge';
@@ -259,8 +259,8 @@ export const ProductDetail = () => {
       })
       .finally(() => setLoading(false));
 
-    // Fetch all products for dynamic related products
-    fetchProducts().then(({ products: liveItems }) => {
+    // Fetch targeted related products from category
+    fetchRelatedProducts(id).then((liveItems) => {
       if (liveItems && liveItems.length > 0) {
         setAllProducts(liveItems);
       }
@@ -290,9 +290,7 @@ export const ProductDetail = () => {
 
   const isWishlisted = isInWishlist(product._id || product.id);
   const primaryImage = product.image || (product.images && product.images.length > 0 ? product.images[0] : '/logo-circuit.svg');
-  const relatedProducts = allProducts.filter(
-    p => p.category === product.category && (p._id !== product._id && p.id !== product.id)
-  ).slice(0, 4);
+  const relatedProducts = allProducts.slice(0, 4);
 
   const discountPercent = product.originalPrice && product.originalPrice > product.price
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
