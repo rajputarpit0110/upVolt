@@ -11,6 +11,7 @@
     "migrate:images": "node scripts/migrateImagesToCloudinary.js"
   },
   "dependencies": {
+    "@getbrevo/brevo": "^6.0.3",
     "@hono/node-server": "^2.1.1",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.11.0",

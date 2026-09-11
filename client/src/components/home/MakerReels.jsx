@@ -17,17 +17,28 @@ import './MakerReels.css';
 
 export const MakerReels = () => {
   const [reels, setReels] = useState(DEFAULT_REELS);
-  const [activePlayingId, setActivePlayingId] = useState(null);
+  const [pausedMap, setPausedMap] = useState({});
   const [activeModalReel, setActiveModalReel] = useState(null);
 
   const getPosterUrl = (reel) => {
     if (reel.posterUrl) return reel.posterUrl;
     if (reel.videoUrl && reel.videoUrl.includes('res.cloudinary.com')) {
       return reel.videoUrl
-        .replace('/video/upload/', '/video/upload/so_0,f_auto,q_auto:good,w_600/')
-        .replace(/\.mp4$/, '.jpg');
+        .replace(/\/video\/upload\/(?:[^/]+\/)?/, '/video/upload/so_0,f_auto,q_auto,w_400/')
+        .replace(/\.[^.]+$/, '.jpg');
     }
     return '/images/realistic/arduino_uno.jpg';
+  };
+
+  const getOptimizedVideoUrl = (videoUrl) => {
+    if (!videoUrl) return '';
+    if (videoUrl.includes('res.cloudinary.com') && !videoUrl.includes('q_auto')) {
+      return videoUrl.replace(
+        '/video/upload/',
+        '/video/upload/c_limit,w_360,q_auto:eco,vc_h264,br_350k/'
+      );
+    }
+    return videoUrl;
   };
 
   useEffect(() => {
@@ -45,12 +56,42 @@ export const MakerReels = () => {
   const videoRefs = useRef({});
   const carouselRef = useRef(null);
 
+  // IntersectionObserver to only autoplay videos that are currently visible on screen
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const video = entry.target.querySelector('video');
+          const reelId = entry.target.getAttribute('data-reel-id');
+          if (!video) return;
+
+          if (entry.isIntersecting && !pausedMap[reelId]) {
+            video.play().catch(() => {});
+          } else {
+            video.pause();
+          }
+        });
+      },
+      { threshold: 0.25 }
+    );
+
+    const cards = document.querySelectorAll('.cc-reel-card');
+    cards.forEach((card) => observer.observe(card));
+
+    return () => observer.disconnect();
+  }, [reels, pausedMap]);
+
   const togglePlay = (id, e) => {
     e.stopPropagation();
-    if (activePlayingId === id) {
-      setActivePlayingId(null);
+    const video = videoRefs.current[id];
+    if (!video) return;
+
+    if (video.paused) {
+      video.play().catch(() => {});
+      setPausedMap((prev) => ({ ...prev, [id]: false }));
     } else {
-      setActivePlayingId(id);
+      video.pause();
+      setPausedMap((prev) => ({ ...prev, [id]: true }));
     }
   };
 
@@ -117,36 +158,31 @@ export const MakerReels = () => {
         <div className="cc-reels-carousel" ref={carouselRef}>
           {reels.map((reel) => {
             const reelId = reel.id || reel._id;
-            const isPlaying = activePlayingId === reelId;
+            const isManuallyPaused = pausedMap[reelId];
             const posterUrl = getPosterUrl(reel);
+            const optimizedUrl = getOptimizedVideoUrl(reel.videoUrl);
 
             return (
               <div
                 key={reelId}
+                data-reel-id={reelId}
                 className="cc-reel-card"
                 onClick={() => setActiveModalReel(reel)}
                 title="Click to view full build details"
               >
                 {/* Video / Poster Wrap */}
                 <div className="cc-reel-card__video-wrap">
-                  {isPlaying ? (
-                    <video
-                      ref={(el) => (videoRefs.current[reelId] = el)}
-                      src={reel.videoUrl}
-                      className="cc-reel-card__video"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                    />
-                  ) : (
-                    <img
-                      src={posterUrl}
-                      alt={reel.title}
-                      className="cc-reel-card__poster"
-                      loading="lazy"
-                    />
-                  )}
+                  <video
+                    ref={(el) => (videoRefs.current[reelId] = el)}
+                    src={optimizedUrl}
+                    poster={posterUrl}
+                    className="cc-reel-card__video"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    preload="metadata"
+                  />
 
                   {/* Dark gradient overlay for typography readability */}
                   <div className="cc-reel-card__overlay-top" />
@@ -168,14 +204,14 @@ export const MakerReels = () => {
                     </button>
                   </div>
 
-                  {/* Center Play/Pause Overlay Indicator on Hover */}
+                  {/* Center Play/Pause Overlay Indicator on Hover or when manually paused */}
                   <button
                     type="button"
-                    className={`cc-reel-play-btn ${!isPlaying ? 'cc-reel-play-btn--paused' : ''}`}
+                    className={`cc-reel-play-btn ${isManuallyPaused ? 'cc-reel-play-btn--paused' : ''}`}
                     onClick={(e) => togglePlay(reelId, e)}
-                    aria-label={isPlaying ? "Pause video" : "Play video"}
+                    aria-label={isManuallyPaused ? "Play video" : "Pause video"}
                   >
-                    {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+                    {isManuallyPaused ? <Play size={20} /> : <Pause size={20} />}
                   </button>
 
                   {/* Bottom Content Area */}

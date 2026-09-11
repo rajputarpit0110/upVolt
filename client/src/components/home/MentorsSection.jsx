@@ -133,7 +133,7 @@ export const MentorsSection = () => {
               </div>
             </div>
 
-            <div className="cc-general-mentors-grid">
+            <div className={`cc-general-mentors-grid cc-general-mentors-grid--count-${generalMentors.length}`}>
               {generalMentors.map((mentor) => (
                 <div key={mentor._id || mentor.id} className="cc-general-mentor-card glass-panel">
                   <div className="cc-general-mentor-body">
