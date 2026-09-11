@@ -57,7 +57,7 @@ export const GuidanceBanner = () => {
 
             {/* WhatsApp Consultation & Community Buttons */}
             <div className="cc-guidance-action-group">
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
+              <div className="cc-guidance-btns-wrap">
                 <a
                   href={getWhatsAppLink('Hi UPVOLT! I need guidance from a project expert regarding my college project idea.')}
                   target="_blank"
