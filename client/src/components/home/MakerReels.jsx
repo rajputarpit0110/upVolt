@@ -17,8 +17,18 @@ import './MakerReels.css';
 
 export const MakerReels = () => {
   const [reels, setReels] = useState(DEFAULT_REELS);
-  const [playingState, setPlayingState] = useState({});
+  const [activePlayingId, setActivePlayingId] = useState(null);
   const [activeModalReel, setActiveModalReel] = useState(null);
+
+  const getPosterUrl = (reel) => {
+    if (reel.posterUrl) return reel.posterUrl;
+    if (reel.videoUrl && reel.videoUrl.includes('res.cloudinary.com')) {
+      return reel.videoUrl
+        .replace('/video/upload/', '/video/upload/so_0,f_auto,q_auto:good,w_600/')
+        .replace(/\.mp4$/, '.jpg');
+    }
+    return '/images/realistic/arduino_uno.jpg';
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -37,15 +47,10 @@ export const MakerReels = () => {
 
   const togglePlay = (id, e) => {
     e.stopPropagation();
-    const vid = videoRefs.current[id];
-    if (!vid) return;
-
-    if (vid.paused) {
-      vid.play();
-      setPlayingState(prev => ({ ...prev, [id]: true }));
+    if (activePlayingId === id) {
+      setActivePlayingId(null);
     } else {
-      vid.pause();
-      setPlayingState(prev => ({ ...prev, [id]: false }));
+      setActivePlayingId(id);
     }
   };
 
@@ -112,7 +117,8 @@ export const MakerReels = () => {
         <div className="cc-reels-carousel" ref={carouselRef}>
           {reels.map((reel) => {
             const reelId = reel.id || reel._id;
-            const isPlaying = playingState[reelId] !== false;
+            const isPlaying = activePlayingId === reelId;
+            const posterUrl = getPosterUrl(reel);
 
             return (
               <div
@@ -121,18 +127,26 @@ export const MakerReels = () => {
                 onClick={() => setActiveModalReel(reel)}
                 title="Click to view full build details"
               >
-                {/* Looping Video */}
+                {/* Video / Poster Wrap */}
                 <div className="cc-reel-card__video-wrap">
-                  <video
-                    ref={(el) => (videoRefs.current[reelId] = el)}
-                    src={reel.videoUrl}
-                    className="cc-reel-card__video"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    preload="metadata"
-                  />
+                  {isPlaying ? (
+                    <video
+                      ref={(el) => (videoRefs.current[reelId] = el)}
+                      src={reel.videoUrl}
+                      className="cc-reel-card__video"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                    />
+                  ) : (
+                    <img
+                      src={posterUrl}
+                      alt={reel.title}
+                      className="cc-reel-card__poster"
+                      loading="lazy"
+                    />
+                  )}
 
                   {/* Dark gradient overlay for typography readability */}
                   <div className="cc-reel-card__overlay-top" />
@@ -219,6 +233,7 @@ export const MakerReels = () => {
               <div className="cc-reel-modal__player-wrap">
                 <video
                   src={activeModalReel.videoUrl}
+                  poster={getPosterUrl(activeModalReel)}
                   className="cc-reel-modal__video"
                   autoPlay
                   loop

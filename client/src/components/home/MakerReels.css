@@ -166,7 +166,8 @@
   position: relative;
 }
 
-.cc-reel-card__video {
+.cc-reel-card__video,
+.cc-reel-card__poster {
   width: 100%;
   height: 100%;
   object-fit: cover;

@@ -63,13 +63,49 @@ export const pingAnalytics = async (customPage) => {
 };
 
 export const initAnalyticsHeartbeat = () => {
-  // Ping immediately
-  pingAnalytics();
-
-  // Ping every 25 seconds to keep active status fresh
-  const intervalId = setInterval(() => {
+  // Only ping immediately if the tab is currently visible
+  if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
     pingAnalytics();
-  }, 25000);
+  }
 
-  return () => clearInterval(intervalId);
+  let intervalId = null;
+
+  const startHeartbeat = () => {
+    if (!intervalId) {
+      // 60-second throttled interval (preserves active user tracking without network spam)
+      intervalId = setInterval(() => {
+        if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+          pingAnalytics();
+        }
+      }, 60000);
+    }
+  };
+
+  const stopHeartbeat = () => {
+    if (intervalId) {
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+  };
+
+  const handleVisibilityChange = () => {
+    if (document.visibilityState === 'visible') {
+      pingAnalytics(); // Instant refresh upon returning to tab
+      startHeartbeat();
+    } else {
+      stopHeartbeat(); // Zero background pings while tab is inactive
+    }
+  };
+
+  if (typeof document !== 'undefined') {
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    startHeartbeat();
+  }
+
+  return () => {
+    stopHeartbeat();
+    if (typeof document !== 'undefined') {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    }
+  };
 };

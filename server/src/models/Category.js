@@ -44,4 +44,12 @@ const categorySchema = new mongoose.Schema({
 categorySchema.index({ order: 1, name: 1 });
 categorySchema.index({ isActive: 1 });
 
+// Guard: Disallow storing raw Base64 images in MongoDB
+categorySchema.pre('save', function (next) {
+  if (this.image && typeof this.image === 'string' && this.image.startsWith('data:image')) {
+    return next(new Error('Raw Base64 images cannot be saved directly to MongoDB. Upload to Cloudinary first.'));
+  }
+  next();
+});
+
 export const Category = mongoose.model('Category', categorySchema);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { fetchProducts, deleteProduct } from '../services/productService';
+import { fetchProducts, fetchProductById, deleteProduct } from '../services/productService';
 import { fetchCategories, deleteCategory } from '../services/categoryService';
 import { fetchAllOrders, updateOrderStatus, deleteOrder } from '../services/orderService';
 import { fetchAuditLogs, fetchAdminStats, resetPassword, fetchLiveAnalytics, resetLiveAnalytics } from '../services/adminService';
@@ -454,11 +454,44 @@ export const AdminDashboard = () => {
       loadAuditLogs();
       loadLiveAnalytics();
 
-      const liveInterval = setInterval(() => {
-        loadLiveAnalytics();
-      }, 10000);
+      let liveInterval = null;
+      const startLivePolling = () => {
+        if (!liveInterval) {
+          liveInterval = setInterval(() => {
+            if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+              loadLiveAnalytics();
+            }
+          }, 30000); // 30s throttled live analytics
+        }
+      };
 
-      return () => clearInterval(liveInterval);
+      const stopLivePolling = () => {
+        if (liveInterval) {
+          clearInterval(liveInterval);
+          liveInterval = null;
+        }
+      };
+
+      const handleVisibility = () => {
+        if (document.visibilityState === 'visible') {
+          loadLiveAnalytics();
+          startLivePolling();
+        } else {
+          stopLivePolling();
+        }
+      };
+
+      if (typeof document !== 'undefined') {
+        document.addEventListener('visibilitychange', handleVisibility);
+        startLivePolling();
+      }
+
+      return () => {
+        stopLivePolling();
+        if (typeof document !== 'undefined') {
+          document.removeEventListener('visibilitychange', handleVisibility);
+        }
+      };
     }
   }, [isAdmin]);
 
@@ -488,6 +521,19 @@ export const AdminDashboard = () => {
       loadStatsSettings();
     }
   }, [orderStatusFilter, activeTab]);
+
+  const handleOpenEditProduct = async (product) => {
+    setProductToEdit(product);
+    setIsEditProductModalOpen(true);
+    try {
+      const full = await fetchProductById(product._id || product.sku);
+      if (full) {
+        setProductToEdit(full);
+      }
+    } catch (err) {
+      console.debug('Failed to fetch full product details for edit:', err);
+    }
+  };
 
   const handleDeleteProduct = (product) => {
     setProductToDelete(product);
@@ -1240,7 +1286,7 @@ export const AdminDashboard = () => {
                             <button
                               type="button"
                               className="cc-action-sm-btn"
-                              onClick={() => { setProductToEdit(p); setIsEditProductModalOpen(true); }}
+                              onClick={() => handleOpenEditProduct(p)}
                               title="Edit component"
                               style={{ color: 'var(--text-primary)' }}
                             >

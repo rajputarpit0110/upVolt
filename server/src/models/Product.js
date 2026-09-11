@@ -57,4 +57,19 @@ productSchema.index({ category: 1, rating: -1 });
 productSchema.index({ createdAt: -1 });
 productSchema.index({ badge: 1 });
 
+// Guard: Disallow storing raw Base64 images in MongoDB to preserve bandwidth & DB limits
+productSchema.pre('save', function (next) {
+  if (this.image && typeof this.image === 'string' && this.image.startsWith('data:image')) {
+    return next(new Error('Raw Base64 images cannot be saved directly to MongoDB. Upload to Cloudinary first.'));
+  }
+  if (Array.isArray(this.images)) {
+    for (const img of this.images) {
+      if (typeof img === 'string' && img.startsWith('data:image')) {
+        return next(new Error('Raw Base64 images cannot be saved in product gallery. Upload to Cloudinary first.'));
+      }
+    }
+  }
+  next();
+});
+
 export const Product = mongoose.model('Product', productSchema);

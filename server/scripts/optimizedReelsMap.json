@@ -1,0 +1,47 @@
+[
+  {
+    "file": "reel_soldering.mp4",
+    "title": "Soldering Build",
+    "originalKB": 909,
+    "optimizedKB": 296.4,
+    "reduction": "67.4%",
+    "videoUrl": "https://res.cloudinary.com/uzyiejkw/video/upload/c_limit,q_auto:good,vc_h264,w_720/v1789134495/upvolt/reels/reel_soldering_720p.mp4",
+    "posterUrl": "https://res.cloudinary.com/uzyiejkw/video/upload/so_0,f_auto,q_auto:good,w_600/v1789134495/upvolt/reels/reel_soldering_720p.jpg"
+  },
+  {
+    "file": "reel_robot.mp4",
+    "title": "4WD Robot Car",
+    "originalKB": 1157.9,
+    "optimizedKB": 963.5,
+    "reduction": "16.8%",
+    "videoUrl": "https://res.cloudinary.com/uzyiejkw/video/upload/c_limit,q_auto:good,vc_h264,w_720/v1789134540/upvolt/reels/reel_robot_720p.mp4",
+    "posterUrl": "https://res.cloudinary.com/uzyiejkw/video/upload/so_0,f_auto,q_auto:good,w_600/v1789134540/upvolt/reels/reel_robot_720p.jpg"
+  },
+  {
+    "file": "reel_pcb.mp4",
+    "title": "IoT Sensor Node",
+    "originalKB": 2520.4,
+    "optimizedKB": 1738.9,
+    "reduction": "31.0%",
+    "videoUrl": "https://res.cloudinary.com/uzyiejkw/video/upload/c_limit,q_auto:good,vc_h264,w_720/v1789134543/upvolt/reels/reel_pcb_720p.mp4",
+    "posterUrl": "https://res.cloudinary.com/uzyiejkw/video/upload/so_0,f_auto,q_auto:good,w_600/v1789134543/upvolt/reels/reel_pcb_720p.jpg"
+  },
+  {
+    "file": "reel_assembly.mp4",
+    "title": "Microcontroller Pinout",
+    "originalKB": 1452.9,
+    "optimizedKB": 1453.3,
+    "reduction": "-0.0%",
+    "videoUrl": "https://res.cloudinary.com/uzyiejkw/video/upload/c_limit,q_auto:good,vc_h264,w_720/v1789134552/upvolt/reels/reel_assembly_720p.mp4",
+    "posterUrl": "https://res.cloudinary.com/uzyiejkw/video/upload/so_0,f_auto,q_auto:good,w_600/v1789134552/upvolt/reels/reel_assembly_720p.jpg"
+  },
+  {
+    "file": "reel_testing.mp4",
+    "title": "Multimeter Testing",
+    "originalKB": 3357,
+    "optimizedKB": 2103.6,
+    "reduction": "37.3%",
+    "videoUrl": "https://res.cloudinary.com/uzyiejkw/video/upload/c_limit,q_auto:good,vc_h264,w_720/v1789134558/upvolt/reels/reel_testing_720p.mp4",
+    "posterUrl": "https://res.cloudinary.com/uzyiejkw/video/upload/so_0,f_auto,q_auto:good,w_600/v1789134558/upvolt/reels/reel_testing_720p.jpg"
+  }
+]

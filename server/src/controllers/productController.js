@@ -9,10 +9,14 @@ import { uploadImageToCloudinary } from '../config/cloudinary.js';
 // GET all products with filtering & sorting (Optimized for 10,000+ concurrent users)
 export const getProducts = async (req, res) => {
   try {
-    const { category, search, sort, badge } = req.query;
+    const { category, search, sort, badge, page, limit, full } = req.query;
+
+    const pageNum = Math.max(1, parseInt(page) || 1);
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit) || 50));
+    const isFull = full === 'true';
 
     // 1. High-speed In-Memory Cache Lookup (Sub-millisecond response for concurrent traffic)
-    const cacheKey = `products:${category || 'all'}:${search || ''}:${sort || 'default'}:${badge || ''}`;
+    const cacheKey = `products:${category || 'all'}:${search || ''}:${sort || 'default'}:${badge || ''}:${pageNum}:${limitNum}:${isFull}`;
     const cachedResponse = memoryCache.get(cacheKey);
 
     if (cachedResponse) {
@@ -47,7 +51,15 @@ export const getProducts = async (req, res) => {
         ];
       }
 
+      const totalCount = await Product.countDocuments(query);
+
       let queryExec = Product.find(query);
+
+      // Exclude heavy guide/documentation fields from listing to minimize network transfer
+      // unless caller explicitly requests full document (e.g., admin or detailed inspector)
+      if (!isFull) {
+        queryExec = queryExec.select('-howToUse -safetyPrecautions -whereToUse -specifications');
+      }
 
       // Sorting
       if (sort === 'price-low') {
@@ -60,11 +72,14 @@ export const getProducts = async (req, res) => {
         queryExec = queryExec.sort({ createdAt: -1 });
       }
 
-      // Use .lean() for 10x faster execution and 80% less memory usage
+      // Pagination & lean execution
+      const skipNum = (pageNum - 1) * limitNum;
+      queryExec = queryExec.skip(skipNum).limit(limitNum);
+
       let products = await queryExec.lean();
 
       // If database collection is totally empty, auto-seed with initial products
-      if (products.length === 0 && !category && !search) {
+      if (products.length === 0 && !category && !search && pageNum === 1) {
         console.log('Database empty, auto-seeding initial products...');
         products = await Product.insertMany(INITIAL_PRODUCTS);
         products = products.map(p => (p.toObject ? p.toObject() : p));
@@ -73,6 +88,9 @@ export const getProducts = async (req, res) => {
       const responsePayload = {
         success: true,
         count: products.length,
+        total: totalCount || products.length,
+        page: pageNum,
+        totalPages: Math.ceil((totalCount || products.length) / limitNum),
         source: 'database',
         products
       };

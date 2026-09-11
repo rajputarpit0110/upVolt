@@ -6,7 +6,7 @@ import { User } from '../models/User.js';
 // GET /api/admin/audit-logs (Restricted to Master Admin)
 export const getAuditLogs = async (req, res) => {
   try {
-    const { action, adminEmail, limit = 100 } = req.query;
+    const { action, adminEmail, page = 1, limit = 100 } = req.query;
     const query = {};
 
     if (action) {
@@ -17,13 +17,23 @@ export const getAuditLogs = async (req, res) => {
       query.adminEmail = adminEmail.toLowerCase().trim();
     }
 
+    const pageNum = Math.max(1, parseInt(page) || 1);
+    const limitNum = Math.min(200, Math.max(1, parseInt(limit) || 100));
+    const skipNum = (pageNum - 1) * limitNum;
+
+    const totalCount = await AuditLog.countDocuments(query);
     const logs = await AuditLog.find(query)
       .sort({ createdAt: -1 })
-      .limit(Number(limit));
+      .skip(skipNum)
+      .limit(limitNum)
+      .lean();
 
     res.status(200).json({
       success: true,
       count: logs.length,
+      total: totalCount,
+      page: pageNum,
+      totalPages: Math.ceil(totalCount / limitNum),
       logs
     });
   } catch (error) {

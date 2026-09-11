@@ -3,34 +3,88 @@ import { API_BASE_URL, safeJson } from '../config/api';
 
 const API_BASE = `${API_BASE_URL}/api/products`;
 
+// In-flight request deduplication & memory cache
+let inFlightProductsPromise = null;
+let cachedProductsData = null;
+let lastFetchTime = 0;
+const CLIENT_CACHE_TTL_MS = 30000; // 30s cache for catalog listing
+
+export const clearProductCache = () => {
+  cachedProductsData = null;
+  lastFetchTime = 0;
+  inFlightProductsPromise = null;
+};
+
 /**
  * Fetch all products from the backend database (with fallback to mock data)
- * @param {Object} [params] - Query parameters (category, search, sort, badge)
+ * @param {Object} [params] - Query parameters (category, search, sort, badge, page, limit)
  */
 export const fetchProducts = async (params = {}) => {
-  try {
-    const query = new URLSearchParams();
-    if (params.category && params.category !== 'All') query.append('category', params.category);
-    if (params.search) query.append('search', params.search);
-    if (params.sort) query.append('sort', params.sort);
-    if (params.badge) query.append('badge', params.badge);
+  const hasFilterParams = params && Object.keys(params).some(
+    k => params[k] !== undefined && params[k] !== '' && params[k] !== 'All'
+  );
 
-    const queryString = query.toString() ? `?${query.toString()}` : '';
-    const res = await fetch(`${API_BASE}${queryString}`);
-
-    const data = await safeJson(res);
-    if (res.ok && data && data.products && data.products.length > 0) {
-      return {
-        products: data.products,
-        count: data.count || data.products.length,
-        source: data.source || 'database'
-      };
+  // If fetching default list with no filters, serve from short memory cache
+  if (!hasFilterParams) {
+    const now = Date.now();
+    if (cachedProductsData && (now - lastFetchTime < CLIENT_CACHE_TTL_MS)) {
+      return cachedProductsData;
     }
-    return { products: PRODUCTS, count: PRODUCTS.length, source: 'fallback' };
-  } catch (error) {
-    console.warn('API fetch failed, using local mock data:', error.message);
-    return { products: PRODUCTS, count: PRODUCTS.length, source: 'fallback' };
+    // Re-use currently pending in-flight promise to eliminate duplicate simultaneous calls
+    if (inFlightProductsPromise) {
+      return inFlightProductsPromise;
+    }
   }
+
+  const executeFetch = async () => {
+    try {
+      const query = new URLSearchParams();
+      if (params.category && params.category !== 'All') query.append('category', params.category);
+      if (params.search) query.append('search', params.search);
+      if (params.sort) query.append('sort', params.sort);
+      if (params.badge) query.append('badge', params.badge);
+      if (params.page) query.append('page', params.page);
+      if (params.limit) query.append('limit', params.limit);
+      if (params.full) query.append('full', params.full);
+
+      const queryString = query.toString() ? `?${query.toString()}` : '';
+      const res = await fetch(`${API_BASE}${queryString}`);
+
+      const data = await safeJson(res);
+      if (res.ok && data && data.products && data.products.length > 0) {
+        const payload = {
+          products: data.products,
+          count: data.count || data.products.length,
+          total: data.total || data.count || data.products.length,
+          page: data.page || 1,
+          totalPages: data.totalPages || 1,
+          source: data.source || 'database'
+        };
+
+        if (!hasFilterParams) {
+          cachedProductsData = payload;
+          lastFetchTime = Date.now();
+        }
+
+        return payload;
+      }
+      return { products: PRODUCTS, count: PRODUCTS.length, source: 'fallback' };
+    } catch (error) {
+      console.warn('API fetch failed, using local mock data:', error.message);
+      return { products: PRODUCTS, count: PRODUCTS.length, source: 'fallback' };
+    } finally {
+      if (!hasFilterParams) {
+        inFlightProductsPromise = null;
+      }
+    }
+  };
+
+  if (!hasFilterParams) {
+    inFlightProductsPromise = executeFetch();
+    return inFlightProductsPromise;
+  }
+
+  return executeFetch();
 };
 
 /**
@@ -74,6 +128,7 @@ export const createProduct = async (productData, token) => {
     throw new Error(data.message || 'Failed to save product to database');
   }
 
+  clearProductCache();
   return data.product;
 };
 
@@ -101,6 +156,7 @@ export const updateProduct = async (id, productData, token) => {
     throw new Error(data.message || 'Failed to update product in database');
   }
   
+  clearProductCache();
   return data.product;
 };
 
@@ -126,6 +182,7 @@ export const deleteProduct = async (id, token) => {
     throw new Error(data.message || 'Failed to delete product');
   }
 
+  clearProductCache();
   return data;
 };
 
@@ -143,5 +200,6 @@ export const syncProductsCatalog = async (token) => {
     method: 'POST',
     headers
   });
+  clearProductCache();
   return safeJson(res);
 };

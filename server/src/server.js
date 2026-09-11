@@ -21,10 +21,15 @@ import categoryRoutes from './routes/categoryRoutes.js';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { initKeepAlive } from './utils/keepAlive.js';
 
+import { compress } from 'hono/compress';
+
 const app = new Hono();
 const PORT = Number(process.env.PORT) || 5001;
 
-// Normalize trailing slashes if present (e.g., /api/products/ -> /api/products)
+// 1. Response Compression Middleware (Gzip/Deflate for JSON, text, HTML, JS, CSS)
+app.use('*', compress());
+
+// 2. Normalize trailing slashes if present (e.g., /api/products/ -> /api/products)
 app.use('*', async (c, next) => {
   const url = new URL(c.req.url);
   if (url.pathname.length > 1 && url.pathname.endsWith('/')) {
@@ -35,14 +40,47 @@ app.use('*', async (c, next) => {
   await next();
 });
 
-// CORS middleware
+// 3. CORS middleware
 app.use('*', cors({
   origin: (origin) => origin || '*',
   credentials: true
 }));
 
-// Logger middleware
+// 4. Logger middleware
 app.use('*', logger());
+
+// 5. Cache-Control Header Management (Separating Public vs Private/Auth Data)
+app.use('/api/*', async (c, next) => {
+  await next();
+  const path = c.req.path;
+  const method = c.req.method;
+
+  // Private user, admin, auth, orders, payments, messages or mutation requests: STRICT NO-STORE
+  const isSafeRead = method === 'GET' || method === 'HEAD';
+  if (
+    path.startsWith('/api/auth') ||
+    path.startsWith('/api/orders') ||
+    path.startsWith('/api/admin') ||
+    path.startsWith('/api/payments') ||
+    path.startsWith('/api/messages') ||
+    !isSafeRead
+  ) {
+    c.res.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    c.res.headers.set('Pragma', 'no-cache');
+    c.res.headers.set('Expires', '0');
+  } else if (
+    path.startsWith('/api/products') ||
+    path.startsWith('/api/categories') ||
+    path.startsWith('/api/mentors') ||
+    path.startsWith('/api/reels') ||
+    path.startsWith('/api/settings')
+  ) {
+    // Public read-only catalog/settings data
+    if (!c.res.headers.has('Cache-Control')) {
+      c.res.headers.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=120');
+    }
+  }
+});
 
 // Basic health check endpoints (/health & /api/health)
 const healthHandler = (c) => {
@@ -89,6 +127,10 @@ app.route('/api/settings', settingsRoutes);
 app.route('/api/messages', messageRoutes);
 app.route('/api/upload', uploadRoutes);
 app.route('/api/categories', categoryRoutes);
+app.use('/uploads/*', async (c, next) => {
+  await next();
+  c.res.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+});
 app.use('/uploads/*', serveStatic({ root: './public' }));
 
 // Start server

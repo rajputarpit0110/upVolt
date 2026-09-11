@@ -6,7 +6,8 @@ import { AuditLog } from '../models/AuditLog.js';
 const getInitialReels = () => [
   {
     title: 'Soldering Custom ESP32 Smart Switch PCB',
-    videoUrl: '/videos/reels/reel_soldering.mp4',
+    videoUrl: 'https://res.cloudinary.com/uzyiejkw/video/upload/c_limit,q_auto:good,vc_h264,w_720/v1789134495/upvolt/reels/reel_soldering_720p.mp4',
+    posterUrl: 'https://res.cloudinary.com/uzyiejkw/video/upload/so_0,f_auto,q_auto:good,w_600/v1789134495/upvolt/reels/reel_soldering_720p.jpg',
     components: ['ESP32 NodeMCU', '4-Channel Relay', 'OLED 0.96"'],
     difficulty: 'Intermediate',
     description: 'Precision soldering a compact dual-relay smart IoT switch for college hostel room automated lights and fan control.',
@@ -14,7 +15,8 @@ const getInitialReels = () => [
   },
   {
     title: 'Assembling 4WD Obstacle Avoiding Robot Car',
-    videoUrl: '/videos/reels/reel_robot.mp4',
+    videoUrl: 'https://res.cloudinary.com/uzyiejkw/video/upload/c_limit,q_auto:good,vc_h264,w_720/v1789134540/upvolt/reels/reel_robot_720p.mp4',
+    posterUrl: 'https://res.cloudinary.com/uzyiejkw/video/upload/so_0,f_auto,q_auto:good,w_600/v1789134540/upvolt/reels/reel_robot_720p.jpg',
     components: ['4WD Smart Chassis', 'L298N Driver', 'HC-SR04 Sensor', 'SG90 Servo'],
     difficulty: 'Beginner Friendly',
     description: 'Mounting ultrasonic sensor on a micro servo and wiring TT gear motors to the L298N driver for autonomous lab navigation.',
@@ -22,7 +24,8 @@ const getInitialReels = () => [
   },
   {
     title: 'Testing IoT Sensor Node with Breadboard & PCB',
-    videoUrl: '/videos/reels/reel_pcb.mp4',
+    videoUrl: 'https://res.cloudinary.com/uzyiejkw/video/upload/c_limit,q_auto:good,vc_h264,w_720/v1789134543/upvolt/reels/reel_pcb_720p.mp4',
+    posterUrl: 'https://res.cloudinary.com/uzyiejkw/video/upload/so_0,f_auto,q_auto:good,w_600/v1789134543/upvolt/reels/reel_pcb_720p.jpg',
     components: ['DHT11 Temp Sensor', 'Arduino Uno R3', '830-Pt Breadboard'],
     difficulty: 'Beginner',
     description: 'Live testing serial telemetry output from DHT11 humidity sensor hooked up to an Arduino Uno prototype with jumper wires.',
@@ -30,7 +33,8 @@ const getInitialReels = () => [
   },
   {
     title: 'Microcontroller Pinout Wiring & Header Soldering',
-    videoUrl: '/videos/reels/reel_assembly.mp4',
+    videoUrl: 'https://res.cloudinary.com/uzyiejkw/video/upload/c_limit,q_auto:good,vc_h264,w_720/v1789134552/upvolt/reels/reel_assembly_720p.mp4',
+    posterUrl: 'https://res.cloudinary.com/uzyiejkw/video/upload/so_0,f_auto,q_auto:good,w_600/v1789134552/upvolt/reels/reel_assembly_720p.jpg',
     components: ['STM32 Blue Pill', 'FTDI Programmer', 'Dupont Wires'],
     difficulty: 'Advanced',
     description: 'Hand soldering gold male pin headers onto STM32 Blue Pill ARM Cortex-M3 board for solderless breadboard prototyping.',
@@ -38,7 +42,8 @@ const getInitialReels = () => [
   },
   {
     title: 'Multimeter Voltage Probing on Custom Power Rail',
-    videoUrl: '/videos/reels/reel_testing.mp4',
+    videoUrl: 'https://res.cloudinary.com/uzyiejkw/video/upload/c_limit,q_auto:good,vc_h264,w_720/v1789134558/upvolt/reels/reel_testing_720p.mp4',
+    posterUrl: 'https://res.cloudinary.com/uzyiejkw/video/upload/so_0,f_auto,q_auto:good,w_600/v1789134558/upvolt/reels/reel_testing_720p.jpg',
     components: ['LM2596 Buck Converter', '18650 Battery Shield', 'Digital Multimeter'],
     difficulty: 'Intermediate',
     description: 'Calibrating 5V logic line voltages before powering sensitive ESP32 modules to prevent brownouts during wireless transmission.',

@@ -111,7 +111,7 @@ export const getMyOrders = async (req, res) => {
 // GET /api/orders - Get all orders (Admin / Master Admin)
 export const getAllOrders = async (req, res) => {
   try {
-    const { status, search } = req.query;
+    const { status, search, page, limit } = req.query;
     const query = {};
 
     if (status && status !== 'all') {
@@ -128,11 +128,23 @@ export const getAllOrders = async (req, res) => {
       ];
     }
 
-    const orders = await Order.find(query).sort({ createdAt: -1 });
+    const pageNum = Math.max(1, parseInt(page) || 1);
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit) || 50));
+    const skipNum = (pageNum - 1) * limitNum;
+
+    const totalCount = await Order.countDocuments(query);
+    const orders = await Order.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skipNum)
+      .limit(limitNum)
+      .lean();
 
     res.status(200).json({
       success: true,
       count: orders.length,
+      total: totalCount,
+      page: pageNum,
+      totalPages: Math.ceil(totalCount / limitNum),
       orders
     });
   } catch (error) {

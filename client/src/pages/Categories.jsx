@@ -2,12 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CATEGORIES } from '../data/mockProducts';
 import { fetchCategories } from '../services/categoryService';
-import { fetchProducts } from '../services/productService';
 import { ArrowRight } from 'lucide-react';
 
 export const Categories = () => {
   const [categories, setCategories] = useState(CATEGORIES);
-  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     fetchCategories().then((res) => {
@@ -16,12 +14,6 @@ export const Categories = () => {
       }
     }).catch(err => {
       console.warn('Failed to load categories:', err);
-    });
-
-    fetchProducts().then(({ products: liveItems }) => {
-      if (liveItems) setProducts(liveItems);
-    }).catch(err => {
-      console.warn('Failed to load products:', err);
     });
   }, []);
 
@@ -39,8 +31,7 @@ export const Categories = () => {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 24 }}>
           {categories.map((cat) => {
-            const liveCount = products.filter(p => p.category === cat.name).length;
-            const countToUse = liveCount > 0 ? liveCount : (cat.productCount ?? cat.count ?? 0);
+            const countToUse = cat.productCount ?? cat.count ?? 0;
             const displayCount = countToUse > 0 ? `${countToUse} components` : 'Browse components';
 
             return (
