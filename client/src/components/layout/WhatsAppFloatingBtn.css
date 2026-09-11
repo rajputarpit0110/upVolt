@@ -326,7 +326,8 @@
     height: 48px;
   }
   .cc-whatsapp-popover {
-    width: calc(100vw - 32px);
+    width: min(320px, calc(100vw - 36px));
+    max-width: calc(100vw - 36px);
     right: 0;
   }
 }

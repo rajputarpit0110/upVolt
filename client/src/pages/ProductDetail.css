@@ -1713,26 +1713,24 @@
     padding: 16px 0 100px;
   }
 
-  /* Clean horizontal-scrolling breadcrumb that never wraps into broken multi-lines */
+  /* Clean breadcrumb without any horizontal x-scroll */
   .cc-detail-breadcrumb {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 0.8rem;
-    margin-bottom: 16px;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    white-space: nowrap;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 2px;
-  }
-
-  .cc-detail-breadcrumb::-webkit-scrollbar {
-    display: none;
+    font-size: 0.76rem;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    overflow: hidden;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .cc-detail-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     flex-shrink: 0;
     white-space: nowrap;
   }
@@ -1742,11 +1740,10 @@
   }
 
   .cc-breadcrumb-current {
-    max-width: 150px;
+    max-width: 160px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    flex-shrink: 1;
   }
 
   /* Main Card & Visual Layout */
@@ -1927,14 +1924,15 @@
   }
 
   .cc-detail-tab-headers {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
-    padding: 2px 2px 8px;
-    margin-bottom: 14px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    padding: 0;
+    margin-bottom: 16px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
   }
 
   .cc-detail-tab-headers::-webkit-scrollbar {
@@ -1942,12 +1940,16 @@
   }
 
   .cc-detail-tab-btn {
-    flex-shrink: 0;
-    white-space: nowrap;
-    width: auto !important;
-    padding: 9px 15px;
-    font-size: 0.82rem;
+    width: 100% !important;
+    justify-content: center;
+    text-align: center;
+    padding: 10px 8px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    white-space: normal;
+    word-break: break-word;
     border-radius: var(--radius-md);
+    box-sizing: border-box;
   }
 
   .cc-detail-tab-content {
@@ -2123,6 +2125,9 @@
     padding: 12px 14px;
     font-size: 0.76rem;
     line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-x: hidden;
   }
 
   .cc-precautions-card {
