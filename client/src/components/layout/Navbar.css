@@ -668,7 +668,7 @@
   .cc-navbar-header {
     width: 100%;
     max-width: 100%;
-    overflow: hidden;
+    overflow: visible;
   }
   .cc-navbar__container {
     gap: 8px;
