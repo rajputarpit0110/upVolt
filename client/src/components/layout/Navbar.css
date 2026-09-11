@@ -5,6 +5,21 @@
   border-bottom: 1px solid var(--border-color);
   padding: 10px 0;
   transition: background-color var(--transition-normal), border-color var(--transition-normal);
+  background: var(--bg-surface);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+[data-theme="light"] .cc-navbar-header {
+  background: rgba(255, 255, 255, 0.97) !important;
+}
+
+[data-theme="dark"] .cc-navbar-header {
+  background: rgba(10, 14, 23, 0.96) !important;
+}
+
+[data-theme="eyecare"] .cc-navbar-header {
+  background: rgba(244, 239, 230, 0.97) !important;
 }
 
 .cc-navbar__container {

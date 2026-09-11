@@ -318,10 +318,15 @@
     display: none;
   }
   .cc-whatsapp-floating-wrapper {
-    bottom: 18px;
-    right: 18px;
+    bottom: 16px;
+    right: 16px;
+  }
+  .cc-whatsapp-btn {
+    width: 48px;
+    height: 48px;
   }
   .cc-whatsapp-popover {
-    width: calc(100vw - 36px);
+    width: calc(100vw - 32px);
+    right: 0;
   }
 }

@@ -1,23 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { Send, CheckCircle2, Mail } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import { WhatsAppIcon } from '../common/WhatsAppIcon';
 import { WHATSAPP_NUMBER, WHATSAPP_GROUP_LINK, PRIORITY_BUYING_NUMBERS, OFFICIAL_EMAIL, OFFICIAL_INSTAGRAM } from '../../utils/constants';
 import './Footer.css';
 
 
 export const Footer = () => {
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = (e) => {
-    e.preventDefault();
-    if (email && email.includes('@')) {
-      setSubscribed(true);
-      setTimeout(() => setSubscribed(false), 4000);
-      setEmail('');
-    }
-  };
 
   return (
     <footer className="cc-footer">
@@ -107,31 +96,12 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* Column 4: Newsletter & Social */}
+          {/* Column 4: Community & Social */}
           <div className="cc-footer__col cc-footer__col--newsletter">
-            <h4 className="cc-footer__heading">Stay In The Loop</h4>
+            <h4 className="cc-footer__heading">Stay Connected</h4>
             <p className="cc-footer__newsletter-desc">
-              Get updates on new IoT components, student discounts, and project guides.
+              Connect with upVolt for genuine IoT components, student maker guides, and campus updates.
             </p>
-            <form onSubmit={handleSubscribe} className="cc-footer__newsletter-form">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="cc-footer__newsletter-input"
-              />
-              <button type="submit" className="cc-footer__newsletter-btn" aria-label="Subscribe">
-                <Send size={16} />
-              </button>
-            </form>
-            {subscribed && (
-              <div className="cc-footer__subscribed-msg">
-                <CheckCircle2 size={15} />
-                <span>You're subscribed! Welcome to the maker circle.</span>
-              </div>
-            )}
 
             <div className="cc-footer__social">
               <span className="cc-footer__social-label">Connect:</span>
