@@ -68,7 +68,8 @@ export const Checkout = () => {
   const [paymentError, setPaymentError] = useState('');
   const [isRzpModalOpen, setIsRzpModalOpen] = useState(false);
   const [currentRzpOrderId, setCurrentRzpOrderId] = useState(null);
-
+  const [finalPlacedAmount, setFinalPlacedAmount] = useState(0);
+  
   // Load admin-configured delivery fees & rules
   useEffect(() => {
     fetchDeliverySettings()
@@ -133,6 +134,7 @@ export const Checkout = () => {
       const savedOrder = await createOrder(payload);
 
       setPlacedOrderId(savedOrder.orderId);
+      setFinalPlacedAmount(totalAmount);
       setOrderComplete(true);
 
       try {
@@ -197,6 +199,7 @@ export const Checkout = () => {
       try {
         const savedOrder = await createOrder(orderPayload);
         setPlacedOrderId(savedOrder.orderId);
+        setFinalPlacedAmount(totalAmount);
         setOrderComplete(true);
 
         try {
@@ -212,6 +215,7 @@ export const Checkout = () => {
         console.warn('Backend order placement failed, generating local confirmation:', err);
         const fallbackId = 'CC-' + Math.floor(100000 + Math.random() * 900000);
         setPlacedOrderId(fallbackId);
+        setFinalPlacedAmount(totalAmount);
         setOrderComplete(true);
         clearCart();
       } finally {
@@ -267,7 +271,7 @@ export const Checkout = () => {
               </div>
               <div className="cc-success-detail-row">
                 <span>Total Amount:</span>
-                <strong>₹{totalAmount}</strong>
+                <strong>₹{finalPlacedAmount}</strong>
               </div>
             </div>
 
