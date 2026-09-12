@@ -312,7 +312,7 @@ export const OtpVerificationModal = ({
       {/* Security Footer Note */}
       <div className="cc-auth-footer-note">
         <ShieldCheck size={16} className="text-accent" />
-        <span>Secured with 256-Bit Brevo Transactional Email Verification</span>
+        <span>Secured with 256-Bit Encrypted Verification</span>
       </div>
     </div>
   );

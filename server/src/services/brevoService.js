@@ -239,7 +239,7 @@ export const sendOtpEmail = async ({
     if (isProduction) {
       return {
         success: false,
-        error: 'Email verification service is temporarily unavailable. Server administrator must set BREVO_API_KEY in hosting environment variables.',
+        error: 'Email verification service is temporarily unavailable. Please try again in a few moments or contact support.',
         devMode: false
       };
     }
@@ -281,7 +281,7 @@ export const sendOtpEmail = async ({
     console.error(`[Brevo Service] Email delivery failed for ${email}:`, err.message || err);
     return {
       success: false,
-      error: err.message || 'Brevo transactional delivery error'
+      error: 'Unable to send verification email. Please try again in a few moments or contact support.'
     };
   }
 };
