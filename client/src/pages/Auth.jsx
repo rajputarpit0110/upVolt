@@ -34,8 +34,6 @@ export const Auth = () => {
     password: '',
     college: ''
   });
-  const [otpSent, setOtpSent] = useState(false);
-  const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [otpState, setOtpState] = useState({
@@ -50,39 +48,15 @@ export const Auth = () => {
     setErrorMessage('');
     setLoading(true);
 
-    if (isRegister && !otpSent) {
-      // Step 1: Send OTP
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/auth/send-otp`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: formData.email })
-        });
-        const data = await safeJson(res);
-        if (!res.ok || !data.success) {
-          throw new Error(data.message || 'Failed to send OTP.');
-        }
-        setOtpSent(true);
-        setErrorMessage('');
-      } catch (err) {
-        setErrorMessage(err.message || 'Failed to send OTP.');
-      } finally {
-        setLoading(false);
-      }
-      return;
-    }
-
     try {
       const endpoint = isRegister
         ? `${API_BASE_URL}/api/auth/register`
         : `${API_BASE_URL}/api/auth/login`;
 
-      const payload = isRegister ? { ...formData, otp } : formData;
-
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(formData)
       });
 
       const data = await safeJson(res);
@@ -169,14 +143,14 @@ export const Auth = () => {
                   <button
                     type="button"
                     className={`cc-auth-tab ${!isRegister ? 'active' : ''}`}
-                    onClick={() => { setIsRegister(false); setErrorMessage(''); setOtpSent(false); setOtp(''); }}
+                    onClick={() => { setIsRegister(false); setErrorMessage(''); }}
                   >
                     Sign In
                   </button>
                   <button
                     type="button"
                     className={`cc-auth-tab ${isRegister ? 'active' : ''}`}
-                    onClick={() => { setIsRegister(true); setErrorMessage(''); setOtpSent(false); setOtp(''); }}
+                    onClick={() => { setIsRegister(true); setErrorMessage(''); }}
                   >
                     Create Account
                   </button>
@@ -204,28 +178,6 @@ export const Auth = () => {
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="cc-auth-form">
-              {isRegister && otpSent ? (
-                <div className="cc-form-group">
-                  <div className="cc-auth-alert-success" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10B981', padding: '12px 16px', borderRadius: '8px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', fontWeight: '500' }}>
-                    <CheckCircle2 size={18} />
-                    OTP sent to {formData.email}! Please check your inbox.
-                  </div>
-                  <label className="cc-form-label">Enter 6-Digit OTP</label>
-                  <div className="cc-input-wrap">
-                    <ShieldCheck size={18} className="cc-input-icon" />
-                    <input
-                      type="text"
-                      required
-                      placeholder="123456"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                      className="cc-input cc-input--with-icon"
-                      style={{ letterSpacing: '8px', fontSize: '1.2rem', fontWeight: 'bold' }}
-                    />
-                  </div>
-                </div>
-              ) : (
-                    <>
                   {isRegister && (
                     <>
                       <div className="cc-form-group">
@@ -235,13 +187,14 @@ export const Auth = () => {
                           <input
                             type="text"
                             required
-                            placeholder="Aryan Verma"
+                            placeholder="Arpit Rajput"
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                             className="cc-input cc-input--with-icon"
                           />
                         </div>
                       </div>
+
                       <div className="cc-form-group">
                         <label className="cc-form-label">College / University</label>
                         <div className="cc-input-wrap">
@@ -258,34 +211,34 @@ export const Auth = () => {
                     </>
                   )}
 
-                      <div className="cc-form-group">
-                      <label className="cc-form-label">
-                        {isRegister ? 'Email Address' : 'Email Address or Username'}
-                      </label>
-                        <div className="cc-input-wrap">
-                        <Mail size={18} className="cc-input-icon" />
-                          <input
-                            type="text"
-                            required
-                            placeholder={isRegister ? 'student@college.edu.in' : 'Email or Username (e.g. admin1)'}
-                             value={formData.email}
-                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                            className="cc-input cc-input--with-icon"
-                            autoComplete="username"
-                          />
-                        </div>
-                      </div>
+                  <div className="cc-form-group">
+                    <label className="cc-form-label">
+                      {isRegister ? 'Email Address' : 'Email Address or Username'}
+                    </label>
+                    <div className="cc-input-wrap">
+                      <Mail size={18} className="cc-input-icon" />
+                      <input
+                        type="text"
+                        required
+                        placeholder={isRegister ? 'student@college.edu.in' : 'Email or Username (e.g. admin1)'}
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="cc-input cc-input--with-icon"
+                        autoComplete="username"
+                      />
+                    </div>
+                  </div>
 
-                      <div className="cc-form-group">
+                  <div className="cc-form-group">
                     <div className="cc-form-label-row">
                       <label className="cc-form-label">Password</label>
                       {!isRegister && (
                         <span className="cc-forgot-hint">Admin: check server credentials</span>
                       )}
                     </div>
-                        <div className="cc-input-wrap">
+                    <div className="cc-input-wrap">
                       <Lock size={18} className="cc-input-icon" />
-                          <input
+                      <input
                         type={showPassword ? 'text' : 'password'}
                         required
                         placeholder="••••••••••••"
@@ -293,7 +246,7 @@ export const Auth = () => {
                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                         className="cc-input cc-input--with-icon cc-input--with-action"
                         autoComplete={isRegister ? 'new-password' : 'current-password'}
-                          />
+                      />
                       <button
                         type="button"
                         className="cc-input-action-btn"
@@ -302,10 +255,8 @@ export const Auth = () => {
                       >
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
-                        </div>
-                      </div>
-                    </>
-                  )}
+                    </div>
+                  </div>
 
                   {/* Submit Button */}
                   <Button type="submit" variant="glow" size="lg" className="cc-auth-submit-btn" disabled={loading}>
@@ -316,11 +267,7 @@ export const Auth = () => {
                       </span>
                     ) : (
                       <span className="cc-btn-content">
-                    <span>
-                      {!isRegister 
-                        ? 'Sign In to Dashboard' 
-                        : (otpSent ? 'Verify OTP & Register' : 'Send OTP')}
-                    </span>
+                        <span>{isRegister ? 'Create Student Account' : 'Sign In to Dashboard'}</span>
                         <ArrowRight size={18} />
                       </span>
                     )}
