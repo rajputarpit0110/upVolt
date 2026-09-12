@@ -97,7 +97,7 @@ export const Auth = () => {
 
   const handleOtpSuccess = (data) => {
     login(data.user, data.token);
-    
+
     if (returnUrl) {
       navigate(returnUrl, stateParams);
     } else if (data.user.role === 'admin' || data.user.role === 'master_admin') {
@@ -122,7 +122,7 @@ export const Auth = () => {
       <div className="container cc-auth-container">
         {/* Main Card */}
         <div className="cc-auth-card">
-          
+
           {/* Left Form Panel */}
           <div className="cc-auth-form-panel">
             {otpState.required ? (
@@ -295,7 +295,7 @@ export const Auth = () => {
           {/* Right Brand Showcase Panel */}
           <div className="cc-auth-hero-panel">
             <div className="cc-auth-hero-overlay"></div>
-            
+
             <div className="cc-auth-hero-content">
               <div className="cc-auth-hero-badge">
                 <Zap size={14} className="badge-icon" />

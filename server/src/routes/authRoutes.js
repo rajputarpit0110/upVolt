@@ -5,7 +5,8 @@ import {
   verifyOtp,
   resendOtp,
   getMe,
-  resetPassword
+  resetPassword,
+  forgotPassword
 } from '../controllers/authController.js';
 import { protect } from '../middlewares/auth.js';
 import { adaptHandler } from '../utils/honoAdapter.js';
@@ -15,6 +16,7 @@ const router = new Hono();
 
 router.post('/login', adaptHandler(loginUser));
 router.post('/register', otpSendRateLimiter, adaptHandler(registerUser));
+router.post('/forgot-password', otpSendRateLimiter, adaptHandler(forgotPassword));
 router.post('/verify-otp', otpVerifyRateLimiter, adaptHandler(verifyOtp));
 router.post('/resend-otp', otpSendRateLimiter, adaptHandler(resendOtp));
 router.post('/send-otp', otpSendRateLimiter, adaptHandler(resendOtp));

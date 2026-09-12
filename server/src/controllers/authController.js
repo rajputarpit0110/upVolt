@@ -264,6 +264,80 @@ export const registerUser = async (req, res) => {
   }
 };
 
+// POST /api/auth/forgot-password
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide an email address.'
+      });
+    }
+
+    const cleanEmail = email.toLowerCase().trim();
+    const user = await User.findOne({ email: cleanEmail });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'No account found with that email address.'
+      });
+    }
+
+    await EmailOtp.deleteMany({ email: cleanEmail });
+
+    const otp = generateSecureOtp();
+    const otpHash = hashOtp(otp);
+
+    await EmailOtp.create({
+      email: cleanEmail,
+      otpHash,
+      purpose: 'password-reset',
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+      attempts: 0,
+      maxAttempts: 5,
+      lastSentAt: new Date()
+    });
+
+    const emailResult = await sendOtpEmail({
+      email: cleanEmail,
+      name: user.name,
+      otp,
+      purpose: 'password-reset'
+    });
+
+    if (!emailResult.success) {
+      if (emailResult.devMode) {
+        return res.status(200).json({
+          success: true,
+          requiresOtp: true,
+          email: maskEmail(cleanEmail),
+          fullEmail: cleanEmail,
+          devOtp: emailResult.otp,
+          message: `Local Dev Mode: Password reset code is ${emailResult.otp}`
+        });
+      }
+      return res.status(503).json({
+        success: false,
+        message: emailResult.error || "We couldn't send the reset email. Please try again."
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      requiresOtp: true,
+      email: maskEmail(cleanEmail),
+      fullEmail: cleanEmail,
+      message: 'Password reset code sent to your email.'
+    });
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    res.status(500).json({ success: false, message: 'Internal server error.' });
+  }
+};
+
 // POST /api/auth/verify-otp
 export const verifyOtp = async (req, res) => {
   try {
