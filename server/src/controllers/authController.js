@@ -4,8 +4,6 @@ import { User } from '../models/User.js';
 import { AuditLog } from '../models/AuditLog.js';
 import { EmailOtp } from '../models/EmailOtp.js';
 import { sendOtpEmail } from '../services/brevoService.js';
-import nodemailer from 'nodemailer';
-import { Otp } from '../models/Otp.js';
 
 // Helper to generate JWT
 const generateToken = (id) => {
@@ -170,65 +168,15 @@ export const loginUser = async (req, res) => {
   }
 };
 
-// POST /api/auth/send-otp
-export const sendOtp = async (req, res) => {
-  try {
-    const { email } = req.body;
-    if (!email) {
-      return res.status(400).json({ success: false, message: 'Email is required.' });
-    }
-    const cleanEmail = email.toLowerCase().trim();
-    const exists = await User.findOne({ email: cleanEmail });
-    if (exists) {
-      return res.status(400).json({ success: false, message: 'An account with this email already exists.' });
-    }
-    // Generate 6 digit OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    // Delete any existing OTP for this email
-    await Otp.deleteMany({ email: cleanEmail });
-    // Save new OTP
-    await Otp.create({ email: cleanEmail, otp });
-    // Send email
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
-    const mailOptions = {
-      from: `"upVolt" <${process.env.EMAIL_USER}>`,
-      to: cleanEmail,
-      subject: 'Your upVolt Registration OTP',
-      html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
-          <h2 style="color: #38BDF8;">Welcome to upVolt!</h2>
-          <p>Thank you for starting your registration. Please use the OTP below to verify your email address:</p>
-          <div style="background-color: #f4f4f4; padding: 15px; border-radius: 5px; font-size: 24px; font-weight: bold; text-align: center; letter-spacing: 5px; margin: 20px 0;">
-            ${otp}
-          </div>
-          <p>This OTP is valid for 10 minutes. If you did not request this, please ignore this email.</p>
-          <p>Best,<br>The upVolt Team</p>
-        </div>
-      `
-    };
-    await transporter.sendMail(mailOptions);
-    res.status(200).json({ success: true, message: 'OTP sent successfully.' });
-  } catch (error) {
-    console.error('Send OTP error:', error);
-    res.status(500).json({ success: false, message: 'Failed to send OTP email.' });
-  }
-};
-
 // POST /api/auth/register
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password, college, otp } = req.body;
+    const { name, email, password, college } = req.body;
 
-    if (!name || !email || !password || !otp) {
+    if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Name, email, password, and OTP are required.'
+        message: 'Name, email, and password are required.'
       });
     }
 
@@ -241,20 +189,6 @@ export const registerUser = async (req, res) => {
 
     const cleanEmail = email.toLowerCase().trim();
     const existing = await User.findOne({ email: cleanEmail });
-    
-    // Verify OTP
-    const otpRecord = await Otp.findOne({ email: cleanEmail, otp });
-    if (!otpRecord) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid or expired OTP.'
-      });
-    }
-    const exists = await User.findOne({ email: cleanEmail });
-    if (exists) {
-      return res.status(400).json({
-        success: false,
-
 
     if (existing) {
       // If user account is already verified or is an administrator
