@@ -47,6 +47,13 @@ export const Auth = () => {
     purpose: 'registration'
   });
 
+  const [forgotPasswordMode, setForgotPasswordMode] = useState(false);
+  const [resetPasswordMode, setResetPasswordMode] = useState(false);
+  const [resetPasswordForm, setResetPasswordForm] = useState({
+    newPassword: '',
+    confirmPassword: ''
+  });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
@@ -95,8 +102,85 @@ export const Auth = () => {
     }
   };
 
+  const handleForgotPasswordSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMessage('');
+    setLoading(true);
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email })
+      });
+      const data = await safeJson(res);
+      if (data.requiresOtp) {
+        setOtpState({
+          required: true,
+          email: data.fullEmail || formData.email.trim().toLowerCase(),
+          maskedEmail: data.email,
+          purpose: 'password-reset'
+        });
+      } else {
+        throw new Error(data.message || 'Failed to initiate password reset.');
+      }
+    } catch (err) {
+      setErrorMessage(err.message || 'Error initiating password reset.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetPasswordSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMessage('');
+
+    if (resetPasswordForm.newPassword !== resetPasswordForm.confirmPassword) {
+      setErrorMessage('Passwords do not match.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const tokenObj = localStorage.getItem('upvolt_user') || localStorage.getItem('campuscircuit_user');
+      const token = tokenObj ? JSON.parse(tokenObj).token : null;
+      if (!token) throw new Error('Session expired. Please log in again.');
+
+      const res = await fetch(`${API_BASE_URL}/api/auth/reset-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ newPassword: resetPasswordForm.newPassword })
+      });
+      const data = await safeJson(res);
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || 'Failed to reset password.');
+      }
+
+      if (returnUrl) {
+        navigate(returnUrl, stateParams);
+      } else {
+        navigate('/');
+      }
+    } catch (err) {
+      setErrorMessage(err.message || 'Error resetting password.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleOtpSuccess = (data) => {
     login(data.user, data.token);
+
+    if (otpState.purpose === 'password-reset') {
+      setOtpState({ required: false, email: '', maskedEmail: '', purpose: 'registration' });
+      setForgotPasswordMode(false);
+      setResetPasswordMode(true);
+      return;
+    }
 
     if (returnUrl) {
       navigate(returnUrl, stateParams);
@@ -143,151 +227,280 @@ export const Auth = () => {
                   </Link>
                   <div className="cc-auth-pill-badge">
                     <Sparkles size={13} />
-                    <span>{isRegister ? 'Student Registration' : 'Secure Login'}</span>
+                    <span>{resetPasswordMode ? 'Secure Reset' : forgotPasswordMode ? 'Account Recovery' : isRegister ? 'Student Registration' : 'Secure Login'}</span>
                   </div>
                 </div>
 
-                {/* Mode Switcher Tabs */}
-                <div className="cc-auth-tabs">
-                  <button
-                    type="button"
-                    className={`cc-auth-tab ${!isRegister ? 'active' : ''}`}
-                    onClick={() => { setIsRegister(false); setErrorMessage(''); }}
-                  >
-                    Sign In
-                  </button>
-                  <button
-                    type="button"
-                    className={`cc-auth-tab ${isRegister ? 'active' : ''}`}
-                    onClick={() => { setIsRegister(true); setErrorMessage(''); }}
-                  >
-                    Create Account
-                  </button>
-                </div>
-
-                {/* Titles */}
-                <div className="cc-auth-title-wrap">
-                  <h1 className="cc-auth-title">
-                    {isRegister ? 'Join the maker revolution.' : 'Welcome back, builder.'}
-                  </h1>
-                  <p className="cc-auth-subtitle">
-                    {isRegister
-                      ? 'Access verified microcontrollers, student-exclusive discounts, and instant WhatsApp guidance.'
-                      : 'Log in to manage orders, access saved lab components, and track shipments.'}
-                  </p>
-                </div>
-
-                {/* Error Message Box */}
-                {errorMessage && (
-                  <div className="cc-auth-alert-error">
-                    <AlertCircle size={18} className="cc-alert-icon" />
-                    <span>{errorMessage}</span>
-                  </div>
-                )}
-
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="cc-auth-form">
-                  {isRegister && (
-                    <>
+                {resetPasswordMode ? (
+                  <>
+                    <div className="cc-auth-title-wrap">
+                      <h1 className="cc-auth-title">Set New Password</h1>
+                      <p className="cc-auth-subtitle">Please enter a new, strong password.</p>
+                    </div>
+                    {errorMessage && (
+                      <div className="cc-auth-alert-error">
+                        <AlertCircle size={18} className="cc-alert-icon" />
+                        <span>{errorMessage}</span>
+                      </div>
+                    )}
+                    <form onSubmit={handleResetPasswordSubmit} className="cc-auth-form">
                       <div className="cc-form-group">
-                        <label className="cc-form-label">Full Name</label>
+                        <label className="cc-form-label">New Password</label>
                         <div className="cc-input-wrap">
-                          <UserIcon size={18} className="cc-input-icon" />
+                          <Lock size={18} className="cc-input-icon" />
+                          <input
+                            type={showPassword ? 'text' : 'password'}
+                            required
+                            placeholder="••••••••••••"
+                            value={resetPasswordForm.newPassword}
+                            onChange={(e) => setResetPasswordForm({ ...resetPasswordForm, newPassword: e.target.value })}
+                            className="cc-input cc-input--with-icon cc-input--with-action"
+                            minLength={6}
+                          />
+                          <button
+                            type="button"
+                            className="cc-input-action-btn"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                          </button>
+                        </div>
+                      </div>
+                      <div className="cc-form-group">
+                        <label className="cc-form-label">Confirm Password</label>
+                        <div className="cc-input-wrap">
+                          <Lock size={18} className="cc-input-icon" />
+                          <input
+                            type={showPassword ? 'text' : 'password'}
+                            required
+                            placeholder="••••••••••••"
+                            value={resetPasswordForm.confirmPassword}
+                            onChange={(e) => setResetPasswordForm({ ...resetPasswordForm, confirmPassword: e.target.value })}
+                            className="cc-input cc-input--with-icon cc-input--with-action"
+                            minLength={6}
+                          />
+                        </div>
+                      </div>
+                      <Button type="submit" variant="glow" size="lg" className="cc-auth-submit-btn" disabled={loading}>
+                        {loading ? (
+                          <span className="cc-btn-loading-content">
+                            <Loader2 size={18} className="animate-spin" />
+                            <span>Updating Password...</span>
+                          </span>
+                        ) : (
+                          <span className="cc-btn-content">
+                            <span>Update Password</span>
+                            <ArrowRight size={18} />
+                          </span>
+                        )}
+                      </Button>
+                    </form>
+                  </>
+                ) : forgotPasswordMode ? (
+                  <>
+                    <div className="cc-auth-title-wrap">
+                      <h1 className="cc-auth-title">Forgot Password</h1>
+                      <p className="cc-auth-subtitle">Enter your email and we'll send you a verification code to reset it.</p>
+                    </div>
+                    {errorMessage && (
+                      <div className="cc-auth-alert-error">
+                        <AlertCircle size={18} className="cc-alert-icon" />
+                        <span>{errorMessage}</span>
+                      </div>
+                    )}
+                    <form onSubmit={handleForgotPasswordSubmit} className="cc-auth-form">
+                      <div className="cc-form-group">
+                        <label className="cc-form-label">Email Address</label>
+                        <div className="cc-input-wrap">
+                          <Mail size={18} className="cc-input-icon" />
                           <input
                             type="text"
                             required
-                            placeholder="Arpit Rajput"
-                            value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            placeholder="student@college.edu.in"
+                            value={formData.email}
+                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                             className="cc-input cc-input--with-icon"
+                          />
+                        </div>
+                      </div>
+                      <Button type="submit" variant="glow" size="lg" className="cc-auth-submit-btn" disabled={loading}>
+                        {loading ? (
+                          <span className="cc-btn-loading-content">
+                            <Loader2 size={18} className="animate-spin" />
+                            <span>Sending Code...</span>
+                          </span>
+                        ) : (
+                          <span className="cc-btn-content">
+                            <span>Send Reset Code</span>
+                            <ArrowRight size={18} />
+                          </span>
+                        )}
+                      </Button>
+                      <button
+                        type="button"
+                        className="cc-auth-back-link"
+                        onClick={() => { setForgotPasswordMode(false); setErrorMessage(''); }}
+                        style={{ marginTop: '1rem', width: '100%', textAlign: 'center', background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: '0.5rem' }}
+                      >
+                        Back to Login
+                      </button>
+                    </form>
+                  </>
+                ) : (
+                  <>
+                    {/* Mode Switcher Tabs */}
+                    <div className="cc-auth-tabs">
+                      <button
+                        type="button"
+                        className={`cc-auth-tab ${!isRegister ? 'active' : ''}`}
+                        onClick={() => { setIsRegister(false); setErrorMessage(''); }}
+                      >
+                        Sign In
+                      </button>
+                      <button
+                        type="button"
+                        className={`cc-auth-tab ${isRegister ? 'active' : ''}`}
+                        onClick={() => { setIsRegister(true); setErrorMessage(''); }}
+                      >
+                        Create Account
+                      </button>
+                    </div>
+
+                    {/* Titles */}
+                    <div className="cc-auth-title-wrap">
+                      <h1 className="cc-auth-title">
+                        {isRegister ? 'Join the maker revolution.' : 'Welcome back, builder.'}
+                      </h1>
+                      <p className="cc-auth-subtitle">
+                        {isRegister
+                          ? 'Access verified microcontrollers, student-exclusive discounts, and instant WhatsApp guidance.'
+                          : 'Log in to manage orders, access saved lab components, and track shipments.'}
+                      </p>
+                    </div>
+
+                    {/* Error Message Box */}
+                    {errorMessage && (
+                      <div className="cc-auth-alert-error">
+                        <AlertCircle size={18} className="cc-alert-icon" />
+                        <span>{errorMessage}</span>
+                      </div>
+                    )}
+
+                    {/* Form */}
+                    <form onSubmit={handleSubmit} className="cc-auth-form">
+                      {isRegister && (
+                        <>
+                          <div className="cc-form-group">
+                            <label className="cc-form-label">Full Name</label>
+                            <div className="cc-input-wrap">
+                              <UserIcon size={18} className="cc-input-icon" />
+                              <input
+                                type="text"
+                                required
+                                placeholder="Arpit Rajput"
+                                value={formData.name}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                className="cc-input cc-input--with-icon"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="cc-form-group">
+                            <label className="cc-form-label">College / University</label>
+                            <div className="cc-input-wrap">
+                              <GraduationCap size={18} className="cc-input-icon" />
+                              <input
+                                type="text"
+                                placeholder="IIT, NIT, DTU, VIT, BITS..."
+                                value={formData.college}
+                                onChange={(e) => setFormData({ ...formData, college: e.target.value })}
+                                className="cc-input cc-input--with-icon"
+                              />
+                            </div>
+                          </div>
+                        </>
+                      )}
+
+                      <div className="cc-form-group">
+                        <label className="cc-form-label">
+                          {isRegister ? 'Email Address' : 'Email Address or Username'}
+                        </label>
+                        <div className="cc-input-wrap">
+                          <Mail size={18} className="cc-input-icon" />
+                          <input
+                            type="text"
+                            required
+                            placeholder={isRegister ? 'student@college.edu.in' : 'Email or Username (e.g. admin1)'}
+                            value={formData.email}
+                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            className="cc-input cc-input--with-icon"
+                            autoComplete="username"
                           />
                         </div>
                       </div>
 
                       <div className="cc-form-group">
-                        <label className="cc-form-label">College / University</label>
+                        <div className="cc-form-label-row">
+                          <label className="cc-form-label">Password</label>
+                          {!isRegister && (
+                            <button
+                              type="button"
+                              className="cc-forgot-hint"
+                              onClick={() => {
+                                setForgotPasswordMode(true);
+                                setErrorMessage('');
+                              }}
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                            >
+                              Forgot Password?
+                            </button>
+                          )}
+                        </div>
                         <div className="cc-input-wrap">
-                          <GraduationCap size={18} className="cc-input-icon" />
+                          <Lock size={18} className="cc-input-icon" />
                           <input
-                            type="text"
-                            placeholder="IIT, NIT, DTU, VIT, BITS..."
-                            value={formData.college}
-                            onChange={(e) => setFormData({ ...formData, college: e.target.value })}
-                            className="cc-input cc-input--with-icon"
+                            type={showPassword ? 'text' : 'password'}
+                            required
+                            placeholder="••••••••••••"
+                            value={formData.password}
+                            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                            className="cc-input cc-input--with-icon cc-input--with-action"
+                            autoComplete={isRegister ? 'new-password' : 'current-password'}
                           />
+                          <button
+                            type="button"
+                            className="cc-input-action-btn"
+                            onClick={() => setShowPassword(!showPassword)}
+                            aria-label={showPassword ? 'Hide password' : 'Show password'}
+                          >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                          </button>
                         </div>
                       </div>
-                    </>
-                  )}
 
-                  <div className="cc-form-group">
-                    <label className="cc-form-label">
-                      {isRegister ? 'Email Address' : 'Email Address or Username'}
-                    </label>
-                    <div className="cc-input-wrap">
-                      <Mail size={18} className="cc-input-icon" />
-                      <input
-                        type="text"
-                        required
-                        placeholder={isRegister ? 'student@college.edu.in' : 'Email or Username (e.g. admin1)'}
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="cc-input cc-input--with-icon"
-                        autoComplete="username"
-                      />
+                      {/* Submit Button */}
+                      <Button type="submit" variant="glow" size="lg" className="cc-auth-submit-btn" disabled={loading}>
+                        {loading ? (
+                          <span className="cc-btn-loading-content">
+                            <Loader2 size={18} className="animate-spin" />
+                            <span>{isRegister ? 'Creating your account...' : 'Authenticating...'}</span>
+                          </span>
+                        ) : (
+                          <span className="cc-btn-content">
+                            <span>{isRegister ? 'Create Student Account' : 'Sign In to Dashboard'}</span>
+                            <ArrowRight size={18} />
+                          </span>
+                        )}
+                      </Button>
+                    </form>
+
+                    {/* Bottom Footer Note */}
+                    <div className="cc-auth-footer-note">
+                      <ShieldCheck size={16} className="text-accent" />
+                      <span>256-Bit SSL Encrypted Authentication & Secure Session Tokens</span>
                     </div>
-                  </div>
-
-                  <div className="cc-form-group">
-                    <div className="cc-form-label-row">
-                      <label className="cc-form-label">Password</label>
-                      {!isRegister && (
-                        <span className="cc-forgot-hint">Admin: check server credentials</span>
-                      )}
-                    </div>
-                    <div className="cc-input-wrap">
-                      <Lock size={18} className="cc-input-icon" />
-                      <input
-                        type={showPassword ? 'text' : 'password'}
-                        required
-                        placeholder="••••••••••••"
-                        value={formData.password}
-                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                        className="cc-input cc-input--with-icon cc-input--with-action"
-                        autoComplete={isRegister ? 'new-password' : 'current-password'}
-                      />
-                      <button
-                        type="button"
-                        className="cc-input-action-btn"
-                        onClick={() => setShowPassword(!showPassword)}
-                        aria-label={showPassword ? 'Hide password' : 'Show password'}
-                      >
-                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Submit Button */}
-                  <Button type="submit" variant="glow" size="lg" className="cc-auth-submit-btn" disabled={loading}>
-                    {loading ? (
-                      <span className="cc-btn-loading-content">
-                        <Loader2 size={18} className="animate-spin" />
-                        <span>{isRegister ? 'Creating your account...' : 'Authenticating...'}</span>
-                      </span>
-                    ) : (
-                      <span className="cc-btn-content">
-                        <span>{isRegister ? 'Create Student Account' : 'Sign In to Dashboard'}</span>
-                        <ArrowRight size={18} />
-                      </span>
-                    )}
-                  </Button>
-                </form>
-
-                {/* Bottom Footer Note */}
-                <div className="cc-auth-footer-note">
-                  <ShieldCheck size={16} className="text-accent" />
-                  <span>256-Bit SSL Encrypted Authentication & Secure Session Tokens</span>
-                </div>
+                  </>
+                )}
               </>
             )}
           </div>
