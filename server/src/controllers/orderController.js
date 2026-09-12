@@ -78,6 +78,47 @@ export const createOrder = async (req, res) => {
   }
 };
 
+// PUT /api/orders/:id/cancel - Cancel pending order
+export const cancelMyOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const order = await Order.findOne({
+      $or: [
+        { _id: id.match(/^[0-9a-fA-F]{24}$/) ? id : null },
+        { orderId: id }
+      ]
+    });
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found.' });
+    }
+
+    if (order.orderStatus !== 'pending') {
+      return res.status(400).json({ success: false, message: 'Only pending orders can be cancelled.' });
+    }
+
+    order.orderStatus = 'cancelled';
+    order.statusHistory.push({
+      status: 'cancelled',
+      changedAt: new Date(),
+      changedBy: req.user ? req.user.name : (order.customerName || 'User'),
+      note: 'Cancelled by user'
+    });
+
+    await order.save();
+
+    res.status(200).json({
+      success: true,
+      message: `Order #${order.orderId} cancelled successfully`,
+      order
+    });
+  } catch (error) {
+    console.error('Cancel order error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // GET /api/orders/my-orders - Get orders for current user or by phone/email
 export const getMyOrders = async (req, res) => {
   try {

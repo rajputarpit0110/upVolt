@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Badge } from '../components/common/Badge';
-import { fetchMyOrders } from '../services/orderService';
-import { Package, Truck, CheckCircle2, Clock, RefreshCw, ShoppingBag, AlertCircle } from 'lucide-react';
+import { fetchMyOrders, cancelMyOrder } from '../services/orderService';
+import { Package, Truck, CheckCircle2, Clock, RefreshCw, ShoppingBag, AlertCircle, XCircle } from 'lucide-react';
 import './Orders.css';
 
 export const Orders = () => {
@@ -28,6 +28,18 @@ export const Orders = () => {
   useEffect(() => {
     loadOrders();
   }, []);
+
+  const handleCancelOrder = async (orderId) => {
+    if (window.confirm('Are you sure you want to cancel this order? This action cannot be undone.')) {
+      try {
+        await cancelMyOrder(orderId);
+        // Refresh orders after successful cancellation
+        loadOrders();
+      } catch (err) {
+        alert(err.message || 'Failed to cancel order');
+      }
+    }
+  };
 
   const getStepForStatus = (status) => {
     switch (status?.toLowerCase()) {
@@ -109,9 +121,21 @@ export const Orders = () => {
 
                     <div className="cc-order-header-right">
                       <span className="cc-order-total">Total: <strong>₹{order.totalAmount}</strong></span>
-                      <Badge variant={getBadgeVariant(order.orderStatus)}>
-                        {order.orderStatus ? order.orderStatus.toUpperCase() : 'PENDING'}
-                      </Badge>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        {order.orderStatus === 'pending' && (
+                          <button 
+                            className="cc-btn cc-btn--outline" 
+                            style={{ padding: '4px 10px', fontSize: '0.75rem', borderColor: '#EF4444', color: '#EF4444', display: 'flex', alignItems: 'center', gap: '4px' }}
+                            onClick={() => handleCancelOrder(order._id || order.orderId)}
+                          >
+                            <XCircle size={14} />
+                            Cancel Order
+                          </button>
+                        )}
+                        <Badge variant={getBadgeVariant(order.orderStatus)}>
+                          {order.orderStatus ? order.orderStatus.toUpperCase() : 'PENDING'}
+                        </Badge>
+                      </div>
                     </div>
                   </div>
 

@@ -52,6 +52,30 @@ export const fetchMyOrders = async (params = {}) => {
 };
 
 /**
+ * Cancel a pending order
+ * @param {string} orderId - e.g. 'CC-363654' or _id
+ */
+export const cancelMyOrder = async (orderId) => {
+  const headers = {};
+  const token = localStorage.getItem('campuscircuit_token');
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const res = await fetch(`${API_BASE}/${orderId}/cancel`, {
+    method: 'PUT',
+    headers
+  });
+
+  const data = await safeJson(res);
+  if (!res.ok || !data.success) {
+    throw new Error(data.message || 'Failed to cancel order.');
+  }
+
+  return data.order;
+};
+
+/**
  * Fetch all orders for Admin / Master Admin
  * @param {string} [status] - pending, processing, shipped, completed, cancelled, all
  * @param {string} [search]
