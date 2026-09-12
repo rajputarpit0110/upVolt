@@ -142,8 +142,7 @@ export const Auth = () => {
 
     setLoading(true);
     try {
-      const tokenObj = localStorage.getItem('upvolt_user') || localStorage.getItem('campuscircuit_user');
-      const token = tokenObj ? JSON.parse(tokenObj).token : null;
+      const token = localStorage.getItem('upvolt_token') || localStorage.getItem('campuscircuit_token');
       if (!token) throw new Error('Session expired. Please log in again.');
 
       const res = await fetch(`${API_BASE_URL}/api/auth/reset-password`, {
