@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/common/Button';
 import {
@@ -24,7 +24,11 @@ import './Auth.css';
 
 export const Auth = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
+
+  const returnUrl = location.state?.returnUrl;
+  const stateParams = location.state?.checkoutState ? { state: location.state.checkoutState } : undefined;
 
   const [isRegister, setIsRegister] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -77,7 +81,9 @@ export const Auth = () => {
 
       login(data.user, data.token);
 
-      if (data.user.role === 'admin' || data.user.role === 'master_admin') {
+      if (returnUrl) {
+        navigate(returnUrl, stateParams);
+      } else if (data.user.role === 'admin' || data.user.role === 'master_admin') {
         navigate('/admin');
       } else {
         navigate('/');
@@ -91,7 +97,10 @@ export const Auth = () => {
 
   const handleOtpSuccess = (data) => {
     login(data.user, data.token);
-    if (data.user.role === 'admin' || data.user.role === 'master_admin') {
+    
+    if (returnUrl) {
+      navigate(returnUrl, stateParams);
+    } else if (data.user.role === 'admin' || data.user.role === 'master_admin') {
       navigate('/admin');
     } else {
       navigate('/');

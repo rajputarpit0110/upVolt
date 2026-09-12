@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/common/Button';
 import { WhatsAppIcon } from '../components/common/WhatsAppIcon';
 import { getWhatsAppLink, WHATSAPP_NUMBER, PRIORITY_BUYING_NUMBERS } from '../utils/constants';
@@ -21,6 +22,7 @@ import './Cart.css';
 
 export const Cart = () => {
   const { cartItems, updateQuantity, removeFromCart, cartSubtotal, clearCart } = useCart();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const [couponCode, setCouponCode] = useState('');
@@ -238,7 +240,14 @@ export const Cart = () => {
                 variant="primary"
                 size="lg"
                 fullWidth
-                onClick={() => navigate('/checkout', { state: { couponCode: couponApplied ? couponCode : '', discountAmount } })}
+                onClick={() => {
+                  const checkoutState = { couponCode: couponApplied ? couponCode : '', discountAmount };
+                  if (!user) {
+                    navigate('/login', { state: { returnUrl: '/checkout', checkoutState } });
+                  } else {
+                    navigate('/checkout', { state: checkoutState });
+                  }
+                }}
                 icon={<ArrowRight size={18} />}
                 iconPosition="right"
               >
