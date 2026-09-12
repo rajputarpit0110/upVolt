@@ -241,10 +241,20 @@ export const registerUser = async (req, res) => {
       purpose: 'registration'
     });
 
-    if (!emailResult.success && !emailResult.devMode) {
+    if (!emailResult.success) {
+      if (emailResult.devMode) {
+        return res.status(200).json({
+          success: true,
+          requiresOtp: true,
+          email: maskEmail(cleanEmail),
+          fullEmail: cleanEmail,
+          devOtp: emailResult.otp,
+          message: `Local Dev Mode: Verification code is ${emailResult.otp}`
+        });
+      }
       return res.status(503).json({
         success: false,
-        message: "We couldn't send the verification email. Please try again."
+        message: emailResult.error || "We couldn't send the verification email. Please try again."
       });
     }
 
@@ -435,10 +445,17 @@ export const resendOtp = async (req, res) => {
       purpose
     });
 
-    if (!emailResult.success && !emailResult.devMode) {
+    if (!emailResult.success) {
+      if (emailResult.devMode) {
+        return res.status(200).json({
+          success: true,
+          devOtp: emailResult.otp,
+          message: `Local Dev Mode: New verification code is ${emailResult.otp}`
+        });
+      }
       return res.status(503).json({
         success: false,
-        message: "We couldn't send the verification email. Please try again."
+        message: emailResult.error || "We couldn't send the verification email. Please try again."
       });
     }
 

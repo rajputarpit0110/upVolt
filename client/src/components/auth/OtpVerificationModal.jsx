@@ -216,6 +216,9 @@ export const OtpVerificationModal = ({
           <Mail size={15} className="text-accent" />
           <span className="cc-otp-masked-email">{maskedEmail || email}</span>
         </div>
+        <p className="cc-otp-hint-note" style={{ fontSize: '0.82rem', color: '#94a3b8', marginTop: '8px' }}>
+          Tip: If not in your primary inbox, please check your <strong>Spam / Junk</strong> folder.
+        </p>
       </div>
 
       {/* Success Alert */}

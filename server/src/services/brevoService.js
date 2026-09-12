@@ -215,7 +215,7 @@ export const sendOtpEmail = async ({
     return { success: false, error: 'Email and OTP are required to send notification.' };
   }
 
-  const senderEmail = process.env.BREVO_SENDER_EMAIL || 'no-reply@upvolt.site';
+  const senderEmail = process.env.BREVO_SENDER_EMAIL || 'support.upvolt@gmail.com';
   const senderName = process.env.BREVO_SENDER_NAME || 'upVolt';
 
   const subjectMap = {
@@ -231,12 +231,24 @@ export const sendOtpEmail = async ({
 
   const brevoClient = getBrevoClient();
 
-  // If no API key configured (e.g. fresh dev clone before Render env configured)
+  // If no API key configured
   if (!brevoClient) {
-    console.log(`[Brevo Service - Dev Fallback] OTP for ${email}: ${otp} (Set BREVO_API_KEY in .env to deliver live emails)`);
+    const isProduction = process.env.NODE_ENV === 'production' || !!process.env.RENDER || !!process.env.RENDER_EXTERNAL_URL;
+    console.error(`[Brevo Service ERROR] Cannot send live OTP to ${email}: BREVO_API_KEY is missing in server environment variables.`);
+    
+    if (isProduction) {
+      return {
+        success: false,
+        error: 'Email verification service is temporarily unavailable. Server administrator must set BREVO_API_KEY in hosting environment variables.',
+        devMode: false
+      };
+    }
+
+    console.warn(`[Brevo Service - Local Dev Fallback] OTP for ${email}: ${otp}`);
     return {
       success: true,
       devMode: true,
+      otp,
       messageId: `dev-simulated-${Date.now()}`
     };
   }
