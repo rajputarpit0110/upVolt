@@ -219,10 +219,10 @@ export const sendOtpEmail = async ({
   const senderName = process.env.BREVO_SENDER_NAME || 'upVolt';
 
   const subjectMap = {
-    registration: 'Verify your upVolt account',
-    login: 'Your upVolt login verification code',
-    'password-reset': 'Your upVolt password reset code',
-    'email-verification': 'Verify your upVolt email'
+    registration: `${otp} is your upVolt verification code`,
+    login: `${otp} is your upVolt login verification code`,
+    'password-reset': `${otp} is your upVolt password reset code`,
+    'email-verification': `${otp} is your upVolt verification code`
   };
 
   const subject = subjectMap[purpose] || 'Verify your upVolt email';
