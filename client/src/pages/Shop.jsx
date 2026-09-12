@@ -31,6 +31,7 @@ export const Shop = () => {
   useEffect(() => {
     if (categoryParam) setSelectedCategory(categoryParam);
     if (searchParam) setSearchQuery(searchParam);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [categoryParam, searchParam]);
 
   const loadCategories = async () => {
