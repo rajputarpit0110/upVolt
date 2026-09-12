@@ -59,7 +59,7 @@ const mentorSchema = new mongoose.Schema({
 });
 
 // Guard: Disallow storing raw Base64 images in MongoDB
-mentorSchema.pre('save', function () {
+mentorSchema.pre('save', async function () {
   if (this.image && typeof this.image === 'string' && this.image.startsWith('data:image')) {
     throw new Error('Raw Base64 images cannot be saved directly to MongoDB. Upload to Cloudinary first.');
   }
