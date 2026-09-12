@@ -571,7 +571,9 @@ export const updateProduct = async (req, res) => {
     product.price = Number(price);
     product.originalPrice = originalPrice ? Number(originalPrice) : undefined;
     if (rating !== undefined) product.rating = Number(rating);
-    product.badge = badge === "" ? null : (badge || product.badge);
+    if (badge !== undefined) {
+      product.badge = (badge === "" || badge === null) ? null : badge;
+    }
     if (inStock !== undefined) product.inStock = Boolean(inStock);
     if (sku && sku.trim()) product.sku = sku.trim();
     product.image = primaryImage;
