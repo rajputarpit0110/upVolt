@@ -191,28 +191,13 @@ export const registerUser = async (req, res) => {
     const existing = await User.findOne({ email: cleanEmail });
 
     if (existing) {
-      // If user account is already verified or is an administrator
       if (existing.isVerified !== false) {
         return res.status(400).json({
           success: false,
           message: 'An account with this email already exists. Please sign in.'
         });
       }
-      // If unverified from previous incomplete registration, update credentials
-      existing.name = name.trim();
-      existing.college = college || existing.college;
-      existing.password = password; // Will be hashed by User pre-save hook
-      await existing.save();
-    } else {
-      // Create user record in unverified state
-      await User.create({
-        name: name.trim(),
-        email: cleanEmail,
-        password,
-        college: college || 'Engineering College',
-        role: 'student',
-        isVerified: false
-      });
+      // If unverified from previous legacy registration, it's fine, we just overwrite using new EmailOtp
     }
 
     // Invalidate any existing OTP records for this email
@@ -222,7 +207,7 @@ export const registerUser = async (req, res) => {
     const otp = generateSecureOtp();
     const otpHash = hashOtp(otp);
 
-    // Save OTP hash with 5-minute expiry
+    // Save OTP hash with 5-minute expiry and temporarily store userData
     await EmailOtp.create({
       email: cleanEmail,
       otpHash,
@@ -230,7 +215,15 @@ export const registerUser = async (req, res) => {
       expiresAt: new Date(Date.now() + 5 * 60 * 1000),
       attempts: 0,
       maxAttempts: 5,
-      lastSentAt: new Date()
+      lastSentAt: new Date(),
+      userData: {
+        name: name.trim(),
+        email: cleanEmail,
+        password,
+        college: college || 'Engineering College',
+        role: 'student',
+        isVerified: true
+      }
     });
 
     // Deliver via Brevo Transactional Email
@@ -346,20 +339,27 @@ export const verifyOtp = async (req, res) => {
       });
     }
 
+    // Store userData before we delete the OTP record
+    const userData = otpRecord.userData;
+
     // 4. Valid OTP: Invalidate OTP record immediately to prevent reuse
     await EmailOtp.deleteMany({ email: cleanEmail });
 
-    // 5. Activate user account and mark email as verified
-    const user = await User.findOne({ email: cleanEmail });
-    if (!user) {
+    // 5. Create or Activate user account
+    let user = await User.findOne({ email: cleanEmail });
+    
+    if (!user && purpose === 'registration' && userData) {
+      // Create user record now
+      user = await User.create(userData);
+    } else if (user) {
+      user.isVerified = true;
+      await user.save();
+    } else {
       return res.status(404).json({
         success: false,
-        message: 'User account not found.'
+        message: 'User account not found or registration session expired. Please register again.'
       });
     }
-
-    user.isVerified = true;
-    await user.save();
 
     // 6. Issue authenticated session token
     const token = generateToken(user._id);
@@ -418,6 +418,25 @@ export const resendOtp = async (req, res) => {
       }
     }
 
+    let userData = null;
+    let name = 'Student Builder';
+    
+    if (existingOtp) {
+      userData = existingOtp.userData;
+      if (userData?.name) name = userData.name;
+    }
+    
+    const user = await User.findOne({ email: cleanEmail });
+    if (user) {
+      name = user.name;
+    } else if (purpose === 'registration' && !userData) {
+      // If user is registering but we lost the userData (e.g. OTP expired and deleted by TTL)
+      return res.status(400).json({
+        success: false,
+        message: 'Registration session expired. Please return to the registration form and try again.'
+      });
+    }
+
     // Invalidate old OTP records
     await EmailOtp.deleteMany({ email: cleanEmail });
 
@@ -425,7 +444,7 @@ export const resendOtp = async (req, res) => {
     const otp = generateSecureOtp();
     const otpHash = hashOtp(otp);
 
-    await EmailOtp.create({
+    const otpData = {
       email: cleanEmail,
       otpHash,
       purpose,
@@ -433,10 +452,12 @@ export const resendOtp = async (req, res) => {
       attempts: 0,
       maxAttempts: 5,
       lastSentAt: new Date()
-    });
+    };
+    if (userData) {
+      otpData.userData = userData;
+    }
 
-    const user = await User.findOne({ email: cleanEmail });
-    const name = user ? user.name : 'Student Builder';
+    await EmailOtp.create(otpData);
 
     const emailResult = await sendOtpEmail({
       email: cleanEmail,

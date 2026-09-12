@@ -33,6 +33,9 @@ const emailOtpSchema = new mongoose.Schema({
   lastSentAt: {
     type: Date,
     default: Date.now
+  },
+  userData: {
+    type: mongoose.Schema.Types.Mixed
   }
 }, {
   timestamps: true
