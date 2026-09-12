@@ -95,7 +95,17 @@ export const Shop = () => {
         if (sortBy === 'price-low') return a.price - b.price;
         if (sortBy === 'price-high') return b.price - a.price;
         if (sortBy === 'rating') return b.rating - a.rating;
-        return 0; // featured
+        
+        // featured sort
+        const getBadgeScore = (badge) => {
+          if (!badge) return 4;
+          const b = badge.toLowerCase();
+          if (b === 'bestseller') return 1;
+          if (b === 'hot') return 2;
+          if (b === 'popular') return 3;
+          return 4;
+        };
+        return getBadgeScore(a.badge) - getBadgeScore(b.badge);
       });
   }, [products, selectedCategory, searchQuery, priceMax, sortBy]);
 

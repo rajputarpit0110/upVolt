@@ -5,8 +5,18 @@ import { ArrowRight } from 'lucide-react';
 import './FeaturedSection.css';
 
 export const FeaturedSection = ({ products = [], loading = false }) => {
-  // Show first 5 or all featured products
-  const displayProducts = products.slice(0, 5);
+  const getBadgeScore = (badge) => {
+    if (!badge) return 4;
+    const b = badge.toLowerCase();
+    if (b === 'bestseller') return 1;
+    if (b === 'hot') return 2;
+    if (b === 'popular') return 3;
+    return 4;
+  };
+
+  // Sort by badge and show first 5
+  const sortedProducts = [...products].sort((a, b) => getBadgeScore(a.badge) - getBadgeScore(b.badge));
+  const displayProducts = sortedProducts.slice(0, 5);
 
   return (
     <section className="cc-featured-section">
