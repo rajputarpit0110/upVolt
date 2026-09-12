@@ -99,6 +99,15 @@ export const Checkout = () => {
 
   const handleInputChange = (e) => {
     setAddress({ ...address, [e.target.name]: e.target.value });
+    let { name, value } = e.target;
+    
+    if (name === 'phone') {
+      value = value.replace(/\D/g, '').slice(0, 10);
+    } else if (name === 'pincode') {
+      value = value.replace(/\D/g, '').slice(0, 6);
+    }
+    
+    setAddress({ ...address, [name]: value });
   };
 
   const handleRazorpaySuccess = async (response, orderPayloadData = null) => {
@@ -361,6 +370,9 @@ export const Checkout = () => {
                       type="tel"
                       name="phone"
                       required
+                      minLength={10}
+                      maxLength={10}
+                      pattern="\d{10}"
                       placeholder="e.g. 9876543210"
                       value={address.phone}
                       onChange={handleInputChange}
@@ -433,6 +445,9 @@ export const Checkout = () => {
                       type="text"
                       name="pincode"
                       required
+                      minLength={6}
+                      maxLength={6}
+                      pattern="\d{6}"
                       placeholder="6-digit PIN"
                       value={address.pincode}
                       onChange={handleInputChange}
