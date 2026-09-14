@@ -35,6 +35,6 @@ export const getWhatsAppLink = (message = 'Hi upVolt, I have a query regarding s
 };
 
 export const getProductWhatsAppLink = (product, number = WHATSAPP_NUMBER) => {
-  const msg = `Hi upVolt! I want to order/buy: ${product.name} (Price: ₹${product.price}). Can you confirm availability and fast delivery?`;
+  const msg = `Hi upVolt! I want to order/buy: ${product.name} (Price: ₹${product.price}) + delivery charges. Can you confirm availability and fast delivery?`;
   return `https://wa.me/${number}?text=${encodeURIComponent(msg)}`;
 };
