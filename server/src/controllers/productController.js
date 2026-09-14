@@ -317,6 +317,7 @@ export const createProduct = async (req, res) => {
       rating,
       badge,
       inStock,
+      stockQuantity,
       sku,
       image,
       images,
@@ -413,6 +414,8 @@ export const createProduct = async (req, res) => {
       ? safetyPrecautions
       : (presetGuide.safetyPrecautions || []);
 
+    const parsedStockQuantity = stockQuantity !== undefined ? parseInt(stockQuantity, 10) : 0;
+
     const newProduct = new Product({
       name: name.trim(),
       category: category.trim(),
@@ -421,7 +424,8 @@ export const createProduct = async (req, res) => {
       rating: rating ? Number(rating) : 4.8,
       reviewsCount: 1,
       badge: badge || null,
-      inStock: inStock !== undefined ? Boolean(inStock) : true,
+      stockQuantity: parsedStockQuantity,
+      inStock: parsedStockQuantity > 0,
       sku: cleanSku,
       image: primaryImage,
       images: imageList,
@@ -516,6 +520,7 @@ export const updateProduct = async (req, res) => {
       rating,
       badge,
       inStock,
+      stockQuantity,
       sku,
       image,
       images,
@@ -574,7 +579,15 @@ export const updateProduct = async (req, res) => {
     if (badge !== undefined) {
       product.badge = (badge === "" || badge === null) ? null : badge;
     }
-    if (inStock !== undefined) product.inStock = Boolean(inStock);
+    
+    if (stockQuantity !== undefined) {
+      const parsedStockQuantity = parseInt(stockQuantity, 10);
+      product.stockQuantity = isNaN(parsedStockQuantity) ? 0 : parsedStockQuantity;
+      product.inStock = product.stockQuantity > 0;
+    } else if (inStock !== undefined) {
+      product.inStock = Boolean(inStock);
+    }
+    
     if (sku && sku.trim()) product.sku = sku.trim();
     product.image = primaryImage;
     product.images = imageList;

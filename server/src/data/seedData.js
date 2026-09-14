@@ -544,5 +544,6 @@ const RAW_PRODUCTS = [
 
 export const INITIAL_PRODUCTS = RAW_PRODUCTS.map(prod => ({
   ...prod,
+  stockQuantity: prod.inStock ? 100 : 0,
   ...(PRODUCT_GUIDES[prod.sku] || {})
 }));

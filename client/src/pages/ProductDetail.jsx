@@ -421,8 +421,12 @@ export const ProductDetail = () => {
 
             {/* Stock status */}
             <div className="cc-detail-stock">
-              <span className="cc-stock-dot" />
-              <span className="cc-stock-text">In Stock & Ready to Dispatch to Campus</span>
+              <span className="cc-stock-dot" style={{ background: (product.stockQuantity > 0 || product.inStock) ? 'var(--color-success)' : 'var(--color-danger)' }} />
+              <span className="cc-stock-text" style={{ color: (product.stockQuantity > 0 || product.inStock) ? 'var(--color-success)' : 'var(--color-danger)' }}>
+                {(product.stockQuantity > 0 || product.inStock) 
+                  ? `In Stock ${product.stockQuantity ? `(${product.stockQuantity} left)` : ''} & Ready to Dispatch to Campus` 
+                  : 'Out of Stock'}
+              </span>
             </div>
 
             {/* Description excerpt */}
@@ -523,6 +527,7 @@ export const ProductDetail = () => {
                 <button
                   type="button"
                   onClick={() => setQuantity(quantity + 1)}
+                  disabled={product.stockQuantity !== undefined && quantity >= product.stockQuantity}
                   className="cc-qty-btn"
                   aria-label="Increase quantity"
                 >
@@ -533,11 +538,12 @@ export const ProductDetail = () => {
               <Button
                 variant="primary"
                 size="lg"
+                disabled={!product.inStock || (product.stockQuantity !== undefined && product.stockQuantity <= 0)}
                 onClick={() => addToCart(product, quantity)}
                 icon={<ShoppingCart size={18} />}
                 className="cc-detail-add-btn"
               >
-                Add to Cart
+                {!product.inStock || (product.stockQuantity !== undefined && product.stockQuantity <= 0) ? 'Out of Stock' : 'Add to Cart'}
               </Button>
             </div>
 

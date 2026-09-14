@@ -9,6 +9,7 @@ const productSchema = new mongoose.Schema({
   reviewsCount: { type: Number, default: 0 },
   badge: { type: String, default: null },
   inStock: { type: Boolean, default: true },
+  stockQuantity: { type: Number, default: 0 },
   sku: { type: String, required: true, unique: true },
   image: { type: String, required: true },
   images: [{ type: String }],

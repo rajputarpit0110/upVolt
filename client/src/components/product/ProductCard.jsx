@@ -110,11 +110,12 @@ export const ProductCard = ({ product }) => {
         <div className="cc-product-card__actions">
           <button
             type="button"
-            className="cc-product-card__btn-cart"
-            onClick={handleAddToCart}
+            className={`cc-product-card__btn-cart ${(!product.inStock || (product.stockQuantity !== undefined && product.stockQuantity <= 0)) ? 'cc-product-card__btn-cart--disabled' : ''}`}
+            onClick={(!product.inStock || (product.stockQuantity !== undefined && product.stockQuantity <= 0)) ? undefined : handleAddToCart}
+            disabled={!product.inStock || (product.stockQuantity !== undefined && product.stockQuantity <= 0)}
           >
             <ShoppingCart size={15} />
-            <span>Add to Cart</span>
+            <span>{(!product.inStock || (product.stockQuantity !== undefined && product.stockQuantity <= 0)) ? 'Out of Stock' : 'Add to Cart'}</span>
           </button>
 
           <a

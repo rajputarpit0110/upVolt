@@ -16,6 +16,7 @@ export const EditProductModal = ({ isOpen, onClose, product, onProductUpdated })
     category: CATEGORIES[0]?.name || 'Development Boards',
     price: '',
     originalPrice: '',
+    stockQuantity: '',
     sku: '',
     badge: '',
     description: '',
@@ -48,6 +49,7 @@ export const EditProductModal = ({ isOpen, onClose, product, onProductUpdated })
         category: product.category || CATEGORIES[0]?.name || 'Development Boards',
         price: product.price || '',
         originalPrice: product.originalPrice || '',
+        stockQuantity: product.stockQuantity !== undefined ? product.stockQuantity : (product.inStock ? 10 : 0),
         sku: product.sku || '',
         badge: product.badge || '',
         description: product.description || '',
@@ -250,6 +252,7 @@ export const EditProductModal = ({ isOpen, onClose, product, onProductUpdated })
         image: images[0],
         images: images,
         badge: formData.badge || null,
+        stockQuantity: Number(formData.stockQuantity),
         description: formData.description.trim() || `${formData.name} for electronics engineering projects.`,
         specifications,
         tags,
@@ -556,6 +559,20 @@ export const EditProductModal = ({ isOpen, onClose, product, onProductUpdated })
                 <option value="Hot">Hot</option>
                 <option value="New">New</option>
               </select>
+            </div>
+
+            <div className="cc-form-group flex-1">
+              <label className="cc-form-label">Stock Qty</label>
+              <input
+                type="number"
+                name="stockQuantity"
+                className="cc-input cc-input--number"
+                placeholder="10"
+                min="0"
+                value={formData.stockQuantity}
+                onChange={handleChange}
+                required
+              />
             </div>
           </div>
 

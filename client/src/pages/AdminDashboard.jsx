@@ -1195,6 +1195,7 @@ export const AdminDashboard = () => {
                     <th>Component</th>
                     <th>Category</th>
                     <th>Price</th>
+                    <th>Stock</th>
                     <th style={{ minWidth: 130 }}>Images</th>
                     <th>SKU</th>
                     <th>Added By</th>
@@ -1226,6 +1227,18 @@ export const AdminDashboard = () => {
                         <td>
                           <strong>₹{p.price}</strong>
                           {p.originalPrice && <del style={{ marginLeft: 6, color: 'var(--text-muted)', fontSize: '0.8rem' }}>₹{p.originalPrice}</del>}
+                        </td>
+                        <td>
+                          <span style={{ 
+                            padding: '2px 8px', 
+                            borderRadius: '12px', 
+                            fontSize: '0.8rem',
+                            fontWeight: 600,
+                            background: p.stockQuantity > 0 ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                            color: p.stockQuantity > 0 ? 'var(--color-success)' : 'var(--color-danger)'
+                          }}>
+                            {p.stockQuantity !== undefined ? p.stockQuantity : (p.inStock ? 'In Stock' : 'Out')}
+                          </span>
                         </td>
                         <td>
                           <div className="cc-admin-img-cell">

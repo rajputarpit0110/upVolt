@@ -141,6 +141,7 @@ export const Cart = () => {
                         <button
                           type="button"
                           className="cc-qty-btn"
+                          disabled={item.stockQuantity !== undefined && item.quantity >= item.stockQuantity}
                           onClick={() => updateQuantity(id, item.quantity + 1)}
                         >
                           <Plus size={12} />

@@ -16,6 +16,7 @@ export const AddProductModal = ({ isOpen, onClose, onProductAdded }) => {
     category: CATEGORIES[0]?.name || 'Development Boards',
     price: '',
     originalPrice: '',
+    stockQuantity: 10,
     sku: '',
     badge: '',
     description: '',
@@ -243,7 +244,8 @@ export const AddProductModal = ({ isOpen, onClose, onProductAdded }) => {
             category: 'Engineering Project'
           };
         }) : undefined,
-        inStock: true
+        inStock: Number(formData.stockQuantity) > 0,
+        stockQuantity: Number(formData.stockQuantity)
       };
 
       const savedProduct = await createProduct(payload, token);

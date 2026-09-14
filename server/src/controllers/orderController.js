@@ -1,5 +1,6 @@
 import { Order } from '../models/Order.js';
 import { AuditLog } from '../models/AuditLog.js';
+import { Product } from '../models/Product.js';
 
 // POST /api/orders - Place a new order
 export const createOrder = async (req, res) => {
@@ -67,6 +68,28 @@ export const createOrder = async (req, res) => {
 
     const savedOrder = await newOrder.save();
 
+    // Decrement stock quantities
+    if (items && items.length > 0) {
+      for (const item of items) {
+        const prodId = item._id || item.productId;
+        if (prodId) {
+          try {
+            const updated = await Product.findByIdAndUpdate(
+              prodId,
+              { $inc: { stockQuantity: -item.quantity } },
+              { new: true }
+            );
+            if (updated && updated.stockQuantity <= 0 && updated.inStock) {
+              updated.inStock = false;
+              await updated.save();
+            }
+          } catch (err) {
+            console.error(`Failed to update stock for product ${prodId}`, err);
+          }
+        }
+      }
+    }
+
     res.status(201).json({
       success: true,
       message: 'Order placed successfully and recorded in database',
@@ -107,6 +130,28 @@ export const cancelMyOrder = async (req, res) => {
     });
 
     await order.save();
+
+    // Restock items
+    if (order.items && order.items.length > 0) {
+      for (const item of order.items) {
+        const prodId = item._id || item.productId;
+        if (prodId) {
+          try {
+            const updated = await Product.findByIdAndUpdate(
+              prodId,
+              { $inc: { stockQuantity: item.quantity } },
+              { new: true }
+            );
+            if (updated && updated.stockQuantity > 0 && !updated.inStock) {
+              updated.inStock = true;
+              await updated.save();
+            }
+          } catch (err) {
+            console.error(`Failed to restock product ${prodId}`, err);
+          }
+        }
+      }
+    }
 
     res.status(200).json({
       success: true,
@@ -234,6 +279,30 @@ export const updateOrderStatus = async (req, res) => {
     });
 
     const updatedOrder = await order.save();
+
+    // Restock items if admin cancelled
+    if (status.toLowerCase() === 'cancelled' && oldStatus !== 'cancelled') {
+      if (order.items && order.items.length > 0) {
+        for (const item of order.items) {
+          const prodId = item._id || item.productId;
+          if (prodId) {
+            try {
+              const updated = await Product.findByIdAndUpdate(
+                prodId,
+                { $inc: { stockQuantity: item.quantity } },
+                { new: true }
+              );
+              if (updated && updated.stockQuantity > 0 && !updated.inStock) {
+                updated.inStock = true;
+                await updated.save();
+              }
+            } catch (err) {
+              console.error(`Failed to restock product ${prodId}`, err);
+            }
+          }
+        }
+      }
+    }
 
     // Log status update to AuditLog
     if (req.user) {
