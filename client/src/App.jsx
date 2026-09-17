@@ -27,6 +27,22 @@ function ScrollToTop() {
   
   return null;
 }
+
+function UrlCleaner() {
+  const location = useLocation();
+  
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.get('source') === 'chatgpt') {
+      searchParams.delete('source');
+      const newSearch = searchParams.toString();
+      const newUrl = location.pathname + (newSearch ? '?' + newSearch : '') + location.hash;
+      window.history.replaceState({}, '', newUrl);
+    }
+  }, [location]);
+
+  return null;
+}
 import { AuthProvider } from './context/AuthContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { CartProvider } from './context/CartContext';
@@ -75,6 +91,7 @@ export function App() {
           <CartProvider>
             <Router>
               <ScrollToTop />
+              <UrlCleaner />
               <Toast />
               <AnalyticsTracker />
               <div className="cc-app-shell">
