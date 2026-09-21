@@ -41,14 +41,14 @@ export const Checkout = () => {
   const testStepParam = Number(searchParams.get('testStep'));
   const [step, setStep] = useState(testStepParam || 1);
   const [address, setAddress] = useState({
-    fullName: user?.name || (testStepParam ? 'Arpit Rajput' : ''),
+    fullName: testStepParam ? 'Arpit Rajput' : '',
     phone: testStepParam ? '9876543210' : '',
     address: testStepParam ? 'Flat 302, Green Valley Apartments, Near Sector 15 Metro Station' : '',
-    collegeName: user?.college || (testStepParam ? 'Delhi Technological University' : ''),
+    collegeName: testStepParam ? 'Delhi Technological University' : '',
     hostelName: testStepParam ? 'Ramanujan Hostel' : '',
     roomNo: testStepParam ? '204' : '',
-    city: 'Delhi',
-    state: 'Delhi',
+    city: testStepParam ? 'Delhi' : '',
+    state: testStepParam ? 'Delhi' : '',
     pincode: testStepParam ? '110042' : ''
   });
 
@@ -111,8 +111,6 @@ export const Checkout = () => {
   };
 
   const handleRazorpaySuccess = async (response, orderPayloadData = null) => {
-    setIsRzpModalOpen(false);
-    setIsSubmitting(true);
     setPaymentError('');
 
     const payload = orderPayloadData || {
@@ -124,8 +122,8 @@ export const Checkout = () => {
         collegeName: address.collegeName || '',
         hostelName: address.hostelName || '',
         roomNo: address.roomNo || '',
-        city: address.city || 'Delhi',
-        state: address.state || 'Delhi',
+        city: address.city || '',
+        state: address.state || '',
         pincode: address.pincode
       },
       items: cartItems.map(item => ({
@@ -144,13 +142,16 @@ export const Checkout = () => {
       paymentMethod: 'online'
     };
 
-    try {
-      // Manual verification: we bypass verifyRazorpayPayment and directly create the order
-      payload.razorpayPaymentId = response.razorpay_payment_id; // This stores the UTR ID
-      payload.paymentStatus = 'pending'; // Requires manual confirmation
+    payload.razorpayPaymentId = response.razorpay_payment_id || response.utr;
+    payload.utr = response.utr || response.razorpay_payment_id;
+    payload.paymentScreenshot = response.paymentScreenshot;
+    payload.paymentStatus = 'pending';
 
+    try {
+      setIsSubmitting(true);
       const savedOrder = await createOrder(payload);
 
+      setIsRzpModalOpen(false);
       setPlacedOrderId(savedOrder.orderId);
       setFinalPlacedAmount(totalAmount);
       setOrderComplete(true);
@@ -166,7 +167,9 @@ export const Checkout = () => {
       clearCart();
     } catch (verifyErr) {
       console.error('Order creation failed:', verifyErr);
-      setPaymentError(verifyErr.message || 'Failed to place order after payment. Please contact support with your UTR.');
+      const errMsg = verifyErr.message || 'Failed to place order after payment. Please contact support with your UTR.';
+      setPaymentError(errMsg);
+      throw new Error(errMsg);
     } finally {
       setIsSubmitting(false);
     }
@@ -192,8 +195,8 @@ export const Checkout = () => {
         collegeName: address.collegeName || '',
         hostelName: address.hostelName || '',
         roomNo: address.roomNo || '',
-        city: address.city || 'Delhi',
-        state: address.state || 'Delhi',
+        city: address.city || '',
+        state: address.state || '',
         pincode: address.pincode
       },
       items: cartItems.map(item => ({
@@ -433,7 +436,7 @@ export const Checkout = () => {
                       type="text"
                       name="city"
                       required
-                      placeholder="City"
+                      placeholder="e.g. Delhi"
                       value={address.city}
                       onChange={handleInputChange}
                     />

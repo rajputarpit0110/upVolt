@@ -22,11 +22,23 @@ export const CartProvider = ({ children }) => {
     }
   }, [cartItems]);
 
-  const showToast = (msg) => {
-    setToastMessage(msg);
-    setTimeout(() => {
+  const toastTimeoutRef = React.useRef(null);
+
+  const showToast = (toastData) => {
+    if (toastTimeoutRef.current) {
+      clearTimeout(toastTimeoutRef.current);
+    }
+    setToastMessage(toastData);
+    toastTimeoutRef.current = setTimeout(() => {
       setToastMessage(null);
-    }, 3000);
+    }, 4000);
+  };
+
+  const closeToast = () => {
+    if (toastTimeoutRef.current) {
+      clearTimeout(toastTimeoutRef.current);
+    }
+    setToastMessage(null);
   };
 
   const addToCart = (product, quantity = 1) => {
@@ -42,7 +54,15 @@ export const CartProvider = ({ children }) => {
       }
       return [...prev, { ...product, id, quantity }];
     });
-    showToast(`Added "${product.name}" to cart!`);
+    
+    const img = product.image || (product.images && product.images.length > 0 ? product.images[0] : null);
+    showToast({
+      title: 'Added to Cart!',
+      name: product.name,
+      image: img,
+      price: product.price,
+      quantity
+    });
   };
 
   const removeFromCart = (productId) => {
@@ -80,7 +100,9 @@ export const CartProvider = ({ children }) => {
         clearCart,
         cartCount,
         cartSubtotal,
-        toastMessage
+        toastMessage,
+        closeToast,
+        showToast
       }}
     >
       {children}

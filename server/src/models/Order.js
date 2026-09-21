@@ -30,8 +30,8 @@ const orderSchema = new mongoose.Schema({
     collegeName: { type: String, default: '' },
     hostelName: { type: String, default: '' },
     roomNo: { type: String, default: '' },
-    city: { type: String, default: 'Delhi' },
-    state: { type: String, default: 'Delhi' },
+    city: { type: String, default: '' },
+    state: { type: String, default: '' },
     pincode: { type: String, required: true }
   },
   deliveryType: {
@@ -56,6 +56,8 @@ const orderSchema = new mongoose.Schema({
   razorpayOrderId: { type: String },
   razorpayPaymentId: { type: String },
   razorpaySignature: { type: String },
+  utr: { type: String, trim: true, index: true },
+  paymentScreenshot: { type: String, trim: true },
   orderStatus: {
     type: String,
     enum: ['pending', 'processing', 'shipped', 'completed', 'cancelled'],

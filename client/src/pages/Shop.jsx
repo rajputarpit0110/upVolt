@@ -24,9 +24,17 @@ export const Shop = () => {
   const [selectedCategory, setSelectedCategory] = useState(categoryParam || 'All');
   const [searchQuery, setSearchQuery] = useState(searchParam || '');
   const [sortBy, setSortBy] = useState('featured');
-  const [priceMax, setPriceMax] = useState(3000);
+  const [priceMax, setPriceMax] = useState(null);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const maxCatalogPrice = useMemo(() => {
+    if (!products.length) return 3000;
+    const highest = Math.max(...products.map(p => Number(p.price) || 0));
+    return Math.max(3000, Math.ceil(highest / 500) * 500);
+  }, [products]);
+
+  const effectivePriceMax = priceMax !== null ? priceMax : maxCatalogPrice;
 
   useEffect(() => {
     if (categoryParam) setSelectedCategory(categoryParam);
@@ -48,7 +56,7 @@ export const Shop = () => {
   const loadProducts = async () => {
     setLoading(true);
     try {
-      const { products: fetched, source } = await fetchProducts();
+      const { products: fetched, source } = await fetchProducts({ limit: 1000 });
       if (fetched && fetched.length > 0) {
         setProducts(fetched);
         setDataSource(source);
@@ -76,8 +84,8 @@ export const Shop = () => {
         if (selectedCategory !== 'All' && p.category !== selectedCategory) {
           return false;
         }
-        // Price filter
-        if (p.price > priceMax) {
+        // Price filter - only filter if user moved slider below max
+        if (priceMax !== null && priceMax < maxCatalogPrice && p.price > priceMax) {
           return false;
         }
         // Search filter
@@ -107,7 +115,7 @@ export const Shop = () => {
         };
         return getBadgeScore(a.badge) - getBadgeScore(b.badge);
       });
-  }, [products, selectedCategory, searchQuery, priceMax, sortBy]);
+  }, [products, selectedCategory, searchQuery, priceMax, maxCatalogPrice, sortBy]);
 
   const handleCategorySelect = (catName) => {
     setSelectedCategory(catName);
@@ -277,32 +285,32 @@ export const Shop = () => {
             <div className="cc-filter-group">
               <div className="cc-filter-group__header">
                 <h3 className="cc-filter-group__title">Max Price</h3>
-                <span className="cc-price-filter-val">₹{priceMax}</span>
+                <span className="cc-price-filter-val">₹{effectivePriceMax.toLocaleString('en-IN')}</span>
               </div>
               <input
                 type="range"
                 min="50"
-                max="3000"
+                max={maxCatalogPrice}
                 step="50"
-                value={priceMax}
+                value={effectivePriceMax}
                 onChange={(e) => setPriceMax(Number(e.target.value))}
                 className="cc-price-slider"
               />
               <div className="cc-price-slider-labels">
                 <span>₹50</span>
-                <span>₹3,000+</span>
+                <span>₹{maxCatalogPrice.toLocaleString('en-IN')}+</span>
               </div>
             </div>
 
             {/* Fast Reset */}
-            {(selectedCategory !== 'All' || searchQuery || priceMax < 3000) && (
+            {(selectedCategory !== 'All' || searchQuery || (priceMax !== null && priceMax < maxCatalogPrice)) && (
               <button
                 type="button"
                 className="cc-filter-reset-btn"
                 onClick={() => {
                   setSelectedCategory('All');
                   setSearchQuery('');
-                  setPriceMax(3000);
+                  setPriceMax(null);
                   setSearchParams({});
                 }}
               >
@@ -406,7 +414,7 @@ export const Shop = () => {
                   onClick={() => {
                     setSelectedCategory('All');
                     setSearchQuery('');
-                    setPriceMax(3000);
+                    setPriceMax(null);
                     setSearchParams({});
                   }}
                 >

@@ -21,11 +21,12 @@ export const clearProductCache = () => {
  */
 export const fetchProducts = async (params = {}) => {
   const hasFilterParams = params && Object.keys(params).some(
-    k => params[k] !== undefined && params[k] !== '' && params[k] !== 'All'
+    k => params[k] !== undefined && params[k] !== '' && params[k] !== 'All' && k !== 'bypassCache' && k !== 'forceRefresh'
   );
+  const shouldBypassCache = Boolean(params?.bypassCache || params?.forceRefresh);
 
-  // If fetching default list with no filters, serve from short memory cache
-  if (!hasFilterParams) {
+  // If fetching default list with no filters and no cache bypass, serve from short memory cache
+  if (!hasFilterParams && !shouldBypassCache) {
     const now = Date.now();
     if (cachedProductsData && (now - lastFetchTime < CLIENT_CACHE_TTL_MS)) {
       return cachedProductsData;
@@ -44,24 +45,29 @@ export const fetchProducts = async (params = {}) => {
       if (params.sort) query.append('sort', params.sort);
       if (params.badge) query.append('badge', params.badge);
       if (params.page) query.append('page', params.page);
-      if (params.limit) query.append('limit', params.limit);
+      if (params.limit) {
+        query.append('limit', params.limit);
+      } else if (!params.page) {
+        // Explicitly request all products if no page/limit was requested to avoid backend truncation
+        query.append('limit', 'all');
+      }
       if (params.full) query.append('full', params.full);
 
       const queryString = query.toString() ? `?${query.toString()}` : '';
       const res = await fetch(`${API_BASE}${queryString}`);
 
       const data = await safeJson(res);
-      if (res.ok && data && data.products && data.products.length > 0) {
+      if (res.ok && data && Array.isArray(data.products)) {
         const payload = {
           products: data.products,
-          count: data.count || data.products.length,
-          total: data.total || data.count || data.products.length,
+          count: data.count !== undefined ? data.count : data.products.length,
+          total: data.total !== undefined ? data.total : data.products.length,
           page: data.page || 1,
           totalPages: data.totalPages || 1,
           source: data.source || 'database'
         };
 
-        if (!hasFilterParams) {
+        if (!hasFilterParams && !shouldBypassCache) {
           cachedProductsData = payload;
           lastFetchTime = Date.now();
         }
@@ -73,13 +79,13 @@ export const fetchProducts = async (params = {}) => {
       console.warn('API fetch failed, using local mock data:', error.message);
       return { products: PRODUCTS, count: PRODUCTS.length, source: 'fallback' };
     } finally {
-      if (!hasFilterParams) {
+      if (!hasFilterParams && !shouldBypassCache) {
         inFlightProductsPromise = null;
       }
     }
   };
 
-  if (!hasFilterParams) {
+  if (!hasFilterParams && !shouldBypassCache) {
     inFlightProductsPromise = executeFetch();
     return inFlightProductsPromise;
   }

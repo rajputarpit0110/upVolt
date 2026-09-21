@@ -11,12 +11,15 @@ export const getProducts = async (req, res) => {
   try {
     const { category, search, sort, badge, page, limit, full } = req.query;
 
-    const pageNum = Math.max(1, parseInt(page) || 1);
-    const limitNum = Math.min(100, Math.max(1, parseInt(limit) || 50));
     const isFull = full === 'true';
+    const isPaginated = Boolean(page || (limit && limit !== 'all' && limit !== '0'));
+    const pageNum = Math.max(1, parseInt(page) || 1);
+    const limitNum = isPaginated
+      ? Math.min(5000, Math.max(1, parseInt(limit) || 50))
+      : null;
 
     // 1. High-speed In-Memory Cache Lookup (Sub-millisecond response for concurrent traffic)
-    const cacheKey = `products:${category || 'all'}:${search || ''}:${sort || 'default'}:${badge || ''}:${pageNum}:${limitNum}:${isFull}`;
+    const cacheKey = `products:${category || 'all'}:${search || ''}:${sort || 'default'}:${badge || ''}:${isPaginated ? `${pageNum}:${limitNum}` : 'all'}:${isFull}`;
     const cachedResponse = memoryCache.get(cacheKey);
 
     if (cachedResponse) {
@@ -72,14 +75,16 @@ export const getProducts = async (req, res) => {
         queryExec = queryExec.sort({ createdAt: -1 });
       }
 
-      // Pagination & lean execution
-      const skipNum = (pageNum - 1) * limitNum;
-      queryExec = queryExec.skip(skipNum).limit(limitNum);
+      // Pagination & lean execution: only apply skip/limit if pagination was explicitly requested
+      if (isPaginated && limitNum) {
+        const skipNum = (pageNum - 1) * limitNum;
+        queryExec = queryExec.skip(skipNum).limit(limitNum);
+      }
 
       let products = await queryExec.lean();
 
       // If database collection is totally empty, auto-seed with initial products
-      if (products.length === 0 && !category && !search && pageNum === 1) {
+      if (products.length === 0 && !category && !search && pageNum === 1 && totalCount === 0) {
         console.log('Database empty, auto-seeding initial products...');
         products = await Product.insertMany(INITIAL_PRODUCTS);
         products = products.map(p => (p.toObject ? p.toObject() : p));
@@ -89,8 +94,8 @@ export const getProducts = async (req, res) => {
         success: true,
         count: products.length,
         total: totalCount || products.length,
-        page: pageNum,
-        totalPages: Math.ceil((totalCount || products.length) / limitNum),
+        page: isPaginated ? pageNum : 1,
+        totalPages: isPaginated && limitNum ? Math.ceil((totalCount || products.length) / limitNum) : 1,
         source: 'database',
         products
       };

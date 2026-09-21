@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { fetchProducts, fetchProductById, deleteProduct } from '../services/productService';
+import { fetchProducts, fetchProductById, deleteProduct, clearProductCache } from '../services/productService';
 import { fetchCategories, deleteCategory } from '../services/categoryService';
 import { fetchAllOrders, updateOrderStatus, deleteOrder } from '../services/orderService';
 import { fetchAuditLogs, fetchAdminStats, resetPassword, fetchLiveAnalytics, resetLiveAnalytics } from '../services/adminService';
@@ -314,7 +314,7 @@ export const AdminDashboard = () => {
   const loadProducts = async () => {
     setProductsLoading(true);
     try {
-      const { products: fetched } = await fetchProducts();
+      const { products: fetched } = await fetchProducts({ limit: 1000, full: 'true', bypassCache: true });
       setProducts(fetched || []);
     } catch (err) {
       console.warn('Failed to load products:', err);
@@ -1165,13 +1165,23 @@ export const AdminDashboard = () => {
                 />
               </div>
 
-              <div style={{ display: 'flex', gap: 10 }}>
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                <span style={{ fontSize: '0.82rem', padding: '6px 12px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-secondary)' }}>
+                  {filteredProducts.length === products.length
+                    ? `Total: ${products.length} components`
+                    : `Showing: ${filteredProducts.length} of ${products.length}`}
+                </span>
                 <button
                   type="button"
                   className="cc-btn cc-btn--secondary"
-                  onClick={loadProducts}
+                  onClick={() => {
+                    clearProductCache();
+                    loadProducts();
+                    loadStats();
+                  }}
                   disabled={productsLoading}
                   style={{ padding: '8px 14px' }}
+                  title="Clear cache and reload live products from database"
                 >
                   <RefreshCw size={15} className={productsLoading ? 'animate-spin' : ''} />
                   <span>Refresh</span>
@@ -2126,10 +2136,32 @@ export const AdminDashboard = () => {
                               <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>
                                 {order.paymentMethod?.toUpperCase()}
                               </span>
-                              {order.paymentMethod === 'online' && order.razorpayPaymentId && (
-                                <span style={{ fontSize: '0.7rem', color: 'var(--accent-primary)', fontWeight: 500 }}>
-                                  Txn ID: {order.razorpayPaymentId}
-                               </span>
+                              {order.paymentMethod === 'online' && (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginTop: 2 }}>
+                                  {(order.utr || order.razorpayPaymentId) && (
+                                    <span style={{ fontSize: '0.72rem', color: 'var(--accent-primary)', fontWeight: 600 }}>
+                                      UTR: {order.utr || order.razorpayPaymentId}
+                                    </span>
+                                  )}
+                                  {order.paymentScreenshot && (
+                                    <a
+                                      href={order.paymentScreenshot}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      style={{
+                                        fontSize: '0.72rem',
+                                        color: '#10B981',
+                                        fontWeight: 600,
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: 3,
+                                        textDecoration: 'underline'
+                                      }}
+                                    >
+                                      📸 View Proof
+                                    </a>
+                                  )}
+                                </div>
                               )}
                               {order.deliveryType === 'fast' ? (
                                 <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#D97706', background: 'rgba(245, 158, 11, 0.12)', padding: '2px 6px', borderRadius: 4, display: 'inline-block', width: 'fit-content' }}>

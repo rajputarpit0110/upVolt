@@ -16,7 +16,10 @@ export const createOrder = async (req, res) => {
       shippingFee,
       totalAmount,
       deliveryType,
-      razorpayPaymentId
+      razorpayPaymentId,
+      utr,
+      paymentScreenshot,
+      paymentStatus
     } = req.body;
 
     if (!customerName || !customerPhone || !shippingAddress || !shippingAddress.address || !items || items.length === 0) {
@@ -24,6 +27,70 @@ export const createOrder = async (req, res) => {
         success: false,
         message: 'Customer details, full delivery address, and at least one item are required.'
       });
+    }
+
+    // Online payment validation: UTR and Payment Screenshot
+    let validatedUtr = undefined;
+    let validatedScreenshot = undefined;
+    const isOnlinePayment = ['online', 'upi', 'razorpay'].includes(paymentMethod);
+
+    if (isOnlinePayment || utr || razorpayPaymentId) {
+      const rawUtr = String(utr || razorpayPaymentId || '').trim().replace(/\s+/g, '');
+
+      if (!rawUtr) {
+        return res.status(400).json({
+          success: false,
+          message: 'UTR / Transaction Reference Number is mandatory for online payment verification.'
+        });
+      }
+
+      // Format validation: 12-digit numeric UPI Ref, or 12-22 alphanumeric bank transfer
+      const is12DigitUpi = /^\d{12}$/.test(rawUtr);
+      const isBankRef = /^[A-Za-z0-9]{12,22}$/.test(rawUtr);
+
+      if (!is12DigitUpi && !isBankRef) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid UTR format. Please enter a valid 12-digit numeric UPI reference number from your payment app (e.g. PhonePe, GPay, Paytm).'
+        });
+      }
+
+      // Check for bogus/repetitive/sequential numbers
+      const isRepeated = /^(\d)\1{11}$/.test(rawUtr);
+      const isDummySequential = rawUtr === '123456789012' || rawUtr === '012345678901';
+      if (isRepeated || isDummySequential) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid or dummy UTR detected. Please enter the genuine 12-digit reference number from your UPI payment receipt.'
+        });
+      }
+
+      // Uniqueness check: Ensure this UTR has not been used previously
+      const duplicateOrder = await Order.findOne({
+        $or: [
+          { utr: rawUtr },
+          { razorpayPaymentId: rawUtr }
+        ]
+      });
+
+      if (duplicateOrder) {
+        return res.status(400).json({
+          success: false,
+          message: `This UTR / Transaction ID (${rawUtr}) has already been submitted for an earlier order. Reusing previous payment receipts is not allowed.`
+        });
+      }
+
+      // Screenshot validation
+      const screenshotStr = String(paymentScreenshot || '').trim();
+      if (!screenshotStr) {
+        return res.status(400).json({
+          success: false,
+          message: 'Payment screenshot proof is mandatory for online payment verification. Please upload the screenshot of your completed payment.'
+        });
+      }
+
+      validatedUtr = rawUtr;
+      validatedScreenshot = screenshotStr;
     }
 
     const orderId = 'CC-' + Math.floor(100000 + Math.random() * 900000);
@@ -43,8 +110,8 @@ export const createOrder = async (req, res) => {
         collegeName: shippingAddress.collegeName || '',
         hostelName: shippingAddress.hostelName || '',
         roomNo: shippingAddress.roomNo || '',
-        city: shippingAddress.city || 'Delhi',
-        state: shippingAddress.state || 'Delhi',
+        city: shippingAddress.city || '',
+        state: shippingAddress.state || '',
         pincode: shippingAddress.pincode || ''
       },
       deliveryType: deliveryType === 'fast' ? 'fast' : 'normal',
@@ -53,15 +120,17 @@ export const createOrder = async (req, res) => {
       shippingFee: calculatedShipping,
       totalAmount: calculatedTotal,
       paymentMethod: paymentMethod || 'cod',
-      paymentStatus: paymentMethod === 'cod' ? 'pending' : 'completed',
-      razorpayPaymentId: razorpayPaymentId || undefined,
+      paymentStatus: paymentStatus || (paymentMethod === 'cod' ? 'pending' : 'pending'),
+      razorpayPaymentId: validatedUtr || razorpayPaymentId || undefined,
+      utr: validatedUtr || undefined,
+      paymentScreenshot: validatedScreenshot || undefined,
       orderStatus: 'pending',
       statusHistory: [
         {
           status: 'pending',
           changedAt: new Date(),
           changedBy: customerName,
-          note: 'Order placed by customer'
+          note: isOnlinePayment ? `Order placed with UPI UTR: ${validatedUtr}` : 'Order placed by customer (COD)'
         }
       ]
     });

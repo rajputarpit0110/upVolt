@@ -169,7 +169,7 @@ export const Orders = () => {
                   <div className="cc-order-delivery-note">
                     <Truck size={16} className="cc-delivery-icon" />
                     <span>
-                      Delivery Address: <strong>{order.shippingAddress?.hostelName || 'Hostel'}, Room {order.shippingAddress?.roomNo || 'N/A'}, {order.shippingAddress?.collegeName || 'Campus'}</strong> ({order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Prepaid UPI'})
+                      Delivery Address: <strong>{order.shippingAddress?.hostelName || 'Hostel'}, Room {order.shippingAddress?.roomNo || 'N/A'}, {order.shippingAddress?.collegeName || 'Campus'}</strong> ({order.paymentMethod === 'cod' ? 'Cash on Delivery' : `Prepaid UPI${order.utr || order.razorpayPaymentId ? ` • UTR: ${order.utr || order.razorpayPaymentId}` : ''}`})
                     </span>
                   </div>
 
