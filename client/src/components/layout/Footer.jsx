@@ -90,9 +90,11 @@ export const Footer = () => {
                   <span style={{ fontSize: '0.8rem' }}>{OFFICIAL_EMAIL}</span>
                 </a>
               </li>
-              <li><Link to="/shipping-policy">Shipping &amp; Delivery</Link></li>
+              <li><Link to="/shipping-policy">Shipping Policy</Link></li>
               <li><Link to="/contact">Help &amp; FAQs</Link></li>
-              <li><Link to="/terms">Terms &amp; Conditions</Link></li>
+              <li><Link to="/refund-policy">Return &amp; Refund Policy</Link></li>
+              <li><Link to="/privacy-policy">Privacy Policy</Link></li>
+              <li><Link to="/terms">Terms of Service</Link></li>
             </ul>
           </div>
 

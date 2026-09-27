@@ -2,6 +2,7 @@ import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import { Order } from '../models/Order.js';
 import { AuditLog } from '../models/AuditLog.js';
+import { Product } from '../models/Product.js';
 
 // Helper to get Razorpay instance
 const getRazorpayInstance = () => {
@@ -162,6 +163,29 @@ export const verifyRazorpayPayment = async (req, res) => {
     });
 
     const savedOrder = await newOrder.save();
+
+    // Decrement stock quantities
+    if (orderData.items && orderData.items.length > 0) {
+      for (const item of orderData.items) {
+        const prodId = item._id || item.productId;
+        if (prodId) {
+          try {
+            const updated = await Product.findByIdAndUpdate(
+              prodId,
+              { $inc: { stockQuantity: -item.quantity } },
+              { new: true }
+            );
+            if (updated && updated.stockQuantity <= 0 && updated.inStock) {
+              updated.inStock = false;
+              await updated.save();
+            }
+          } catch (err) {
+            console.error(`Failed to update stock for product ${prodId}`, err);
+          }
+        }
+      }
+    }
+
 
     // Audit log
     try {

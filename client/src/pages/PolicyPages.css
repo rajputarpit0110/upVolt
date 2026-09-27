@@ -1,0 +1,71 @@
+.policy-page-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  min-height: 60vh;
+  color: var(--text-primary, #333);
+}
+
+.policy-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color, #eee);
+}
+
+.policy-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--heading-color, #111);
+}
+
+.policy-header p {
+  color: var(--text-secondary, #666);
+  font-size: 0.95rem;
+}
+
+.policy-content section {
+  margin-bottom: 30px;
+}
+
+.policy-content h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: var(--heading-color, #222);
+}
+
+.policy-content p {
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.policy-content ul {
+  list-style-type: disc;
+  margin-left: 20px;
+  margin-bottom: 15px;
+}
+
+.policy-content li {
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+/* Dark mode adjustments if the app uses them */
+[data-theme='dark'] .policy-page-container {
+  color: #e0e0e0;
+}
+
+[data-theme='dark'] .policy-header h1,
+[data-theme='dark'] .policy-content h2 {
+  color: #fff;
+}
+
+[data-theme='dark'] .policy-header p {
+  color: #aaa;
+}
+
+[data-theme='dark'] .policy-header {
+  border-bottom: 1px solid #333;
+}

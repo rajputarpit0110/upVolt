@@ -69,6 +69,10 @@ const Contact = React.lazy(() => import('./pages/Contact').then(m => ({ default:
 const Auth = React.lazy(() => import('./pages/Auth').then(m => ({ default: m.Auth })));
 const Profile = React.lazy(() => import('./pages/Profile').then(m => ({ default: m.Profile })));
 const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
+const ShippingPolicy = React.lazy(() => import('./pages/ShippingPolicy').then(m => ({ default: m.ShippingPolicy })));
+const RefundPolicy = React.lazy(() => import('./pages/RefundPolicy').then(m => ({ default: m.RefundPolicy })));
+const PrivacyPolicy = React.lazy(() => import('./pages/PrivacyPolicy').then(m => ({ default: m.PrivacyPolicy })));
+const Terms = React.lazy(() => import('./pages/Terms').then(m => ({ default: m.Terms })));
 
 const RouteLoadingFallback = () => (
   <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -114,6 +118,10 @@ export function App() {
                       <Route path="/register" element={<Auth />} />
                       <Route path="/profile" element={<Profile />} />
                       <Route path="/admin" element={<AdminDashboard />} />
+                      <Route path="/shipping-policy" element={<ShippingPolicy />} />
+                      <Route path="/refund-policy" element={<RefundPolicy />} />
+                      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                      <Route path="/terms" element={<Terms />} />
                       <Route path="*" element={<Home />} />
                     </Routes>
                   </React.Suspense>
