@@ -114,6 +114,13 @@ export const createOrder = async (req, res) => {
       if (!dbProduct) {
         return res.status(404).json({ success: false, message: `Product not found.` });
       }
+
+      if (!dbProduct.inStock || dbProduct.stockQuantity < item.quantity) {
+        return res.status(400).json({ 
+          success: false, 
+          message: `Item "${dbProduct.name}" is out of stock or does not have enough quantity available.` 
+        });
+      }
       
       serverSubtotal += (dbProduct.price * item.quantity);
       validatedItems.push({

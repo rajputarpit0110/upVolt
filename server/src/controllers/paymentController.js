@@ -25,17 +25,67 @@ export const getRazorpayKey = (req, res) => {
 // POST /api/payments/razorpay/create-order
 export const createRazorpayOrder = async (req, res) => {
   try {
-    const { amount, currency = 'INR', receipt } = req.body;
+    const { orderData } = req.body;
 
-    if (!amount || amount <= 0) {
+    if (!orderData || !orderData.items || orderData.items.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Order items are required to initiate payment.'
+      });
+    }
+
+    let serverSubtotal = 0;
+    for (const item of orderData.items) {
+      if (!item.quantity || !Number.isInteger(item.quantity) || item.quantity <= 0 || item.quantity > 50) {
+        return res.status(400).json({ success: false, message: 'Invalid quantity for one or more items.' });
+      }
+
+      const prodId = item._id || item.productId;
+      const dbProduct = await Product.findById(prodId);
+      if (!dbProduct) {
+        return res.status(404).json({ success: false, message: 'Product not found.' });
+      }
+      
+      if (!dbProduct.inStock || dbProduct.stockQuantity < item.quantity) {
+        return res.status(400).json({ 
+          success: false, 
+          message: `Item "${dbProduct.name}" is out of stock or does not have enough quantity available.` 
+        });
+      }
+
+      serverSubtotal += (dbProduct.price * item.quantity);
+    }
+
+    const calculatedSubtotal = serverSubtotal;
+    const calculatedShipping = orderData.deliveryType === 'fast' ? 100 : (calculatedSubtotal >= 499 ? 0 : 40);
+
+    let calculatedDiscount = 0;
+    if (orderData.couponCode && typeof orderData.couponCode === 'string') {
+      const coupon = await Coupon.findOne({ code: orderData.couponCode.toUpperCase(), isActive: true });
+      if (coupon && coupon.validUntil > new Date() && calculatedSubtotal >= coupon.minOrderAmount) {
+        if (coupon.discountType === 'fixed') {
+          calculatedDiscount = coupon.discountValue;
+        } else if (coupon.discountType === 'percentage') {
+          calculatedDiscount = Math.floor((calculatedSubtotal * coupon.discountValue) / 100);
+          if (coupon.maxDiscountAmount && calculatedDiscount > coupon.maxDiscountAmount) {
+            calculatedDiscount = coupon.maxDiscountAmount;
+          }
+        }
+      }
+    }
+
+    const calculatedTotal = Math.max(0, calculatedSubtotal + calculatedShipping - calculatedDiscount);
+
+    if (calculatedTotal <= 0) {
       return res.status(400).json({
         success: false,
         message: 'A valid order amount is required.'
       });
     }
 
-    const amountInPaise = Math.round(Number(amount) * 100);
-    const receiptId = receipt || `rcpt_${Date.now()}`;
+    const amountInPaise = Math.round(calculatedTotal * 100);
+    const receiptId = `rcpt_${Date.now()}`;
+    const currency = 'INR';
     const { instance, keyId } = getRazorpayInstance();
 
     try {
@@ -112,6 +162,13 @@ export const verifyRazorpayPayment = async (req, res) => {
       const dbProduct = await Product.findById(prodId);
       if (!dbProduct) {
         return res.status(404).json({ success: false, message: `Product not found.` });
+      }
+
+      if (!dbProduct.inStock || dbProduct.stockQuantity < item.quantity) {
+        return res.status(400).json({ 
+          success: false, 
+          message: `Item "${dbProduct.name}" is out of stock or does not have enough quantity available.` 
+        });
       }
       
       serverSubtotal += (dbProduct.price * item.quantity);

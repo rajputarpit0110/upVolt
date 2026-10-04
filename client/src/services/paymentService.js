@@ -29,11 +29,11 @@ export const fetchRazorpayKey = async () => {
 };
 
 // Create a Razorpay order on backend
-export const createRazorpayOrder = async (amount, currency = 'INR', receipt = null) => {
+export const createRazorpayOrder = async (orderData) => {
   const res = await fetch(`${API_BASE}/razorpay/create-order`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ amount, currency, receipt })
+    body: JSON.stringify({ orderData })
   });
   const data = await safeJson(res);
   if (!res.ok || !data.success) {

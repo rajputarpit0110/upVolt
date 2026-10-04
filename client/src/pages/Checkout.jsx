@@ -214,7 +214,7 @@ export const Checkout = () => {
       }
 
       const keyId = await fetchRazorpayKey();
-      const orderRes = await createRazorpayOrder(totalAmount, 'INR', `rcpt_${Date.now()}`);
+      const orderRes = await createRazorpayOrder(orderPayload);
 
       const options = {
         key: orderRes.keyId || keyId,
