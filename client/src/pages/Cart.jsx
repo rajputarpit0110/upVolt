@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { validateCouponCode } from '../services/couponService';
 import { fetchDeliverySettings } from '../services/settingsService';
+import { fetchProductById } from '../services/productService';
 import './Cart.css';
 
 export const Cart = () => {
@@ -32,6 +33,8 @@ export const Cart = () => {
   const [couponError, setCouponError] = useState('');
   const [couponMessage, setCouponMessage] = useState('');
   const [validatingCoupon, setValidatingCoupon] = useState(false);
+  const [isCheckingStock, setIsCheckingStock] = useState(true);
+  const [stockAlerts, setStockAlerts] = useState([]);
 
   const [deliverySettings, setDeliverySettings] = useState({
     normalDeliveryFee: 49,
@@ -46,6 +49,54 @@ export const Cart = () => {
         }
       })
       .catch(err => console.warn('Failed to load delivery settings:', err));
+  }, []);
+
+  useEffect(() => {
+    const verifyCartStock = async () => {
+      if (!cartItems || cartItems.length === 0) {
+        setIsCheckingStock(false);
+        return;
+      }
+      
+      setIsCheckingStock(true);
+      const alerts = [];
+      let hasChanges = false;
+      
+      try {
+        await Promise.all(cartItems.map(async (item) => {
+          const id = item._id || item.id;
+          const liveProduct = await fetchProductById(id);
+          
+          if (!liveProduct) {
+            alerts.push(`"${item.name}" is no longer available and was removed.`);
+            removeFromCart(id);
+            hasChanges = true;
+            return;
+          }
+          
+          if (!liveProduct.inStock || liveProduct.stockQuantity <= 0) {
+            alerts.push(`"${item.name}" is currently out of stock and was removed.`);
+            removeFromCart(id);
+            hasChanges = true;
+          } else if (liveProduct.stockQuantity < item.quantity) {
+            alerts.push(`"${item.name}" only has ${liveProduct.stockQuantity} units left. Quantity reduced.`);
+            updateQuantity(id, liveProduct.stockQuantity);
+            hasChanges = true;
+          }
+        }));
+      } catch (error) {
+        console.error('Failed to verify cart stock:', error);
+      } finally {
+        if (hasChanges) {
+          setStockAlerts(alerts);
+        }
+        setIsCheckingStock(false);
+      }
+    };
+
+    verifyCartStock();
+    // We intentionally only run this on mount to avoid infinite loops with updateQuantity
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const shippingFee = cartSubtotal >= (deliverySettings.freeDeliveryThreshold ?? 499) || cartSubtotal === 0 
@@ -112,6 +163,19 @@ export const Cart = () => {
       />
       <div className="container">
         <h1 className="cc-cart-title">Your Cart ({cartItems.length} items)</h1>
+
+        {stockAlerts.length > 0 && (
+          <div className="cc-cart-stock-alerts glass-panel" style={{ marginBottom: 20, padding: 16, backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: 12 }}>
+            <h4 style={{ color: '#ef4444', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, marginTop: 0 }}>
+              <Tag size={16} /> Cart Updated Due to Stock Changes
+            </h4>
+            <ul style={{ margin: 0, paddingLeft: 20, color: 'var(--text-secondary)' }}>
+              {stockAlerts.map((alert, i) => (
+                <li key={i} style={{ marginBottom: 4 }}>{alert}</li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         <div className="cc-cart-layout">
           {/* Items List Left */}
