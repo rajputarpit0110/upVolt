@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import { Order } from '../models/Order.js';
 import { AuditLog } from '../models/AuditLog.js';
 import { Product } from '../models/Product.js';
+import { Coupon } from '../models/Coupon.js';
 
 // Helper to get Razorpay instance
 const getRazorpayInstance = () => {
@@ -94,37 +95,100 @@ export const verifyRazorpayPayment = async (req, res) => {
       });
     }
 
+    // Security Fix: Server-side validation of item quantities and recalculation of total from DB prices
+    let serverSubtotal = 0;
+    const validatedItems = [];
+
+    for (const item of orderData.items) {
+      if (!item.quantity || !Number.isInteger(item.quantity) || item.quantity <= 0 || item.quantity > 50) {
+        return res.status(400).json({ success: false, message: 'Invalid quantity for one or more items.' });
+      }
+
+      const prodId = item._id || item.productId;
+      if (!prodId) {
+        return res.status(400).json({ success: false, message: 'Product ID is missing for an item.' });
+      }
+
+      const dbProduct = await Product.findById(prodId);
+      if (!dbProduct) {
+        return res.status(404).json({ success: false, message: `Product not found.` });
+      }
+      
+      serverSubtotal += (dbProduct.price * item.quantity);
+      validatedItems.push({
+        ...item,
+        price: dbProduct.price // Override client price with authentic DB price
+      });
+    }
+
+    const calculatedSubtotal = serverSubtotal;
+    const calculatedShipping = orderData.deliveryType === 'fast' ? 100 : (calculatedSubtotal >= 499 ? 0 : 40);
+    
+    let calculatedDiscount = 0;
+    let validatedCoupon = null;
+    
+    if (orderData.couponCode && typeof orderData.couponCode === 'string') {
+      const coupon = await Coupon.findOne({ code: orderData.couponCode.toUpperCase(), isActive: true });
+      if (coupon && coupon.validUntil > new Date() && calculatedSubtotal >= coupon.minOrderAmount) {
+        if (coupon.discountType === 'fixed') {
+          calculatedDiscount = coupon.discountValue;
+        } else if (coupon.discountType === 'percentage') {
+          calculatedDiscount = Math.floor((calculatedSubtotal * coupon.discountValue) / 100);
+          if (coupon.maxDiscountAmount && calculatedDiscount > coupon.maxDiscountAmount) {
+            calculatedDiscount = coupon.maxDiscountAmount;
+          }
+        }
+        validatedCoupon = coupon.code;
+      }
+    }
+    
+    const calculatedTotal = Math.max(0, calculatedSubtotal + calculatedShipping - calculatedDiscount);
+    orderData.items = validatedItems;
+
     const keySecret = process.env.RAZORPAY_KEY_SECRET || 'campuscircuit_rzp_secret_key_2026';
 
-    // Verify HMAC SHA256 signature
+    // Verify HMAC SHA256 signature and amount
     let isAuthentic = false;
-    if (razorpay_signature && razorpay_signature !== 'verified_dev') {
+    let isAmountVerified = false;
+
+    if (razorpay_order_id.startsWith('order_test_')) {
+      isAuthentic = true;
+      isAmountVerified = true;
+    } else if (razorpay_signature) {
       const generatedSignature = crypto
         .createHmac('sha256', keySecret)
         .update(`${razorpay_order_id}|${razorpay_payment_id}`)
         .digest('hex');
 
       isAuthentic = (generatedSignature === razorpay_signature);
+      
+      if (isAuthentic) {
+        try {
+          const { instance } = getRazorpayInstance();
+          const rzpOrder = await instance.orders.fetch(razorpay_order_id);
+          
+          if (rzpOrder.amount === calculatedTotal * 100 && rzpOrder.currency === 'INR' && rzpOrder.status === 'paid') {
+            isAmountVerified = true;
+          } else {
+            console.warn(`Payment mismatch: expected ${calculatedTotal * 100} INR, got ${rzpOrder.amount} ${rzpOrder.currency}, status: ${rzpOrder.status}`);
+          }
+        } catch (fetchErr) {
+          console.error("Failed to fetch Razorpay order:", fetchErr);
+        }
+      }
     }
 
-    // Allow dev test orders if running with test order IDs or test token
-    if (!isAuthentic && (razorpay_order_id.startsWith('order_test_') || razorpay_signature === 'verified_dev')) {
-      isAuthentic = true;
-    }
-
-    if (!isAuthentic) {
+    if (!isAuthentic || !isAmountVerified) {
       return res.status(400).json({
         success: false,
-        message: 'Payment signature verification failed. Unauthorized transaction.'
+        message: 'Payment verification failed. Unauthorized transaction or amount mismatch.'
       });
     }
 
     // Create confirmed order in database
     const orderId = 'CC-' + Math.floor(100000 + Math.random() * 900000);
 
-    const calculatedSubtotal = orderData.subtotal || orderData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const calculatedShipping = orderData.shippingFee !== undefined ? Number(orderData.shippingFee) : (calculatedSubtotal >= 499 ? 0 : 40);
-    const calculatedTotal = orderData.totalAmount || (calculatedSubtotal + calculatedShipping);
+
 
     const newOrder = new Order({
       orderId,
@@ -145,6 +209,8 @@ export const verifyRazorpayPayment = async (req, res) => {
       items: orderData.items,
       subtotal: calculatedSubtotal,
       shippingFee: calculatedShipping,
+      couponCode: validatedCoupon || undefined,
+      discountAmount: calculatedDiscount,
       totalAmount: calculatedTotal,
       paymentMethod: 'online',
       paymentStatus: 'completed',

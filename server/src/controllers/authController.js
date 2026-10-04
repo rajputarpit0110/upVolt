@@ -180,6 +180,30 @@ export const registerUser = async (req, res) => {
       });
     }
 
+    if (name.trim().length < 2 || name.length > 50 || /[^a-zA-Z\s.-]/.test(name)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid name (2-50 characters, letters only).'
+      });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid email format.'
+      });
+    }
+
+    const disposableDomains = ['yopmail.com', 'mailinator.com', 'guerrillamail.com', '10minutemail.com', 'tempmail.com', 'temp-mail.org'];
+    const domain = email.split('@')[1]?.toLowerCase();
+    if (disposableDomains.includes(domain)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Disposable or temporary email addresses are not allowed.'
+      });
+    }
+
     if (password.length < 6) {
       return res.status(400).json({
         success: false,

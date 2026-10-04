@@ -1,6 +1,7 @@
 import { Order } from '../models/Order.js';
 import { AuditLog } from '../models/AuditLog.js';
 import { Product } from '../models/Product.js';
+import { Coupon } from '../models/Coupon.js';
 
 // POST /api/orders - Place a new order
 export const createOrder = async (req, res) => {
@@ -19,7 +20,7 @@ export const createOrder = async (req, res) => {
       razorpayPaymentId,
       utr,
       paymentScreenshot,
-      paymentStatus
+      couponCode
     } = req.body;
 
     if (!customerName || !customerPhone || !shippingAddress || !shippingAddress.address || !items || items.length === 0) {
@@ -95,9 +96,57 @@ export const createOrder = async (req, res) => {
 
     const orderId = 'CC-' + Math.floor(100000 + Math.random() * 900000);
 
-    const calculatedSubtotal = subtotal || items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const calculatedShipping = shippingFee !== undefined ? Number(shippingFee) : (calculatedSubtotal >= 499 ? 0 : 40);
-    const calculatedTotal = totalAmount || (calculatedSubtotal + calculatedShipping);
+    // Security Fix: Server-side validation of item quantities and recalculation of total from DB prices
+    let serverSubtotal = 0;
+    const validatedItems = [];
+
+    for (const item of items) {
+      if (!item.quantity || !Number.isInteger(item.quantity) || item.quantity <= 0 || item.quantity > 50) {
+        return res.status(400).json({ success: false, message: 'Invalid quantity for one or more items.' });
+      }
+
+      const prodId = item._id || item.productId;
+      if (!prodId) {
+        return res.status(400).json({ success: false, message: 'Product ID is missing for an item.' });
+      }
+
+      const dbProduct = await Product.findById(prodId);
+      if (!dbProduct) {
+        return res.status(404).json({ success: false, message: `Product not found.` });
+      }
+      
+      serverSubtotal += (dbProduct.price * item.quantity);
+      validatedItems.push({
+        ...item,
+        price: dbProduct.price // Override client price with authentic DB price
+      });
+    }
+
+    const calculatedSubtotal = serverSubtotal;
+    const calculatedShipping = deliveryType === 'fast' ? 100 : (calculatedSubtotal >= 499 ? 0 : 40); // Standardize shipping logic
+    
+    let calculatedDiscount = 0;
+    let validatedCoupon = null;
+    
+    if (couponCode && typeof couponCode === 'string') {
+      const coupon = await Coupon.findOne({ code: couponCode.toUpperCase(), isActive: true });
+      if (coupon && coupon.validUntil > new Date() && calculatedSubtotal >= coupon.minOrderAmount) {
+        if (coupon.discountType === 'fixed') {
+          calculatedDiscount = coupon.discountValue;
+        } else if (coupon.discountType === 'percentage') {
+          calculatedDiscount = Math.floor((calculatedSubtotal * coupon.discountValue) / 100);
+          if (coupon.maxDiscountAmount && calculatedDiscount > coupon.maxDiscountAmount) {
+            calculatedDiscount = coupon.maxDiscountAmount;
+          }
+        }
+        validatedCoupon = coupon.code;
+      }
+    }
+    
+    const calculatedTotal = Math.max(0, calculatedSubtotal + calculatedShipping - calculatedDiscount);
+    
+    // Replace items with validated items
+    req.body.items = validatedItems;
 
     const newOrder = new Order({
       orderId,
@@ -118,9 +167,11 @@ export const createOrder = async (req, res) => {
       items,
       subtotal: calculatedSubtotal,
       shippingFee: calculatedShipping,
+      couponCode: validatedCoupon || undefined,
+      discountAmount: calculatedDiscount,
       totalAmount: calculatedTotal,
       paymentMethod: paymentMethod || 'cod',
-      paymentStatus: paymentStatus || (paymentMethod === 'cod' ? 'pending' : 'pending'),
+      paymentStatus: 'pending',
       razorpayPaymentId: validatedUtr || razorpayPaymentId || undefined,
       utr: validatedUtr || undefined,
       paymentScreenshot: validatedScreenshot || undefined,
@@ -186,6 +237,13 @@ export const cancelMyOrder = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Order not found.' });
     }
 
+    if (
+      !req.user || 
+      (order.user?.toString() !== req.user._id.toString() && order.customerEmail !== req.user.email)
+    ) {
+      return res.status(403).json({ success: false, message: 'Not authorized to cancel this order.' });
+    }
+
     if (order.orderStatus !== 'pending') {
       return res.status(400).json({ success: false, message: 'Only pending orders can be cancelled.' });
     }
@@ -236,20 +294,17 @@ export const cancelMyOrder = async (req, res) => {
 // GET /api/orders/my-orders - Get orders for current user or by phone/email
 export const getMyOrders = async (req, res) => {
   try {
-    const query = {};
-
-    if (req.user) {
-      query.$or = [
-        { user: req.user._id },
-        { customerEmail: req.user.email }
-      ];
-    } else if (req.query.phone) {
-      query.customerPhone = req.query.phone;
-    } else if (req.query.email) {
-      query.customerEmail = req.query.email;
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: 'Authentication required to view orders.' });
     }
 
-    // If no user or query, return recent orders so students can see their orders
+    const query = {
+      $or: [
+        { user: req.user._id },
+        { customerEmail: req.user.email }
+      ]
+    };
+
     const orders = await Order.find(query).sort({ createdAt: -1 });
 
     res.status(200).json({

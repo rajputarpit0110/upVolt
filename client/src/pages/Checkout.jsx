@@ -8,9 +8,9 @@ import { fetchDeliverySettings } from '../services/settingsService';
 import {
   createRazorpayOrder,
   verifyRazorpayPayment,
-  loadRazorpayScript
+  loadRazorpayScript,
+  fetchRazorpayKey
 } from '../services/paymentService';
-import { RazorpayModal } from '../components/checkout/RazorpayModal';
 import { Button } from '../components/common/Button';
 import confetti from 'canvas-confetti';
 import {
@@ -41,17 +41,48 @@ export const Checkout = () => {
 
   const testStepParam = Number(searchParams.get('testStep'));
   const [step, setStep] = useState(testStepParam || 1);
-  const [address, setAddress] = useState({
-    fullName: testStepParam ? 'Arpit Rajput' : '',
-    phone: testStepParam ? '9876543210' : '',
-    address: testStepParam ? 'Flat 302, Green Valley Apartments, Near Sector 15 Metro Station' : '',
-    collegeName: testStepParam ? 'Delhi Technological University' : '',
-    hostelName: testStepParam ? 'Ramanujan Hostel' : '',
-    roomNo: testStepParam ? '204' : '',
-    city: testStepParam ? 'Delhi' : '',
-    state: testStepParam ? 'Delhi' : '',
-    pincode: testStepParam ? '110042' : ''
-  });
+  const getInitialAddress = () => {
+    if (testStepParam) {
+      return {
+        fullName: 'Arpit Rajput',
+        phone: '9876543210',
+        address: 'Flat 302, Green Valley Apartments, Near Sector 15 Metro Station',
+        collegeName: 'Delhi Technological University',
+        hostelName: 'Ramanujan Hostel',
+        roomNo: '204',
+        city: 'Delhi',
+        state: 'Delhi',
+        pincode: '110042'
+      };
+    }
+    const storageKey = `upvolt_checkout_address_${user?._id || 'guest'}`;
+    const saved = localStorage.getItem(storageKey);
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        // ignore
+      }
+    }
+    return {
+      fullName: user?.name || '',
+      phone: user?.phone || '',
+      address: '',
+      collegeName: '',
+      hostelName: '',
+      roomNo: '',
+      city: '',
+      state: '',
+      pincode: ''
+    };
+  };
+
+  const [address, setAddress] = useState(getInitialAddress);
+
+  useEffect(() => {
+    const storageKey = `upvolt_checkout_address_${user?._id || 'guest'}`;
+    localStorage.setItem(storageKey, JSON.stringify(address));
+  }, [address, user?._id]);
 
   const [deliverySettings, setDeliverySettings] = useState({
     normalDeliveryFee: 40,
@@ -67,8 +98,6 @@ export const Checkout = () => {
   const [placedOrderId, setPlacedOrderId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [paymentError, setPaymentError] = useState('');
-  const [isRzpModalOpen, setIsRzpModalOpen] = useState(false);
-  const [currentRzpOrderId, setCurrentRzpOrderId] = useState(null);
   const [finalPlacedAmount, setFinalPlacedAmount] = useState(0);
   
   // Load admin-configured delivery fees & rules
@@ -111,76 +140,7 @@ export const Checkout = () => {
     setAddress({ ...address, [name]: value });
   };
 
-  const handleRazorpaySuccess = async (response, orderPayloadData = null) => {
-    setPaymentError('');
 
-    const payload = orderPayloadData || {
-      customerName: address.fullName,
-      customerEmail: user?.email || '',
-      customerPhone: address.phone,
-      shippingAddress: {
-        address: address.address,
-        collegeName: address.collegeName || '',
-        hostelName: address.hostelName || '',
-        roomNo: address.roomNo || '',
-        city: address.city || '',
-        state: address.state || '',
-        pincode: address.pincode
-      },
-      items: cartItems.map(item => ({
-        name: item.name,
-        price: item.price,
-        quantity: item.quantity,
-        image: item.image,
-        sku: item.sku || `SKU-${item._id || item.id}`
-      })),
-      deliveryType,
-      subtotal: cartSubtotal,
-      shippingFee,
-      discountAmount,
-      couponCode,
-      totalAmount,
-      paymentMethod: 'online'
-    };
-
-    payload.razorpayPaymentId = response.razorpay_payment_id || response.utr;
-    payload.utr = response.utr || response.razorpay_payment_id;
-    payload.paymentScreenshot = response.paymentScreenshot;
-    payload.paymentStatus = 'pending';
-
-    try {
-      setIsSubmitting(true);
-      const savedOrder = await createOrder(payload);
-
-      setIsRzpModalOpen(false);
-      setPlacedOrderId(savedOrder.orderId);
-      setFinalPlacedAmount(totalAmount);
-      setOrderComplete(true);
-
-      try {
-        confetti({
-          particleCount: 140,
-          spread: 90,
-          origin: { y: 0.6 }
-        });
-      } catch { }
-
-      clearCart();
-    } catch (verifyErr) {
-      console.error('Order creation failed:', verifyErr);
-      const errMsg = verifyErr.message || 'Failed to place order after payment. Please contact support with your UTR.';
-      setPaymentError(errMsg);
-      throw new Error(errMsg);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleRazorpayModalClose = () => {
-    setIsRzpModalOpen(false);
-    setIsSubmitting(false);
-    setPaymentError('Payment was cancelled. Your order has not been placed. You can select another method or retry.');
-  };
 
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
@@ -246,10 +206,70 @@ export const Checkout = () => {
       return;
     }
 
-    // Flow 2: Manual Online Payment via UPI QR Code
-    // Bypass Razorpay Initialization and directly open the manual modal
-    setIsSubmitting(false);
-    setIsRzpModalOpen(true);
+    // Flow 2: Real Online Payment via Razorpay SDK
+    try {
+      const isLoaded = await loadRazorpayScript();
+      if (!isLoaded) {
+        throw new Error('Failed to load Razorpay SDK. Please check your connection.');
+      }
+
+      const keyId = await fetchRazorpayKey();
+      const orderRes = await createRazorpayOrder(totalAmount, 'INR', `rcpt_${Date.now()}`);
+
+      const options = {
+        key: orderRes.keyId || keyId,
+        amount: orderRes.amount,
+        currency: orderRes.currency,
+        order_id: orderRes.orderId,
+        name: 'upVolt',
+        description: 'Component Purchase',
+        prefill: {
+          name: address.fullName,
+          email: user?.email || '',
+          contact: address.phone
+        },
+        handler: async (response) => {
+          try {
+            setIsSubmitting(true);
+            const verifyRes = await verifyRazorpayPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              orderData: orderPayload
+            });
+
+            if (verifyRes.success) {
+              setPlacedOrderId(verifyRes.order.orderId);
+              setFinalPlacedAmount(totalAmount);
+              setOrderComplete(true);
+              clearCart();
+              try { confetti({ particleCount: 140, spread: 90, origin: { y: 0.6 } }); } catch { }
+            }
+          } catch (err) {
+            console.error('Payment verification failed:', err);
+            setPaymentError(err.message || 'Payment verification failed. Please contact support if amount was deducted.');
+          } finally {
+            setIsSubmitting(false);
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            setIsSubmitting(false);
+            setPaymentError('Payment was cancelled. You can retry.');
+          }
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (response) {
+        setPaymentError(`Payment failed: ${response.error.description}`);
+      });
+      rzp.open();
+    } catch (err) {
+      console.error(err);
+      setIsSubmitting(false);
+      setPaymentError(err.message || 'Failed to initialize payment gateway.');
+    }
   };
 
   if (orderComplete) {
@@ -779,17 +799,7 @@ export const Checkout = () => {
         </div>
       </div>
 
-      {/* Razorpay Online Payment Gateway Modal */}
-      <RazorpayModal
-        isOpen={isRzpModalOpen}
-        onClose={handleRazorpayModalClose}
-        onSuccess={handleRazorpaySuccess}
-        amount={totalAmount}
-        orderId={currentRzpOrderId}
-        customerName={address.fullName}
-        customerEmail={user?.email || ''}
-        customerPhone={address.phone}
-      />
+
     </div>
   );
 };

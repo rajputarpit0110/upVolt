@@ -79,3 +79,18 @@ export const otpVerifyRateLimiter = new SlidingRateLimiter({
   maxRequests: 10,
   message: 'Too many verification attempts. Please wait before trying again.'
 }).middleware();
+
+// 3. Login Limiter (20 login attempts per 15 minutes)
+export const loginRateLimiter = new SlidingRateLimiter({
+  windowMs: 15 * 60 * 1000,
+  maxRequests: 20,
+  message: 'Too many login attempts. Please try again later.'
+}).middleware();
+
+// 4. Checkout Limiter (10 checkout attempts per 15 minutes)
+export const checkoutRateLimiter = new SlidingRateLimiter({
+  windowMs: 15 * 60 * 1000,
+  maxRequests: 10,
+  message: 'Too many order requests. Please try again later.'
+}).middleware();
+

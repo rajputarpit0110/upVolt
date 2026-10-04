@@ -10,11 +10,11 @@ import {
 } from '../controllers/authController.js';
 import { protect } from '../middlewares/auth.js';
 import { adaptHandler } from '../utils/honoAdapter.js';
-import { otpSendRateLimiter, otpVerifyRateLimiter } from '../middlewares/otpRateLimiter.js';
+import { otpSendRateLimiter, otpVerifyRateLimiter, loginRateLimiter } from '../middlewares/otpRateLimiter.js';
 
 const router = new Hono();
 
-router.post('/login', adaptHandler(loginUser));
+router.post('/login', loginRateLimiter, adaptHandler(loginUser));
 router.post('/register', otpSendRateLimiter, adaptHandler(registerUser));
 router.post('/forgot-password', otpSendRateLimiter, adaptHandler(forgotPassword));
 router.post('/verify-otp', otpVerifyRateLimiter, adaptHandler(verifyOtp));

@@ -22,11 +22,36 @@ import { serveStatic } from '@hono/node-server/serve-static';
 import { initKeepAlive } from './utils/keepAlive.js';
 
 import { compress } from 'hono/compress';
+import { secureHeaders } from 'hono/secure-headers';
 
 const app = new Hono();
 const PORT = Number(process.env.PORT) || 5001;
 
-// 1. Response Compression Middleware (Gzip/Deflate for JSON, text, HTML, JS, CSS)
+// 1. Security Headers Middleware
+app.use('*', secureHeaders({
+  contentSecurityPolicy: {
+    defaultSrc: ["'self'"],
+    baseUri: ["'self'"],
+    fontSrc: ["'self'", 'https:', 'data:'],
+    formAction: ["'self'"],
+    frameAncestors: ["'none'"],
+    imgSrc: ["'self'", 'data:', 'https:', 'blob:'],
+    objectSrc: ["'none'"],
+    scriptSrc: ["'self'", 'https:', "'unsafe-inline'", "'unsafe-eval'"],
+    styleSrc: ["'self'", 'https:', "'unsafe-inline'"],
+  },
+  strictTransportSecurity: 'max-age=31536000; includeSubDomains; preload',
+  referrerPolicy: 'no-referrer',
+  xFrameOptions: 'DENY',
+  xXssProtection: '1; mode=block',
+  xContentTypeOptions: 'nosniff'
+}));
+
+app.get('/.well-known/security.txt', (c) => {
+  return c.text("Contact: mailto:security@upvolt.site\nExpires: 2027-12-31T23:59:59.000Z\nPreferred-Languages: en");
+});
+
+// 2. Response Compression Middleware (Gzip/Deflate for JSON, text, HTML, JS, CSS)
 app.use('*', compress());
 
 // 2. Normalize trailing slashes if present (e.g., /api/products/ -> /api/products)
