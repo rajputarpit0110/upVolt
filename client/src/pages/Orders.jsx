@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import SEO from '../components/common/SEO';
 import { Badge } from '../components/common/Badge';
 import { fetchMyOrders, cancelMyOrder } from '../services/orderService';
 import { Package, Truck, CheckCircle2, Clock, RefreshCw, ShoppingBag, AlertCircle, XCircle } from 'lucide-react';
@@ -66,6 +67,10 @@ export const Orders = () => {
 
   return (
     <div className="cc-page cc-orders-page">
+      <SEO 
+        title="Your Orders | upVolt" 
+        description="Track your upVolt orders and delivery status." 
+      />
       <div className="container">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 30 }}>
           <div>

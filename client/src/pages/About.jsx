@@ -1,4 +1,5 @@
 import React from 'react';
+import SEO from '../components/common/SEO';
 import { Button } from '../components/common/Button';
 import { WhatsAppIcon } from '../components/common/WhatsAppIcon';
 import { getWhatsAppLink } from '../utils/constants';
@@ -9,6 +10,10 @@ import { FoundersSection } from '../components/about/FoundersSection';
 export const About = () => {
   return (
     <div className="cc-page cc-about-page" style={{ padding: '40px 0 80px' }}>
+      <SEO 
+        title="About Us | upVolt" 
+        description="Learn more about upVolt, our mission, and the team empowering the next generation of builders and makers." 
+      />
       <div className="container">
         <div style={{ maxWidth: 840, margin: '0 auto', textAlign: 'center', marginBottom: 50 }}>
           <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent-primary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>

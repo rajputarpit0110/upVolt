@@ -1,9 +1,14 @@
 import React from 'react';
+import SEO from '../components/common/SEO';
 import './PolicyPages.css';
 
 export const RefundPolicy = () => {
   return (
     <div className="policy-page-container">
+      <SEO 
+        title="Refund Policy | upVolt" 
+        description="Read upVolt's return and refund policy." 
+      />
       <div className="policy-header">
         <h1>Return & Refund Policy</h1>
         <p>Last updated: {new Date().toLocaleDateString()}</p>

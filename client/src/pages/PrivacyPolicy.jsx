@@ -1,9 +1,14 @@
 import React from 'react';
+import SEO from '../components/common/SEO';
 import './PolicyPages.css';
 
 export const PrivacyPolicy = () => {
   return (
     <div className="policy-page-container">
+      <SEO 
+        title="Privacy Policy | upVolt" 
+        description="Read upVolt's privacy policy and learn how we protect your data." 
+      />
       <div className="policy-header">
         <h1>Privacy Policy</h1>
         <p>Last updated: {new Date().toLocaleDateString()}</p>

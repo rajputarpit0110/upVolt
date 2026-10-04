@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams, useLocation } from 'react-router-dom';
+import SEO from '../components/common/SEO';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { createOrder } from '../services/orderService';
@@ -327,6 +328,10 @@ export const Checkout = () => {
 
   return (
     <div className="cc-page cc-checkout-page">
+      <SEO 
+        title="Checkout | upVolt" 
+        description="Complete your purchase securely at upVolt." 
+      />
       <div className="container">
         {/* Step Stepper Header */}
         <div className="cc-checkout-stepper">

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import SEO from '../components/common/SEO';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/common/Button';
@@ -105,6 +106,10 @@ export const Cart = () => {
 
   return (
     <div className="cc-page cc-cart-page">
+      <SEO 
+        title="Your Cart | upVolt" 
+        description="Review items in your upVolt cart before checkout." 
+      />
       <div className="container">
         <h1 className="cc-cart-title">Your Cart ({cartItems.length} items)</h1>
 

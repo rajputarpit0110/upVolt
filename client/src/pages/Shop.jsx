@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import SEO from '../components/common/SEO';
 import { ProductCard } from '../components/product/ProductCard';
 import { AddProductModal } from '../components/product/AddProductModal';
 import { PRODUCTS, CATEGORIES } from '../data/mockProducts';
@@ -129,6 +130,10 @@ export const Shop = () => {
 
   return (
     <div className="cc-page cc-shop-page">
+      <SEO 
+        title="Shop Components | upVolt" 
+        description="Browse our wide selection of microcontrollers, robotics parts, sensors and kits for your engineering projects." 
+      />
       <div className="container">
         {/* Shop Header */}
         <div className="cc-shop-header">

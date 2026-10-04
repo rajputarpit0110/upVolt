@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import SEO from '../components/common/SEO';
 import { PRODUCTS } from '../data/mockProducts';
 import { fetchProductById, fetchRelatedProducts } from '../services/productService';
 import { useCart } from '../context/CartContext';
@@ -298,6 +299,11 @@ export const ProductDetail = () => {
 
   return (
     <div className="cc-page cc-detail-page">
+      <SEO 
+        title={`${product.name} | upVolt`} 
+        description={product.shortDescription || product.description?.substring(0, 160) || `Buy ${product.name} at upVolt for your next engineering project.`} 
+        type="product"
+      />
       <div className="container">
         {/* Breadcrumb navigation */}
         <div className="cc-detail-breadcrumb">

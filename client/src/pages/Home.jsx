@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import SEO from '../components/common/SEO';
 import { Hero } from '../components/home/Hero';
 import { TrustStrip } from '../components/home/TrustStrip';
 import { CategoryGrid } from '../components/home/CategoryGrid';
@@ -26,6 +27,10 @@ export const Home = () => {
 
   return (
     <div className="cc-page cc-page--home">
+      <SEO
+        title="upVolt | Empowering Makers & Creators"
+        description="Discover top-quality electronic components, tools, and learning kits for makers, engineers, and hobbyists. Build your next project with upVolt."
+      />
       <Hero />
       <TrustStrip />
       <CategoryGrid />

@@ -1,9 +1,14 @@
 import React from 'react';
+import SEO from '../components/common/SEO';
 import './PolicyPages.css';
 
 export const ShippingPolicy = () => {
   return (
     <div className="policy-page-container">
+      <SEO 
+        title="Shipping Policy | upVolt" 
+        description="Learn about upVolt's shipping policy, delivery times, and rates." 
+      />
       <div className="policy-header">
         <h1>Shipping Policy</h1>
         <p>Last updated: {new Date().toLocaleDateString()}</p>

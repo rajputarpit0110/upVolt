@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SEO from '../components/common/SEO';
 import { Button } from '../components/common/Button';
 import { WhatsAppIcon } from '../components/common/WhatsAppIcon';
 import { InstagramIcon } from '../components/common/SocialIcons';
@@ -30,6 +31,10 @@ export const Contact = () => {
 
   return (
     <div className="cc-page cc-contact-page" style={{ padding: '40px 0 80px' }}>
+      <SEO 
+        title="Contact Us | upVolt" 
+        description="Get in touch with the upVolt team for support, queries, or partnership opportunities." 
+      />
       <div className="container" style={{ maxWidth: 1040 }}>
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
           <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent-primary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>

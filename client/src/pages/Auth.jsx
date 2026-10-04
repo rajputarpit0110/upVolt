@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
+import SEO from '../components/common/SEO';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/common/Button';
 import {
@@ -202,6 +203,10 @@ export const Auth = () => {
 
   return (
     <div className="cc-page cc-auth-page">
+      <SEO 
+        title="Login & Register | upVolt" 
+        description="Login or register for an upVolt account to buy authentic electronic components and get exclusive student offers." 
+      />
       <div className="container cc-auth-container">
         {/* Main Card */}
         <div className="cc-auth-card">

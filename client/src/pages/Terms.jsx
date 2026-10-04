@@ -1,9 +1,14 @@
 import React from 'react';
+import SEO from '../components/common/SEO';
 import './PolicyPages.css';
 
 export const Terms = () => {
   return (
     <div className="policy-page-container">
+      <SEO 
+        title="Terms of Service | upVolt" 
+        description="Read upVolt's terms of service and usage conditions." 
+      />
       <div className="policy-header">
         <h1>Terms of Service</h1>
         <p>Last updated: {new Date().toLocaleDateString()}</p>
