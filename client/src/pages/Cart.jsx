@@ -142,6 +142,20 @@ export const Cart = () => {
             <div className="cc-cart-empty-icon">
               <ShoppingBag size={48} />
             </div>
+
+            {stockAlerts.length > 0 && (
+              <div className="cc-cart-stock-alerts glass-panel" style={{ marginBottom: 20, padding: 16, backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: 12, textAlign: 'left' }}>
+                <h4 style={{ color: '#ef4444', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, marginTop: 0 }}>
+                  <Tag size={16} /> Cart Updated Due to Stock Changes
+                </h4>
+                <ul style={{ margin: 0, paddingLeft: 20, color: 'var(--text-secondary)' }}>
+                  {stockAlerts.map((alert, i) => (
+                    <li key={i} style={{ marginBottom: 4 }}>{alert}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             <h2>Your Cart is Empty</h2>
             <p>You haven't added any microcontrollers, sensors, or kits yet.</p>
             <Link to="/shop">

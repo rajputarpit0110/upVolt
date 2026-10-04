@@ -262,11 +262,20 @@ export const Checkout = () => {
         }
       };
 
-      const rzp = new window.Razorpay(options);
-      rzp.on('payment.failed', function (response) {
-        setPaymentError(`Payment failed: ${response.error.description}`);
-      });
-      rzp.open();
+      if (orderRes.orderId.startsWith('order_test_')) {
+        // Dev fallback: Simulate successful Razorpay checkout 
+        options.handler({
+          razorpay_order_id: orderRes.orderId,
+          razorpay_payment_id: `pay_test_${Date.now()}`,
+          razorpay_signature: 'test_signature_mock'
+        });
+      } else {
+        const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', function (response) {
+          setPaymentError(`Payment failed: ${response.error.description}`);
+        });
+        rzp.open();
+      }
     } catch (err) {
       console.error(err);
       setIsSubmitting(false);
