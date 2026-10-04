@@ -10,8 +10,7 @@ export const PRIORITY_BUYING_NUMBERS = [
   {
     raw: '917754804455',
     display: '+91 77548 04455',
-    label: 'Founder',
-    tag: 'Priority 1 (Founder)',
+    tag: 'Priority 1',
     isFounder: true
   },
   {
