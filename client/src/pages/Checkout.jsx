@@ -161,6 +161,8 @@ export const Checkout = () => {
         pincode: address.pincode
       },
       items: cartItems.map(item => ({
+        productId: item._id || item.id,
+        _id: item._id || item.id,
         name: item.name,
         price: item.price,
         quantity: item.quantity,
