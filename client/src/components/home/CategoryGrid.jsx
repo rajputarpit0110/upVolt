@@ -45,7 +45,7 @@ export const CategoryGrid = () => {
               <div className="cc-category-card__image-box">
                 <img
                   src={getOptimizedImageUrl(cat.image || '/images/realistic/arduino_uno.webp', { width: 320 })}
-                  alt={cat.name}
+                  alt={`Shop ${cat.name} components, modules, and kits for your next engineering project`}
                   className="cc-category-card__img"
                   loading="lazy"
                   decoding="async"

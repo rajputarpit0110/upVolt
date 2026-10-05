@@ -110,7 +110,7 @@ export const Hero = () => {
                 <source srcSet="/images/realistic/arduino_uno.webp" type="image/webp" />
                 <img
                   src="/images/realistic/arduino_uno.jpg"
-                  alt="Arduino Uno Board"
+                  alt="Arduino Uno R3 Development Board - The best microcontroller for beginners and engineering student projects"
                   className="cc-hero__board-img"
                   width="160"
                   height="140"
@@ -126,7 +126,7 @@ export const Hero = () => {
                 <source srcSet="/images/realistic/esp32.webp" type="image/webp" />
                 <img
                   src="/images/realistic/esp32.jpg"
-                  alt="ESP32 Wireless MCU"
+                  alt="ESP32 Wireless MCU WiFi Bluetooth Module - Perfect for IoT smart home projects and advanced robotics"
                   className="cc-hero__board-img"
                   width="160"
                   height="140"

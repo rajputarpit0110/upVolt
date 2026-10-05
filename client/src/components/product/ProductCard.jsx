@@ -65,7 +65,7 @@ export const ProductCard = ({ product }) => {
             src={optimizedImg}
             srcSet={srcSet}
             sizes="(max-width: 600px) 240px, 380px"
-            alt={product.name}
+            alt={`${product.name} - ${product.category || 'IoT Component'} | buy electronic components for engineering projects`}
             className="cc-product-card__img"
             loading="lazy"
             decoding="async"

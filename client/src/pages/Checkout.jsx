@@ -772,7 +772,7 @@ export const Checkout = () => {
             <div className="cc-checkout-summary-items">
               {cartItems.map((item) => (
                 <div key={item._id || item.id} className="cc-checkout-mini-item">
-                  <img src={item.image} alt={item.name} />
+                  <img src={item.image} alt={`Checkout summary item: ${item.name}`} loading="lazy" />
                   <div className="cc-mini-item-info">
                     <span className="cc-mini-item-name">{item.name}</span>
                     <span className="cc-mini-item-qty">Qty: {item.quantity}</span>

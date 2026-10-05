@@ -332,8 +332,9 @@ export const ProductDetail = () => {
             >
               <img
                 src={activeImage || product.image}
-                alt={product.name}
+                alt={`High-quality photo of ${product.name}, a ${product.category || 'hardware module'} used for IoT, robotics, and engineering student projects`}
                 className="cc-detail-main-img"
+                loading="lazy"
                 onError={(e) => {
                   e.target.onerror = null;
                   e.target.src = '/logo-circuit.svg';
@@ -381,7 +382,7 @@ export const ProductDetail = () => {
                     onClick={() => setActiveImage(imgUrl)}
                     title={`View image ${idx + 1}`}
                   >
-                    <img src={imgUrl} alt={`${product.name} thumbnail ${idx + 1}`} />
+                    <img src={imgUrl} alt={`Angle ${idx + 1} view of ${product.name} ${product.category || 'component'}`} loading="lazy" />
                   </button>
                 ))}
               </div>
@@ -1025,7 +1026,7 @@ export const ProductDetail = () => {
                       onClick={() => setActiveImage(imgUrl)}
                       title={`View image ${idx + 1}`}
                     >
-                      <img src={imgUrl} alt="Thumbnail" />
+                      <img src={imgUrl} alt={`Full screen view of ${product.name}`} loading="lazy" />
                     </button>
                   ))}
                 </div>

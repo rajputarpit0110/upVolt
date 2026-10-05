@@ -200,7 +200,7 @@ export const Cart = () => {
                 return (
                   <div key={id} className="cc-cart-item glass-panel">
                     <Link to={`/product/${id}`} className="cc-cart-item__thumb">
-                      <img src={item.image} alt={item.name} />
+                      <img src={item.image} alt={`Cart item: ${item.name}`} loading="lazy" />
                     </Link>
 
                     <div className="cc-cart-item__info">
