@@ -14,8 +14,13 @@ export const FeaturedSection = ({ products = [], loading = false }) => {
     return 4;
   };
 
+  // Filter out out-of-stock products
+  const inStockProducts = products.filter(
+    (product) => product.inStock !== false && (product.stockQuantity === undefined || product.stockQuantity > 0)
+  );
+
   // Sort by badge and show first 5
-  const sortedProducts = [...products].sort((a, b) => getBadgeScore(a.badge) - getBadgeScore(b.badge));
+  const sortedProducts = [...inStockProducts].sort((a, b) => getBadgeScore(a.badge) - getBadgeScore(b.badge));
   const displayProducts = sortedProducts.slice(0, 5);
 
   return (
