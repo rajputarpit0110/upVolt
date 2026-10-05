@@ -131,8 +131,9 @@ export const Shop = () => {
   return (
     <div className="cc-page cc-shop-page">
       <SEO 
-        title="Shop Components | upVolt" 
-        description="Browse our wide selection of microcontrollers, robotics parts, sensors and kits for your engineering projects." 
+        title="Shop Components & Modules | upVolt Catalog" 
+        description="Browse our wide selection of microcontrollers, robotics parts, sensors, and IoT kits for your engineering projects at the best prices." 
+        keywords="buy electronic components, shop microcontrollers, robotics parts online, sensors, IoT kits, arduino store, engineering student projects"
       />
       <div className="container">
         {/* Shop Header */}

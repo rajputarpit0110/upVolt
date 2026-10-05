@@ -28,8 +28,9 @@ export const Home = () => {
   return (
     <div className="cc-page cc-page--home">
       <SEO
-        title="upVolt | Empowering Makers & Creators"
-        description="Discover top-quality electronic components, tools, and learning kits for makers, engineers, and hobbyists. Build your next project with upVolt."
+        title="upVolt | Empowering Makers & Creators | Electronics & IoT Kits"
+        description="Discover top-quality electronic components, microcontrollers, IoT kits, and robotics tools for engineering students and hobbyists. Build your next project with upVolt."
+        keywords="electronic components, IoT kits, microcontrollers, arduino, raspberry pi, robotics, student projects, engineering kits, upVolt"
       />
       <Hero />
       <TrustStrip />

@@ -300,8 +300,9 @@ export const ProductDetail = () => {
   return (
     <div className="cc-page cc-detail-page">
       <SEO 
-        title={`${product.name} | upVolt`} 
+        title={`${product.name} | Buy at upVolt`} 
         description={product.shortDescription || product.description?.substring(0, 160) || `Buy ${product.name} at upVolt for your next engineering project.`} 
+        keywords={`${product.name.toLowerCase()}, buy ${product.category.toLowerCase()}, ${product.category.toLowerCase()} modules, electronic components, upVolt`}
         type="product"
       />
       <div className="container">

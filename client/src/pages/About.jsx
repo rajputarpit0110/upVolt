@@ -11,8 +11,9 @@ export const About = () => {
   return (
     <div className="cc-page cc-about-page" style={{ padding: '40px 0 80px' }}>
       <SEO 
-        title="About Us | upVolt" 
-        description="Learn more about upVolt, our mission, and the team empowering the next generation of builders and makers." 
+        title="About Us | upVolt - India's Student Tech Platform" 
+        description="Learn more about upVolt, our mission to democratize hardware innovation, and the mentors empowering the next generation of builders, makers, and engineers." 
+        keywords="about upvolt, electronic components startup, hardware innovation India, maker community, engineering students, robotics"
       />
       <div className="container">
         <div style={{ maxWidth: 840, margin: '0 auto', textAlign: 'center', marginBottom: 50 }}>

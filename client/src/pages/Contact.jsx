@@ -32,8 +32,9 @@ export const Contact = () => {
   return (
     <div className="cc-page cc-contact-page" style={{ padding: '40px 0 80px' }}>
       <SEO 
-        title="Contact Us | upVolt" 
-        description="Get in touch with the upVolt team for support, queries, or partnership opportunities." 
+        title="Contact Us | Support & Guidance | upVolt" 
+        description="Get in touch with the upVolt team for project support, technical queries, or bulk component orders. We are here to help you build." 
+        keywords="contact upvolt, technical support, IoT help, order electronic components, bulk components, engineering project help"
       />
       <div className="container" style={{ maxWidth: 1040 }}>
         <div style={{ textAlign: 'center', marginBottom: 40 }}>

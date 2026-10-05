@@ -1,12 +1,13 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 
-const SEO = ({ title, description, type = 'website', name = 'upVolt' }) => {
+const SEO = ({ title, description, keywords = '', type = 'website', name = 'upVolt' }) => {
   return (
     <Helmet>
       {/* Standard metadata tags */}
       <title>{title}</title>
       <meta name='description' content={description} />
+      {keywords && <meta name='keywords' content={keywords} />}
       
       {/* OpenGraph tags */}
       <meta property="og:type" content={type} />
