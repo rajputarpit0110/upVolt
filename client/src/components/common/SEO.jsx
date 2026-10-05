@@ -8,13 +8,13 @@ const SEO = ({ title, description, keywords = '', type = 'website', name = 'upVo
       <title>{title}</title>
       <meta name='description' content={description} />
       {keywords && <meta name='keywords' content={keywords} />}
-      
+
       {/* OpenGraph tags */}
       <meta property="og:type" content={type} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:site_name" content={name} />
-      
+
       {/* Twitter tags */}
       <meta name="twitter:creator" content={name} />
       <meta name="twitter:card" content="summary_large_image" />
