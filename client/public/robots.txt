@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://upvolt.site/sitemap.xml
