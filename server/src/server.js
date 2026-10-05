@@ -18,6 +18,7 @@ import settingsRoutes from './routes/settingsRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
+import sitemapRoutes from './routes/sitemapRoutes.js';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { initKeepAlive } from './utils/keepAlive.js';
 
@@ -152,6 +153,7 @@ app.route('/api/settings', settingsRoutes);
 app.route('/api/messages', messageRoutes);
 app.route('/api/upload', uploadRoutes);
 app.route('/api/categories', categoryRoutes);
+app.route('/api/sitemap.xml', sitemapRoutes);
 app.use('/uploads/*', async (c, next) => {
   await next();
   c.res.headers.set('Cache-Control', 'public, max-age=31536000, immutable');

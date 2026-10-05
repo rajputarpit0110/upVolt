@@ -5,6 +5,7 @@ import { INITIAL_PRODUCTS } from '../data/seedData.js';
 import { PRODUCT_GUIDES } from '../data/productGuides.js';
 import { memoryCache } from '../utils/cacheService.js';
 import { uploadImageToCloudinary } from '../config/cloudinary.js';
+import { generateSitemap } from '../utils/sitemapGenerator.js';
 
 // GET all products with filtering & sorting (Optimized for 10,000+ concurrent users)
 export const getProducts = async (req, res) => {
@@ -454,6 +455,9 @@ export const createProduct = async (req, res) => {
     const savedProduct = await newProduct.save();
     memoryCache.invalidate('product');
 
+    // Fire and forget sitemap generation
+    generateSitemap().catch(console.error);
+
     // Log this action to AuditLog for all Admins tracking
     try {
       await AuditLog.create({
@@ -612,6 +616,9 @@ export const updateProduct = async (req, res) => {
     const updatedProduct = await product.save();
     memoryCache.invalidate('product');
 
+    // Fire and forget sitemap generation
+    generateSitemap().catch(console.error);
+
     const adminUser = req.user || {
       _id: new mongoose.Types.ObjectId(),
       name: 'System Admin',
@@ -690,6 +697,9 @@ export const deleteProduct = async (req, res) => {
     await Product.findByIdAndDelete(product._id);
     memoryCache.invalidate('product');
 
+    // Fire and forget sitemap generation
+    generateSitemap().catch(console.error);
+
     // Record deletion in AuditLog
     try {
       await AuditLog.create({
@@ -748,6 +758,9 @@ export const seedProducts = async (req, res) => {
 
     const total = await Product.countDocuments();
     memoryCache.invalidate('product');
+
+    // Fire and forget sitemap generation
+    generateSitemap().catch(console.error);
 
     res.status(200).json({
       success: true,
