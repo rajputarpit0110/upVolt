@@ -33,9 +33,9 @@ export const getEligibleProducts = async (req, res) => {
     }
 
     // Check which of these products the user has already reviewed
-    const existingReviews = await Review.find({ 
-      user: userId, 
-      product: { $in: Array.from(productIds) } 
+    const existingReviews = await Review.find({
+      user: userId,
+      product: { $in: Array.from(productIds) }
     });
 
     const reviewedProductIds = new Set(existingReviews.map(r => r.product.toString()));
@@ -49,7 +49,7 @@ export const getEligibleProducts = async (req, res) => {
 
     // Fetch product details for the eligible ones
     const products = await Product.find({ _id: { $in: eligibleProductIds } })
-                                  .select('_id name image');
+      .select('_id name image');
 
     res.status(200).json({
       success: true,
@@ -96,7 +96,7 @@ export const createReview = async (req, res) => {
       uploadedImages = await Promise.all(
         uniqueImages.map(img => {
           if (img.startsWith('data:image')) {
-             return uploadImageToCloudinary(img, 'upvolt/reviews');
+            return uploadImageToCloudinary(img, 'upvolt/reviews');
           }
           return img; // Already uploaded
         })
@@ -118,7 +118,7 @@ export const createReview = async (req, res) => {
       const oldRating = product.rating || 5.0;
       const count = product.reviewsCount || 0;
       const newRating = ((oldRating * count) + Number(rating)) / (count + 1);
-      
+
       product.rating = Math.round(newRating * 10) / 10;
       product.reviewsCount = count + 1;
       await product.save();
@@ -147,10 +147,10 @@ export const getProductReviews = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const reviews = await Review.find({ product: productId })
-                                .populate('user', 'name image avatar')
-                                .sort({ createdAt: -1 })
-                                .skip(skip)
-                                .limit(Number(limit));
+      .populate('user', 'name image avatar')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(Number(limit));
 
     const total = await Review.countDocuments({ product: productId });
 

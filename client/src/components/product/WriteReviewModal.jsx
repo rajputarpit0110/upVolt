@@ -8,7 +8,7 @@ const WriteReviewModal = ({ isOpen, onClose, initialProductId, onSuccess }) => {
   const { user } = useAuth();
   const [eligibleProducts, setEligibleProducts] = useState([]);
   const [loadingEligible, setLoadingEligible] = useState(true);
-  
+
   const [selectedProduct, setSelectedProduct] = useState(initialProductId || '');
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
@@ -17,7 +17,7 @@ const WriteReviewModal = ({ isOpen, onClose, initialProductId, onSuccess }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [toast, setToast] = useState(null);
-  
+
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -54,16 +54,16 @@ const WriteReviewModal = ({ isOpen, onClose, initialProductId, onSuccess }) => {
       setError('You can upload a maximum of 3 images.');
       return;
     }
-    
+
     setError('');
     const newImages = [];
-    
+
     files.forEach(file => {
       if (file.size > 2 * 1024 * 1024) { // 2MB limit
         setError('Each image must be less than 2MB.');
         return;
       }
-      
+
       const reader = new FileReader();
       reader.onloadend = () => {
         newImages.push(reader.result);
@@ -97,7 +97,7 @@ const WriteReviewModal = ({ isOpen, onClose, initialProductId, onSuccess }) => {
     try {
       setIsSubmitting(true);
       setError('');
-      
+
       const res = await createReview(user.token, {
         productId: selectedProduct,
         rating,
@@ -160,14 +160,14 @@ const WriteReviewModal = ({ isOpen, onClose, initialProductId, onSuccess }) => {
           </div>
         ) : (
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            
+
             {error && <div className="cc-form-error" style={{ color: '#ff4d4d', fontSize: '0.9rem', padding: '10px', background: 'rgba(255,0,0,0.1)', borderRadius: '6px' }}>{error}</div>}
 
             {/* Product Selection */}
             <div>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', color: '#ccc' }}>Select Product *</label>
-              <select 
-                value={selectedProduct} 
+              <select
+                value={selectedProduct}
                 onChange={(e) => setSelectedProduct(e.target.value)}
                 style={{ width: '100%', padding: '12px', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: '1rem' }}
                 required
@@ -192,10 +192,10 @@ const WriteReviewModal = ({ isOpen, onClose, initialProductId, onSuccess }) => {
                     onMouseLeave={() => setHoverRating(0)}
                     style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                   >
-                    <Star 
-                      size={28} 
-                      fill={(hoverRating || rating) >= star ? "#ffc107" : "none"} 
-                      color={(hoverRating || rating) >= star ? "#ffc107" : "rgba(255,255,255,0.3)"} 
+                    <Star
+                      size={28}
+                      fill={(hoverRating || rating) >= star ? "#ffc107" : "none"}
+                      color={(hoverRating || rating) >= star ? "#ffc107" : "rgba(255,255,255,0.3)"}
                     />
                   </button>
                 ))}
@@ -221,8 +221,8 @@ const WriteReviewModal = ({ isOpen, onClose, initialProductId, onSuccess }) => {
                 {images.map((img, idx) => (
                   <div key={idx} style={{ position: 'relative', width: '80px', height: '80px', borderRadius: '8px', overflow: 'hidden' }}>
                     <img src={img} alt="Upload preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       onClick={() => removeImage(idx)}
                       style={{ position: 'absolute', top: '4px', right: '4px', background: 'rgba(0,0,0,0.6)', color: 'white', border: 'none', borderRadius: '50%', padding: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     >
@@ -230,9 +230,9 @@ const WriteReviewModal = ({ isOpen, onClose, initialProductId, onSuccess }) => {
                     </button>
                   </div>
                 ))}
-                
+
                 {images.length < 3 && (
-                  <button 
+                  <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     style={{ width: '80px', height: '80px', borderRadius: '8px', border: '2px dashed rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.02)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(255,255,255,0.5)' }}
@@ -242,18 +242,18 @@ const WriteReviewModal = ({ isOpen, onClose, initialProductId, onSuccess }) => {
                   </button>
                 )}
               </div>
-              <input 
-                type="file" 
-                ref={fileInputRef} 
-                onChange={handleImageUpload} 
-                accept="image/*" 
-                multiple 
-                style={{ display: 'none' }} 
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleImageUpload}
+                accept="image/*"
+                multiple
+                style={{ display: 'none' }}
               />
             </div>
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={isSubmitting || !selectedProduct || rating === 0 || !comment.trim()}
               className="cc-btn cc-btn--primary"
               style={{ width: '100%', marginTop: '10px', padding: '14px', fontSize: '1rem', fontWeight: 600 }}

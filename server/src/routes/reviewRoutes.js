@@ -1,8 +1,8 @@
 import { Hono } from 'hono';
-import { 
-  getEligibleProducts, 
-  createReview, 
-  getProductReviews 
+import {
+  getEligibleProducts,
+  createReview,
+  getProductReviews
 } from '../controllers/reviewController.js';
 import { protect } from '../middlewares/authMiddleware.js';
 

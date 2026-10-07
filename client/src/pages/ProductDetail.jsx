@@ -43,7 +43,7 @@ import './ProductDetail.css';
 
 const YouTubeIcon = ({ size = 18, className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} style={{ flexShrink: 0 }}>
-    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
   </svg>
 );
 
@@ -300,9 +300,9 @@ export const ProductDetail = () => {
 
   return (
     <div className="cc-page cc-detail-page">
-      <SEO 
-        title={`${product.name} | Buy at upVolt`} 
-        description={product.shortDescription || product.description?.substring(0, 160) || `Buy ${product.name} at upVolt for your next engineering project.`} 
+      <SEO
+        title={`${product.name} | Buy at upVolt`}
+        description={product.shortDescription || product.description?.substring(0, 160) || `Buy ${product.name} at upVolt for your next engineering project.`}
         keywords={`${product.name.toLowerCase()}, buy ${product.category.toLowerCase()}, ${product.category.toLowerCase()} modules, electronic components, upVolt`}
         type="product"
       />
@@ -432,8 +432,8 @@ export const ProductDetail = () => {
             <div className="cc-detail-stock">
               <span className="cc-stock-dot" style={{ background: (product.stockQuantity > 0 || product.inStock) ? 'var(--color-success)' : 'var(--color-danger)' }} />
               <span className="cc-stock-text" style={{ color: (product.stockQuantity > 0 || product.inStock) ? 'var(--color-success)' : 'var(--color-danger)' }}>
-                {(product.stockQuantity > 0 || product.inStock) 
-                  ? `In Stock ${product.stockQuantity ? `(${product.stockQuantity} left)` : ''} & Ready to Dispatch to Campus` 
+                {(product.stockQuantity > 0 || product.inStock)
+                  ? `In Stock ${product.stockQuantity ? `(${product.stockQuantity} left)` : ''} & Ready to Dispatch to Campus`
                   : 'Out of Stock'}
               </span>
             </div>
@@ -956,7 +956,7 @@ export const ProductDetail = () => {
 
                 <div className="cc-academic-note">
                   <CheckCircle2 size={16} />
-                      <span>Verified academic citations and official datasheets curated by upVolt engineering team.</span>
+                  <span>Verified academic citations and official datasheets curated by upVolt engineering team.</span>
                 </div>
               </div>
             )}

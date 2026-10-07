@@ -11,7 +11,7 @@ const ProductReviews = ({ productId }) => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
-  
+
   // For viewing uploaded images full screen
   const [activeImage, setActiveImage] = useState(null);
 
@@ -46,8 +46,8 @@ const ProductReviews = ({ productId }) => {
           <MessageSquare size={24} color="#00e5ff" />
           Customer Reviews
         </h3>
-        
-        <button 
+
+        <button
           onClick={() => setIsWriteModalOpen(true)}
           className="cc-btn cc-btn--primary"
           style={{ padding: '10px 20px', fontSize: '0.95rem' }}
@@ -84,26 +84,26 @@ const ProductReviews = ({ productId }) => {
                     </span>
                   </div>
                 </div>
-                
+
                 <div style={{ display: 'flex', gap: '2px' }}>
                   {[1, 2, 3, 4, 5].map(star => (
-                    <Star 
-                      key={star} 
-                      size={16} 
-                      fill={review.rating >= star ? "#ffc107" : "none"} 
-                      color={review.rating >= star ? "#ffc107" : "rgba(255,255,255,0.2)"} 
+                    <Star
+                      key={star}
+                      size={16}
+                      fill={review.rating >= star ? "#ffc107" : "none"}
+                      color={review.rating >= star ? "#ffc107" : "rgba(255,255,255,0.2)"}
                     />
                   ))}
                 </div>
               </div>
-              
+
               <p style={{ margin: '0 0 15px', lineHeight: '1.6', color: 'rgba(255,255,255,0.85)' }}>{review.comment}</p>
-              
+
               {review.images && review.images.length > 0 && (
                 <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                   {review.images.map((img, idx) => (
-                    <div 
-                      key={idx} 
+                    <div
+                      key={idx}
                       onClick={() => setActiveImage(img)}
                       style={{ width: '80px', height: '80px', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.1)' }}
                     >
@@ -114,10 +114,10 @@ const ProductReviews = ({ productId }) => {
               )}
             </div>
           ))}
-          
+
           {totalPages > 1 && (
             <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '20px' }}>
-              <button 
+              <button
                 disabled={page === 1}
                 onClick={() => setPage(p => p - 1)}
                 className="cc-btn"
@@ -128,7 +128,7 @@ const ProductReviews = ({ productId }) => {
               <span style={{ display: 'flex', alignItems: 'center', color: 'rgba(255,255,255,0.6)' }}>
                 Page {page} of {totalPages}
               </span>
-              <button 
+              <button
                 disabled={page === totalPages}
                 onClick={() => setPage(p => p + 1)}
                 className="cc-btn"
@@ -142,27 +142,27 @@ const ProductReviews = ({ productId }) => {
       )}
 
       {/* Write Review Modal */}
-      <WriteReviewModal 
-        isOpen={isWriteModalOpen} 
-        onClose={() => setIsWriteModalOpen(false)} 
+      <WriteReviewModal
+        isOpen={isWriteModalOpen}
+        onClose={() => setIsWriteModalOpen(false)}
         initialProductId={productId}
         onSuccess={handleReviewAdded}
       />
 
       {/* Image Lightbox */}
       {activeImage && (
-        <div 
-          className="cc-modal-overlay" 
+        <div
+          className="cc-modal-overlay"
           onClick={() => setActiveImage(null)}
           style={{ zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
         >
-          <img 
-            src={activeImage} 
-            alt="Review full screen" 
-            style={{ maxWidth: '100%', maxHeight: '90vh', borderRadius: '8px', objectFit: 'contain' }} 
+          <img
+            src={activeImage}
+            alt="Review full screen"
+            style={{ maxWidth: '100%', maxHeight: '90vh', borderRadius: '8px', objectFit: 'contain' }}
             onClick={e => e.stopPropagation()}
           />
-          <button 
+          <button
             onClick={() => setActiveImage(null)}
             style={{ position: 'absolute', top: '20px', right: '20px', background: 'rgba(0,0,0,0.5)', color: 'white', border: 'none', borderRadius: '50%', padding: '10px', cursor: 'pointer' }}
           >
