@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 import SEO from '../components/common/SEO';
 import { Badge } from '../components/common/Badge';
 import { fetchMyOrders, cancelMyOrder } from '../services/orderService';
-import { Package, Truck, CheckCircle2, Clock, RefreshCw, ShoppingBag, AlertCircle, XCircle } from 'lucide-react';
+import { Package, Truck, CheckCircle2, Clock, RefreshCw, ShoppingBag, AlertCircle, XCircle, Star } from 'lucide-react';
+import WriteReviewModal from '../components/product/WriteReviewModal';
 import './Orders.css';
 
 export const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
   const loadOrders = async () => {
     setLoading(true);
@@ -77,17 +79,34 @@ export const Orders = () => {
             <h1 className="cc-orders-title">Your Hardware Orders</h1>
             <p className="cc-orders-subtitle">Track your project components and delivery to your college campus.</p>
           </div>
-          <button
-            type="button"
-            className="cc-btn cc-btn--secondary"
-            onClick={loadOrders}
-            disabled={loading}
-            style={{ padding: '8px 14px', fontSize: '0.88rem' }}
-          >
-            <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
-            <span>Refresh Status</span>
-          </button>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button
+              type="button"
+              className="cc-btn cc-btn--primary"
+              onClick={() => setIsReviewModalOpen(true)}
+              style={{ padding: '8px 14px', fontSize: '0.88rem' }}
+            >
+              <Star size={15} />
+              <span>Write a Review</span>
+            </button>
+            <button
+              type="button"
+              className="cc-btn cc-btn--secondary"
+              onClick={loadOrders}
+              disabled={loading}
+              style={{ padding: '8px 14px', fontSize: '0.88rem' }}
+            >
+              <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
+              <span>Refresh Status</span>
+            </button>
+          </div>
         </div>
+
+        {/* Review Modal */}
+        <WriteReviewModal 
+          isOpen={isReviewModalOpen} 
+          onClose={() => setIsReviewModalOpen(false)} 
+        />
 
         {loading ? (
           <div style={{ textAlign: 'center', padding: '60px 0' }}>

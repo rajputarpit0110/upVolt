@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Star, MessageSquare, Image as ImageIcon } from 'lucide-react';
+import { Star, MessageSquare, Image as ImageIcon, X } from 'lucide-react';
 import { getProductReviews } from '../../services/reviewService';
 import WriteReviewModal from './WriteReviewModal';
 import { useAuth } from '../../context/AuthContext';
@@ -173,8 +173,5 @@ const ProductReviews = ({ productId }) => {
     </div>
   );
 };
-
-// Assuming X was imported but let's make sure it is for the lightbox
-import { X } from 'lucide-react';
 
 export default ProductReviews;
