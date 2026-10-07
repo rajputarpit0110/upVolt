@@ -9,6 +9,7 @@ import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
 import { WhatsAppIcon } from '../components/common/WhatsAppIcon';
 import { ProductCard } from '../components/product/ProductCard';
+import ProductReviews from '../components/product/ProductReviews';
 import { getProductWhatsAppLink, PRIORITY_BUYING_NUMBERS } from '../utils/constants';
 import {
   Star,
@@ -981,6 +982,9 @@ export const ProductDetail = () => {
             )}
           </div>
         </div>
+
+        {/* Product Reviews Section */}
+        <ProductReviews productId={product._id} />
 
         {/* Related Products */}
         {relatedProducts.length > 0 && (
