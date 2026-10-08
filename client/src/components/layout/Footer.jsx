@@ -164,7 +164,7 @@ export const Footer = () => {
             © {new Date().getFullYear()} upVolt. All rights reserved. Built for students, by builders.
           </div>
           <div className="cc-footer__tagline-script">
-            Powering Ideas. Connecting Possibilities. 🚀
+            Powering Ideas. Connecting Possibilities.
           </div>
         </div>
       </div>
