@@ -10,8 +10,8 @@ export const generateSitemap = async () => {
   try {
     const products = await Product.find({ isActive: { $ne: false } }).select('_id updatedAt').sort({ updatedAt: -1 });
 
-    // Frontend base URL (change if deployed on a different domain)
-    const baseUrl = process.env.FRONTEND_URL || 'https://upvolt.site';
+    // Force the correct verified domain for SEO
+    const baseUrl = 'https://upvolt.site';
 
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;

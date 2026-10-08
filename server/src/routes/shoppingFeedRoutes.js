@@ -7,8 +7,8 @@ router.get('/', async (c) => {
   try {
     const products = await Product.find({ isActive: { $ne: false } }).sort({ updatedAt: -1 });
 
-    // Frontend base URL (change if deployed on a different domain)
-    const baseUrl = process.env.FRONTEND_URL || 'https://upvolt.site';
+    // Force the correct verified domain for Google Merchant Center
+    const baseUrl = 'https://upvolt.site';
     const brandName = 'upVolt';
 
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
