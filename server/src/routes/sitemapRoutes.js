@@ -6,13 +6,13 @@ const router = new Hono();
 router.get('/', async (c) => {
   try {
     const products = await Product.find({ isActive: { $ne: false } }).select('_id updatedAt').sort({ updatedAt: -1 });
-    
+
     // Force the correct verified domain for SEO
     const baseUrl = 'https://upvolt.site';
-    
+
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
-    
+
     // Core static routes
     const staticRoutes = [
       { url: '/', priority: '1.0', changefreq: 'daily' },
@@ -21,7 +21,7 @@ router.get('/', async (c) => {
       { url: '/about', priority: '0.6', changefreq: 'monthly' },
       { url: '/contact', priority: '0.6', changefreq: 'monthly' }
     ];
-    
+
     staticRoutes.forEach(route => {
       xml += `  <url>\n`;
       xml += `    <loc>${baseUrl}${route.url}</loc>\n`;
@@ -29,7 +29,7 @@ router.get('/', async (c) => {
       xml += `    <changefreq>${route.changefreq}</changefreq>\n`;
       xml += `  </url>\n`;
     });
-    
+
     // Dynamic Product routes
     products.forEach(product => {
       xml += `  <url>\n`;
@@ -39,9 +39,9 @@ router.get('/', async (c) => {
       xml += `    <changefreq>weekly</changefreq>\n`;
       xml += `  </url>\n`;
     });
-    
+
     xml += `</urlset>`;
-    
+
     c.res.headers.set('Content-Type', 'application/xml');
     c.res.headers.set('Cache-Control', 'public, max-age=3600');
     return c.body(xml);
