@@ -4,24 +4,33 @@ import { CheckCircle2, ArrowRight, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import './Toast.css';
 
-export const Toast = () => {
-  const { toastMessage, closeToast } = useCart();
+export const Toast = ({ message: propMessage, type: propType, onClose: propOnClose } = {}) => {
+  const { toastMessage: cartToastMessage, closeToast: cartCloseToast } = useCart();
+
+  const toastMessage = propMessage || cartToastMessage;
+  const closeToast = propOnClose || cartCloseToast;
 
   if (!toastMessage) return null;
 
   const isObj = typeof toastMessage === 'object' && toastMessage !== null;
-  const title = isObj && toastMessage.title ? toastMessage.title : 'Added to Cart!';
+  const isDirect = Boolean(propMessage);
+
+  const title = isDirect
+    ? (propType === 'error' ? 'Notice' : 'Success')
+    : (isObj && toastMessage.title ? toastMessage.title : 'Added to Cart!');
 
   let productName = '';
-  if (isObj) {
+  if (isDirect) {
+    productName = typeof propMessage === 'string' ? propMessage : (propMessage.message || '');
+  } else if (isObj) {
     productName = toastMessage.name || toastMessage.message || '';
   } else if (typeof toastMessage === 'string') {
     const match = toastMessage.match(/Added\s+"?(.*?)"?\s+to cart!/i);
     productName = match ? match[1] : toastMessage;
   }
 
-  const image = isObj ? toastMessage.image : null;
-  const price = isObj && toastMessage.price ? toastMessage.price : null;
+  const image = (!isDirect && isObj) ? toastMessage.image : null;
+  const price = (!isDirect && isObj && toastMessage.price) ? toastMessage.price : null;
 
   return (
     <aside className="cc-toast" role="status" aria-live="polite">
@@ -45,7 +54,9 @@ export const Toast = () => {
         {/* Middle Info */}
         <div className="cc-toast__content">
           <div className="cc-toast__header">
-            <span className="cc-toast__status-pill">Success</span>
+            <span className="cc-toast__status-pill">
+              {propType === 'error' ? 'Error' : 'Success'}
+            </span>
             <strong className="cc-toast__title">{title}</strong>
           </div>
 
@@ -62,15 +73,17 @@ export const Toast = () => {
 
         {/* Right CTA Actions */}
         <div className="cc-toast__actions">
-          <Link 
-            to="/cart" 
-            className="cc-toast__cta-btn" 
-            onClick={closeToast}
-            title="Go to Cart"
-          >
-            <span>View Cart</span>
-            <ArrowRight size={13} strokeWidth={2.5} />
-          </Link>
+          {!isDirect && (
+            <Link 
+              to="/cart" 
+              className="cc-toast__cta-btn" 
+              onClick={closeToast}
+              title="Go to Cart"
+            >
+              <span>View Cart</span>
+              <ArrowRight size={13} strokeWidth={2.5} />
+            </Link>
+          )}
           <button 
             type="button" 
             className="cc-toast__close-btn" 
@@ -89,3 +102,5 @@ export const Toast = () => {
     </aside>
   );
 };
+
+export default Toast;

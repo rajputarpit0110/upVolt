@@ -4,9 +4,13 @@ import { Button } from '../common/Button';
 import { WhatsAppIcon } from '../common/WhatsAppIcon';
 import { getWhatsAppLink } from '../../utils/constants';
 import { Truck, Headphones, ShieldCheck, ArrowRight, Sparkles } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 import './Hero.css';
 
 export const Hero = () => {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+
   return (
     <section className="cc-hero">
       <div className="container cc-hero__container">
@@ -84,71 +88,80 @@ export const Hero = () => {
           </div>
 
           <div className="cc-hero__handwritten-note">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="cc-hero__arrow-curved">
-              <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
-              <path d="M12 3v13"/>
-              <path d="m8 12 4 4 4-4"/>
-            </svg>
             <span>Have a doubt? Just ask our makers!</span>
           </div>
         </div>
 
-        {/* Right Visual Collage Column (Matching Reference Image) */}
+        {/* Right Visual Showcase Column with Seamless Blending */}
         <div className="cc-hero__visual">
           <div className="cc-hero__glow-bg" />
           
-          <div className="cc-hero__collage">
-            {/* Annotation 1 */}
-            <div className="cc-hero__annotation cc-hero__annotation--top-right">
-              <span>Same Components,</span>
-              <strong>Bigger Possibilities ⚡</strong>
-            </div>
-
-            {/* Hardware Cards Collage */}
-            <div className="cc-hero__board-card cc-hero__board-card--uno">
+          <div className="cc-hero__showcase">
+            {/* Main Seamless Blended Image (Light & Dark theme aware) */}
+            <div className="cc-hero__image-blend-wrap">
               <picture>
-                <source srcSet="/images/realistic/arduino_uno.webp" type="image/webp" />
+                <source
+                  srcSet={isDark ? '/images/hero_hardware_nano_dark.webp' : '/images/hero_hardware_nano_light.webp'}
+                  type="image/webp"
+                />
                 <img
-                  src="/images/realistic/arduino_uno.jpg"
-                  alt="Arduino Uno R3 Development Board - The best microcontroller for beginners and engineering student projects"
-                  className="cc-hero__board-img"
-                  width="160"
-                  height="140"
+                  src={isDark ? '/images/hero_hardware_nano_dark.webp' : '/images/hero_hardware_nano_light.webp'}
+                  alt="Arduino Uno R3 Development Board, Arduino Nano, and ESP32 Microcontrollers for Robotics and IoT Projects"
+                  className="cc-hero__blend-image"
+                  width="600"
+                  height="450"
                   fetchPriority="high"
                   decoding="async"
                 />
               </picture>
-              <div className="cc-hero__chip-tag">Arduino Uno R3</div>
             </div>
 
-            <div className="cc-hero__board-card cc-hero__board-card--esp">
-              <picture>
-                <source srcSet="/images/realistic/esp32.webp" type="image/webp" />
-                <img
-                  src="/images/realistic/esp32.jpg"
-                  alt="ESP32 Wireless MCU WiFi Bluetooth Module - Perfect for IoT smart home projects and advanced robotics"
-                  className="cc-hero__board-img"
-                  width="160"
-                  height="140"
-                  decoding="async"
-                />
-              </picture>
-              <div className="cc-hero__chip-tag">ESP32 Dual Core</div>
+            {/* Unified Precision Vector Pointer Lines Overlay (2-part L-shaped elbow lines with single bend) */}
+            <svg
+              className="cc-hero__pointers-svg"
+              viewBox="0 0 1000 750"
+              preserveAspectRatio="xMidYMid meet"
+              fill="none"
+              aria-hidden="true"
+            >
+              {/* Uno Pointer: Tag (Top Right) -> Horizontal Left -> 90° Elbow Bend -> Vertical Down to Uno Board */}
+              <g className="cc-hero__pointer-group cc-hero__pointer-group--uno">
+                <path d="M 625 75 H 510 V 470" className="cc-hero__pointer-path" />
+                <circle cx="510" cy="470" r="10" className="cc-hero__pointer-halo" />
+                <circle cx="510" cy="470" r="5" className="cc-hero__pointer-dot" />
+              </g>
+
+              {/* Nano Pointer: Tag (Left) -> Horizontal Right -> 90° Elbow Bend -> Vertical Down to Nano Board */}
+              <g className="cc-hero__pointer-group cc-hero__pointer-group--nano">
+                <path d="M 165 232 H 250 V 415" className="cc-hero__pointer-path" />
+                <circle cx="250" cy="415" r="10" className="cc-hero__pointer-halo" />
+                <circle cx="250" cy="415" r="5" className="cc-hero__pointer-dot" />
+              </g>
+
+              {/* ESP32 Pointer: Tag (Right) -> Horizontal Left -> 90° Elbow Bend -> Vertical Down to ESP32 Board */}
+              <g className="cc-hero__pointer-group cc-hero__pointer-group--esp">
+                <path d="M 805 172 H 745 V 540" className="cc-hero__pointer-path" />
+                <circle cx="745" cy="540" r="10" className="cc-hero__pointer-halo" />
+                <circle cx="745" cy="540" r="5" className="cc-hero__pointer-dot" />
+              </g>
+            </svg>
+
+            {/* Hardware Chip Tag 1: Arduino Uno R3 (Top Center) */}
+            <div className="cc-hero__chip-tag cc-hero__chip-tag--uno">
+              <span className="cc-hero__pulse-dot" />
+              Arduino Uno R3
             </div>
 
-            {/* OLED Display badge */}
-            <div className="cc-hero__oled-display">
-              <div className="cc-hero__oled-screen">
-                <span className="cc-hero__oled-text">Ideas</span>
-                <span className="cc-hero__oled-text">Into</span>
-                <span className="cc-hero__oled-accent">Reality</span>
-              </div>
+            {/* Hardware Chip Tag 2: Arduino Nano (Left Podium) */}
+            <div className="cc-hero__chip-tag cc-hero__chip-tag--nano">
+              <span className="cc-hero__pulse-dot" />
+              Arduino Nano
             </div>
 
-            {/* Annotation 2 */}
-            <div className="cc-hero__annotation cc-hero__annotation--bottom-right">
-              <span>For Students</span>
-              <strong>By Builders ♡</strong>
+            {/* Hardware Chip Tag 3: ESP32 Dual Core (Right Podium) */}
+            <div className="cc-hero__chip-tag cc-hero__chip-tag--esp">
+              <span className="cc-hero__pulse-dot" />
+              ESP32 Dual Core
             </div>
           </div>
         </div>
