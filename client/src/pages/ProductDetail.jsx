@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import SEO from '../components/common/SEO';
 import { PRODUCTS } from '../data/mockProducts';
 import { fetchProductById, fetchRelatedProducts } from '../services/productService';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { useAuth } from '../context/AuthContext';
 import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
 import { WhatsAppIcon } from '../components/common/WhatsAppIcon';
 import { ProductCard } from '../components/product/ProductCard';
 import ProductReviews from '../components/product/ProductReviews';
-import { getProductWhatsAppLink, PRIORITY_BUYING_NUMBERS } from '../utils/constants';
+import { getProductWhatsAppLink } from '../utils/constants';
 import {
   Star,
   Heart,
   ShoppingCart,
+  Zap,
   Truck,
   ShieldCheck,
   RotateCcw,
@@ -182,6 +184,8 @@ export const getEffectiveWhereToUse = (product) => {
 
 export const ProductDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
@@ -192,6 +196,16 @@ export const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('how-to-use');
   const [copiedCode, setCopiedCode] = useState(false);
+
+  const handleBuyNow = () => {
+    if (!product || !product.inStock || (product.stockQuantity !== undefined && product.stockQuantity <= 0)) return;
+    addToCart(product, quantity);
+    if (!user) {
+      navigate('/login', { state: { returnUrl: '/checkout' } });
+    } else {
+      navigate('/checkout');
+    }
+  };
 
   // Compute effective YouTube tutorial URL with verified component fallbacks
   const effectiveYoutubeUrl = getEffectiveYouTubeUrl(product);
@@ -345,7 +359,7 @@ export const ProductDetail = () => {
                   transform: isZoomed ? 'scale(2.35)' : 'scale(1)'
                 }}
               />
-              {product.badge && (
+              {product.badge && product.badge.toLowerCase() !== 'hot' && (
                 <div className={`cc-detail-badge-pos ${isZoomed ? 'cc-detail-badge--hidden' : ''}`}>
                   <Badge variant={product.badge.toLowerCase()}>{product.badge}</Badge>
                 </div>
@@ -544,75 +558,39 @@ export const ProductDetail = () => {
                 </button>
               </div>
 
-              <Button
-                variant="primary"
-                size="lg"
-                disabled={!product.inStock || (product.stockQuantity !== undefined && product.stockQuantity <= 0)}
-                onClick={() => addToCart(product, quantity)}
-                icon={<ShoppingCart size={18} />}
-                className="cc-detail-add-btn"
-              >
-                {!product.inStock || (product.stockQuantity !== undefined && product.stockQuantity <= 0) ? 'Out of Stock' : 'Add to Cart'}
-              </Button>
-            </div>
+              {(!product.inStock || (product.stockQuantity !== undefined && product.stockQuantity <= 0)) ? (
+                <Button
+                  variant="primary"
+                  size="lg"
+                  disabled
+                  icon={<ShoppingCart size={18} />}
+                  className="cc-detail-add-btn cc-detail-btn--full"
+                >
+                  Out of Stock
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => addToCart(product, quantity)}
+                    icon={<ShoppingCart size={18} />}
+                    className="cc-detail-add-btn"
+                  >
+                    Add to Cart
+                  </Button>
 
-            {/* Direct WhatsApp Order CTA & Priority Buying Lines */}
-            <div className="cc-detail-whatsapp-box">
-              <a
-                href={getProductWhatsAppLink(product, PRIORITY_BUYING_NUMBERS[0].raw)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="cc-detail-whatsapp-btn"
-              >
-                <WhatsAppIcon size={20} />
-                <span>Buy / Order Directly on WhatsApp</span>
-              </a>
-              <span className="cc-detail-whatsapp-sub">Instant confirmation • Cash on Delivery or UPI Available</span>
-
-              {/* Priority Direct Buying Lines (Students can buy from any) */}
-              <div className="cc-detail-priority-box">
-                <div className="cc-detail-priority-header">
-                  <div className="cc-detail-priority-title">
-                    <span className="cc-detail-priority-bolt">⚡</span>
-                    <span>Priority Direct Buying Lines:</span>
-                  </div>
-                  <div className="cc-detail-priority-status">
-                    <span className="cc-detail-priority-dot" />
-                    <span>Fast Response</span>
-                  </div>
-                </div>
-
-                <div className="cc-detail-priority-grid">
-                  {PRIORITY_BUYING_NUMBERS.map((line, idx) => (
-                    <a
-                      key={idx}
-                      href={getProductWhatsAppLink(product, line.raw)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`cc-detail-priority-card ${idx === 0 ? 'cc-detail-priority-card--founder' : ''}`}
-                      title={`Buy ${product.name} directly via ${line.label}`}
-                    >
-                      <div className="cc-detail-priority-card-top">
-                        <div className="cc-detail-priority-card-label">
-                          <WhatsAppIcon size={14} color="#25D366" />
-                          <span>{line.label}</span>
-                        </div>
-                        <span className={`cc-detail-priority-pill ${idx === 0 ? 'cc-detail-priority-pill--founder' : ''}`}>
-                          {idx === 0 ? 'Priority 1' : `Priority ${idx + 1}`}
-                        </span>
-                      </div>
-
-                      <div className="cc-detail-priority-number">
-                        {line.display}
-                      </div>
-
-                      <div className="cc-detail-priority-hint">
-                        {idx === 0 ? 'Founder Line • Instant Reply' : 'Direct Dispatch Desk'}
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              </div>
+                  <Button
+                    variant="glow"
+                    size="lg"
+                    onClick={handleBuyNow}
+                    icon={<Zap size={18} />}
+                    className="cc-detail-buynow-btn"
+                  >
+                    Buy Now
+                  </Button>
+                </>
+              )}
             </div>
 
             {/* Trust Badges */}

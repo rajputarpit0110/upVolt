@@ -29,8 +29,8 @@ export const WhatsAppFloatingBtn = () => {
             <div className="cc-whatsapp-popover__header-title">
               <span className="cc-whatsapp-popover__pulse" />
               <div>
-                <h4>Buy Components on WhatsApp</h4>
-                <p>Instant dispatch for engineering students</p>
+                <h4>Student Helpline & Support</h4>
+                <p>Chat with our engineering mentors</p>
               </div>
             </div>
             <button
@@ -46,14 +46,14 @@ export const WhatsAppFloatingBtn = () => {
           <div className="cc-whatsapp-popover__body">
             <div className="cc-whatsapp-popover__tag">
               <Zap size={13} />
-              <span>Priority Direct Buying Lines:</span>
+              <span>Project Help & Guidance:</span>
             </div>
 
             <div className="cc-whatsapp-popover__lines">
               {PRIORITY_BUYING_NUMBERS.map((line, idx) => (
                 <a
                   key={idx}
-                  href={getWhatsAppLink(`Hi upVolt! I want to order/buy components directly. Please share availability and fast delivery details.`, line.raw)}
+                  href={getWhatsAppLink(`Hi upVolt! I need quick assistance or project guidance.`, line.raw)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`cc-whatsapp-line-card ${idx === 0 ? 'cc-whatsapp-line-card--founder' : ''}`}
@@ -93,14 +93,14 @@ export const WhatsAppFloatingBtn = () => {
       <div
         className="cc-whatsapp-floating"
         onClick={() => setIsOpen(!isOpen)}
-        title="Direct Component Ordering & WhatsApp Helpline"
+        title="Student Help & Mentor Guidance on WhatsApp"
         role="button"
         tabIndex={0}
       >
         {!isOpen && (
           <div className="cc-whatsapp-bubble">
-            <span className="cc-whatsapp-bubble__title">⚡ Buy Components</span>
-            <span className="cc-whatsapp-bubble__sub">Direct WhatsApp</span>
+            <span className="cc-whatsapp-bubble__title">Need Help?</span>
+            <span className="cc-whatsapp-bubble__sub">Student Support</span>
           </div>
         )}
         <div className={`cc-whatsapp-btn ${isOpen ? 'cc-whatsapp-btn--active' : ''}`}>

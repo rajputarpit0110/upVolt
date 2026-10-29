@@ -527,7 +527,6 @@ export const AddProductModal = ({ isOpen, onClose, onProductAdded }) => {
                 <option value="">None</option>
                 <option value="Bestseller">Bestseller</option>
                 <option value="Popular">Popular</option>
-                <option value="Hot">Hot</option>
                 <option value="New">New</option>
               </select>
             </div>

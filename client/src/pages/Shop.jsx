@@ -7,8 +7,6 @@ import { PRODUCTS, CATEGORIES } from '../data/mockProducts';
 import { fetchProducts } from '../services/productService';
 import { fetchCategories } from '../services/categoryService';
 import { useAuth } from '../context/AuthContext';
-import { WhatsAppIcon } from '../components/common/WhatsAppIcon';
-import { PRIORITY_BUYING_NUMBERS } from '../utils/constants';
 import { Filter, Search, SlidersHorizontal, X, Plus, Database, RefreshCw, Zap } from 'lucide-react';
 import './Shop.css';
 
@@ -110,8 +108,8 @@ export const Shop = () => {
           if (!badge) return 4;
           const b = badge.toLowerCase();
           if (b === 'bestseller') return 1;
-          if (b === 'hot') return 2;
-          if (b === 'popular') return 3;
+          if (b === 'popular') return 2;
+          if (b === 'new') return 3;
           return 4;
         };
         return getBadgeScore(a.badge) - getBadgeScore(b.badge);
@@ -166,80 +164,6 @@ export const Shop = () => {
               <Filter size={18} />
               <span>Filters</span>
             </button>
-          </div>
-        </div>
-
-        {/* Direct WhatsApp Ordering Bar for Buyers */}
-        <div style={{
-          marginBottom: 24,
-          padding: '12px 18px',
-          background: 'linear-gradient(135deg, rgba(37, 211, 102, 0.1), rgba(0, 210, 255, 0.05))',
-          border: '1px solid rgba(37, 211, 102, 0.3)',
-          borderRadius: 'var(--radius-lg)',
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 12
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: 32,
-              height: 32,
-              borderRadius: '50%',
-              background: 'rgba(37, 211, 102, 0.2)',
-              color: 'var(--color-whatsapp)',
-              flexShrink: 0
-            }}>
-              <WhatsAppIcon size={18} />
-            </span>
-            <div>
-              <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                ⚡ Direct Component Ordering on WhatsApp
-              </div>
-              <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>
-                Need components delivered urgently to your college? Order directly via our priority lines:
-              </div>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {PRIORITY_BUYING_NUMBERS.map((line, idx) => (
-              <a
-                key={idx}
-                href={`https://wa.me/${line.raw}?text=${encodeURIComponent(`Hi upVolt! I am browsing the component catalog and would like to buy components directly.`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  padding: '6px 12px',
-                  background: idx === 0 ? 'rgba(37, 211, 102, 0.18)' : 'var(--bg-surface)',
-                  border: idx === 0 ? '1px solid rgba(37, 211, 102, 0.5)' : '1px solid var(--border-color)',
-                  borderRadius: 'var(--radius-full)',
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  color: 'var(--text-primary)',
-                  textDecoration: 'none',
-                  transition: 'all 0.15s ease'
-                }}
-                title={`Order directly via ${line.label}`}
-              >
-                <WhatsAppIcon size={13} color="#25D366" />
-                <span>{line.display}</span>
-                <span style={{
-                  fontSize: '0.66rem',
-                  color: idx === 0 ? 'var(--color-whatsapp)' : 'var(--text-muted)',
-                  fontWeight: 600
-                }}>
-                  ({idx === 0 ? 'Founder' : `P${idx + 1}`})
-                </span>
-              </a>
-            ))}
           </div>
         </div>
 

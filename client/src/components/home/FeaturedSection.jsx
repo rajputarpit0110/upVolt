@@ -9,8 +9,8 @@ export const FeaturedSection = ({ products = [], loading = false }) => {
     if (!badge) return 4;
     const b = badge.toLowerCase();
     if (b === 'bestseller') return 1;
-    if (b === 'hot') return 2;
-    if (b === 'popular') return 3;
+    if (b === 'popular') return 2;
+    if (b === 'new') return 3;
     return 4;
   };
 

@@ -1,15 +1,16 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
+import { useAuth } from '../../context/AuthContext';
 import { Badge } from '../common/Badge';
-import { WhatsAppIcon } from '../common/WhatsAppIcon';
-import { getProductWhatsAppLink } from '../../utils/constants';
 import { getOptimizedImageUrl, getOptimizedSrcSet } from '../../utils/imageHelper';
-import { Star, Heart, ShoppingCart, ArrowRight } from 'lucide-react';
+import { Star, Heart, ShoppingCart, ArrowRight, Zap } from 'lucide-react';
 import './ProductCard.css';
 
 export const ProductCard = ({ product }) => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
@@ -31,6 +32,18 @@ export const ProductCard = ({ product }) => {
     addToCart(product, 1);
   };
 
+  const handleBuyNow = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!product.inStock || (product.stockQuantity !== undefined && product.stockQuantity <= 0)) return;
+    addToCart(product, 1);
+    if (!user) {
+      navigate('/login', { state: { returnUrl: '/checkout' } });
+    } else {
+      navigate('/checkout');
+    }
+  };
+
   const handleWishlistToggle = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -41,7 +54,7 @@ export const ProductCard = ({ product }) => {
     <div className="cc-product-card">
       {/* Top Bar: Badge & Wishlist */}
       <div className="cc-product-card__header">
-        {product.badge ? (
+        {product.badge && product.badge.toLowerCase() !== 'hot' ? (
           <Badge variant={product.badge.toLowerCase()}>{product.badge}</Badge>
         ) : discountPercent ? (
           <Badge variant="discount">{discountPercent}% OFF</Badge>
@@ -106,28 +119,40 @@ export const ProductCard = ({ product }) => {
           )}
         </div>
 
-        {/* Action Buttons: Add to Cart + WhatsApp Buy */}
+        {/* Action Buttons: Add to Cart & Buy Now */}
         <div className="cc-product-card__actions">
-          <button
-            type="button"
-            className={`cc-product-card__btn-cart ${(!product.inStock || (product.stockQuantity !== undefined && product.stockQuantity <= 0)) ? 'cc-product-card__btn-cart--disabled' : ''}`}
-            onClick={(!product.inStock || (product.stockQuantity !== undefined && product.stockQuantity <= 0)) ? undefined : handleAddToCart}
-            disabled={!product.inStock || (product.stockQuantity !== undefined && product.stockQuantity <= 0)}
-          >
-            <ShoppingCart size={15} />
-            <span>{(!product.inStock || (product.stockQuantity !== undefined && product.stockQuantity <= 0)) ? 'Out of Stock' : 'Add to Cart'}</span>
-          </button>
+          {(!product.inStock || (product.stockQuantity !== undefined && product.stockQuantity <= 0)) ? (
+            <button
+              type="button"
+              className="cc-product-card__btn-cart cc-product-card__btn-cart--disabled cc-product-card__btn--full"
+              disabled
+            >
+              <ShoppingCart size={14} />
+              <span>Out of Stock</span>
+            </button>
+          ) : (
+            <>
+              <button
+                type="button"
+                className="cc-product-card__btn-cart"
+                onClick={handleAddToCart}
+                title="Add to Cart"
+              >
+                <ShoppingCart size={14} />
+                <span>Add to Cart</span>
+              </button>
 
-          <a
-            href={getProductWhatsAppLink(product)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cc-product-card__btn-whatsapp"
-            title="Buy or inquire on WhatsApp"
-            aria-label="WhatsApp Order"
-          >
-            <WhatsAppIcon size={16} />
-          </a>
+              <button
+                type="button"
+                className="cc-product-card__btn-buynow"
+                onClick={handleBuyNow}
+                title="Buy Now directly"
+              >
+                <Zap size={14} />
+                <span>Buy Now</span>
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>

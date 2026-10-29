@@ -169,119 +169,135 @@
 /* Actions */
 .cc-product-card__actions {
   display: grid;
-  grid-template-columns: 1fr 42px;
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
+  width: 100%;
+}
+
+.cc-product-card__btn--full {
+  grid-column: 1 / -1;
 }
 
 .cc-product-card__btn-cart {
-  background: rgba(133, 168, 241, 0.16);
+  width: 100%;
+  background: rgba(133, 168, 241, 0.14);
   border: 1px solid rgba(86, 148, 246, 0.35);
   color: #93C5FD;
   font-weight: 600;
-  font-size: 0.85rem;
-  padding: 8px 12px;
+  font-size: 0.78rem;
+  padding: 8px 6px;
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 5px;
   cursor: pointer;
   transition: all var(--transition-fast);
+  white-space: nowrap;
 }
 
-.cc-product-card__btn-cart:hover {
-  background: var(--accent-primary);
+.cc-product-card__btn-cart:hover:not(:disabled) {
+  background: rgba(86, 148, 246, 0.25);
   color: #FFFFFF;
-  border-color: var(--accent-primary);
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+  border-color: #60A5FA;
+  transform: translateY(-1px);
 }
 
-.cc-product-card__btn-whatsapp {
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.35);
-  color: #34D399;
+.cc-product-card__btn-cart--disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.cc-product-card__btn-buynow {
+  width: 100%;
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  border: 1px solid #3B82F6;
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.78rem;
+  padding: 8px 6px;
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 5px;
   cursor: pointer;
   transition: all var(--transition-fast);
-  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+  white-space: nowrap;
 }
 
-.cc-product-card__btn-whatsapp:hover {
-  background: rgba(16, 185, 129, 0.28);
-  border-color: rgba(16, 185, 129, 0.6);
-  color: #A7F3D0;
-  transform: scale(1.04);
+.cc-product-card__btn-buynow:hover:not(:disabled) {
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  border-color: #60A5FA;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45);
+  transform: translateY(-1px);
+}
+
+.cc-product-card__btn-buynow--disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 /* =========================================================
    LIGHT MODE: Dark, high-contrast, crystal clear buttons
    ========================================================= */
 [data-theme="light"] .cc-product-card__btn-cart {
-  background: #3f76ec;
-  border: 1px solid #1D4ED8;
-  color: #FFFFFF;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  color: #1D4ED8;
   font-weight: 600;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
 }
 
-[data-theme="light"] .cc-product-card__btn-cart:hover {
-  background: #1D4ED8;
-  border-color: #1E40AF;
-  color: #FFFFFF;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+[data-theme="light"] .cc-product-card__btn-cart:hover:not(:disabled) {
+  background: #DBEAFE;
+  border-color: #93C5FD;
+  color: #1E40AF;
   transform: translateY(-1px);
 }
 
-[data-theme="light"] .cc-product-card__btn-whatsapp {
-  background: #1ac95a;
-  border: 1px solid #15803D;
+[data-theme="light"] .cc-product-card__btn-buynow {
+  background: #2563EB;
+  border: 1px solid #1D4ED8;
   color: #FFFFFF;
-  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.25);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
 }
 
-[data-theme="light"] .cc-product-card__btn-whatsapp:hover {
-  background: #189044;
-  border-color: #166534;
-  color: #FFFFFF;
-  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);
-  transform: scale(1.05);
+[data-theme="light"] .cc-product-card__btn-buynow:hover:not(:disabled) {
+  background: #1D4ED8;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  transform: translateY(-1px);
 }
 
 /* =========================================================
    EYE CARE MODE: Warm, deep soothing forest green contrast
    ========================================================= */
 [data-theme="eyecare"] .cc-product-card__btn-cart {
+  background: rgba(45, 106, 79, 0.12);
+  border: 1px solid rgba(45, 106, 79, 0.35);
+  color: #2D6A4F;
+  font-weight: 600;
+}
+
+[data-theme="eyecare"] .cc-product-card__btn-buynow {
   background: #2D6A4F;
   border: 1px solid #21513C;
   color: #FCFAF6;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(45, 106, 79, 0.22);
 }
 
-[data-theme="eyecare"] .cc-product-card__btn-cart:hover {
+[data-theme="eyecare"] .cc-product-card__btn-buynow:hover:not(:disabled) {
+  background: #1B4332;
+  border-color: #143526;
+  box-shadow: 0 4px 14px rgba(45, 106, 79, 0.32);
+  transform: translateY(-1px);
+}
+
+[data-theme="eyecare"] .cc-product-card__btn-cart:hover:not(:disabled) {
   background: #1B4332;
   border-color: #143526;
   color: #FCFAF6;
   box-shadow: 0 4px 14px rgba(45, 106, 79, 0.32);
   transform: translateY(-1px);
-}
-
-[data-theme="eyecare"] .cc-product-card__btn-whatsapp {
-  background: #1B5E3B;
-  border: 1px solid #14492E;
-  color: #FCFAF6;
-  box-shadow: 0 2px 8px rgba(27, 94, 59, 0.22);
-}
-
-[data-theme="eyecare"] .cc-product-card__btn-whatsapp:hover {
-  background: #14492E;
-  border-color: #0E3320;
-  color: #FCFAF6;
-  box-shadow: 0 4px 14px rgba(27, 94, 59, 0.32);
-  transform: scale(1.05);
 }
 
 /* =========================================================

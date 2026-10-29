@@ -4,8 +4,6 @@ import SEO from '../components/common/SEO';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/common/Button';
-import { WhatsAppIcon } from '../components/common/WhatsAppIcon';
-import { getWhatsAppLink, WHATSAPP_NUMBER, PRIORITY_BUYING_NUMBERS } from '../utils/constants';
 import {
   Trash2,
   Minus,
@@ -124,14 +122,6 @@ export const Cart = () => {
     } finally {
       setValidatingCoupon(false);
     }
-  };
-
-  const getWhatsAppCartOrderLink = (number = WHATSAPP_NUMBER) => {
-    const itemsSummary = cartItems
-      .map((item, idx) => `${idx + 1}. ${item.name} x ${item.quantity} = ₹${item.price * item.quantity}`)
-      .join('%0A');
-    const msg = `Hi upVolt! I would like to order the following items from my cart:%0A%0A${itemsSummary}%0A%0ASubtotal: ₹${cartSubtotal}%0AShipping: ₹${shippingFee}%0ATotal: ₹${finalTotal}%0A%0APlease confirm my order.`;
-    return `https://wa.me/${number}?text=${msg}`;
   };
 
   if (cartItems.length === 0) {
@@ -337,87 +327,6 @@ export const Cart = () => {
               >
                 Proceed to Checkout
               </Button>
-
-              <a
-                href={getWhatsAppCartOrderLink(PRIORITY_BUYING_NUMBERS[0].raw)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="cc-cart-whatsapp-btn"
-              >
-                <WhatsAppIcon size={18} />
-                <span>Order on WhatsApp (Instant)</span>
-              </a>
-            </div>
-
-            {/* Priority Direct Buying Lines */}
-            <div style={{
-              marginTop: 12,
-              padding: '12px 14px',
-              background: 'rgba(37, 211, 102, 0.07)',
-              border: '1px solid rgba(37, 211, 102, 0.25)',
-              borderRadius: 'var(--radius-md)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 8
-            }}>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                fontSize: '0.76rem',
-                fontWeight: 700,
-                color: 'var(--text-secondary)',
-                textTransform: 'uppercase',
-                letterSpacing: '0.04em'
-              }}>
-                <span>⚡ Direct WhatsApp Order Lines:</span>
-                <span style={{ color: 'var(--color-whatsapp)', fontSize: '0.72rem', fontWeight: 600 }}>Quick Dispatch</span>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                {PRIORITY_BUYING_NUMBERS.map((line, idx) => (
-                  <a
-                    key={idx}
-                    href={getWhatsAppCartOrderLink(line.raw)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: '8px 10px',
-                      background: idx === 0 ? 'rgba(37, 211, 102, 0.14)' : 'var(--bg-surface)',
-                      border: idx === 0 ? '1px solid rgba(37, 211, 102, 0.4)' : '1px solid var(--border-color)',
-                      borderRadius: 'var(--radius-sm)',
-                      textDecoration: 'none',
-                      transition: 'all 0.15s ease'
-                    }}
-                    title={`Send cart order directly to ${line.display} (${line.label})`}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <WhatsAppIcon size={16} color="#25D366" />
-                      <div style={{ textAlign: 'left' }}>
-                        <span style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--text-primary)', display: 'block' }}>
-                          {line.display}
-                        </span>
-                        <span style={{ fontSize: '0.7rem', color: idx === 0 ? 'var(--color-whatsapp)' : 'var(--text-muted)', fontWeight: 600 }}>
-                          {line.label}
-                        </span>
-                      </div>
-                    </div>
-                    <span style={{
-                      fontSize: '0.68rem',
-                      fontWeight: 700,
-                      color: idx === 0 ? '#10B981' : 'var(--text-muted)',
-                      background: idx === 0 ? 'rgba(16, 185, 129, 0.12)' : 'var(--bg-main)',
-                      padding: '2px 7px',
-                      borderRadius: 10,
-                      border: idx === 0 ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--border-color)'
-                    }}>
-                      {line.tag}
-                    </span>
-                  </a>
-                ))}
-              </div>
             </div>
 
             {/* Perks */}

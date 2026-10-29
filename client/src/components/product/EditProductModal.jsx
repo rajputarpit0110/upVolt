@@ -556,7 +556,6 @@ export const EditProductModal = ({ isOpen, onClose, product, onProductUpdated })
                 <option value="">None</option>
                 <option value="Bestseller">Bestseller</option>
                 <option value="Popular">Popular</option>
-                <option value="Hot">Hot</option>
                 <option value="New">New</option>
               </select>
             </div>

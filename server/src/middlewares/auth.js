@@ -63,3 +63,27 @@ export const requireMasterAdmin = async (c, next) => {
   }
   await next();
 };
+
+// Optional authentication: attaches user if valid token present, does not reject if absent
+export const optionalAuth = async (c, next) => {
+  let token;
+  const authHeader = c.req.header('authorization');
+
+  if (authHeader && authHeader.startsWith('Bearer')) {
+    token = authHeader.split(' ')[1];
+  }
+
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'super_secret_jwt_key_for_campus_circuit');
+      const user = await User.findById(decoded.id).select('-password');
+      if (user) {
+        c.set('user', user);
+      }
+    } catch {
+      // ignore invalid token in optional auth
+    }
+  }
+
+  await next();
+};
