@@ -434,6 +434,41 @@ export const Navbar = () => {
         </div>
       </div>
 
+      {/* Prominent Flipkart-style Mobile Search Bar (Always visible on mobile below top navbar) */}
+      <div className="cc-mobile-header-search show-tablet">
+        <div ref={mobileSearchRef} className="container cc-mobile-header-search__inner">
+          <form onSubmit={handleSearchSubmit} role="search" className="cc-mobile-search-form">
+            <div className="cc-search-box cc-search-box--mobile">
+              <Search size={16} className="cc-search-icon" />
+              <input
+                type="text"
+                placeholder="Search microcontrollers, sensors, kits..."
+                value={searchQuery}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                onFocus={() => {
+                  if (searchQuery.trim()) setSearchDropdownOpen(true);
+                }}
+                className="cc-search-input"
+                autoComplete="off"
+                aria-label="Search components"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  className="cc-search-clear-btn"
+                  onClick={handleClearSearch}
+                  title="Clear search"
+                  aria-label="Clear search"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+          </form>
+          {renderSearchDropdown()}
+        </div>
+      </div>
+
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="cc-mobile-drawer glass-panel show-tablet">

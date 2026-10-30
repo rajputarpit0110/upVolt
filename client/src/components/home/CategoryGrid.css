@@ -108,12 +108,59 @@
 }
 
 @media (max-width: 640px) {
+  .cc-category-section {
+    padding: 20px 0 30px;
+    margin-bottom: 24px;
+  }
   .cc-category-grid {
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 14px;
+    padding-bottom: 10px;
+    padding-left: 2px;
+    padding-right: 2px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .cc-category-grid::-webkit-scrollbar {
+    display: none;
+  }
+  .cc-category-card {
+    flex: 0 0 88px;
+    scroll-snap-align: start;
+    padding: 10px 6px;
+    border-radius: 16px;
+  }
+  .cc-category-card__image-box {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+  .cc-category-card__img {
+    border-radius: 50%;
+  }
+  .cc-category-card__name {
+    font-size: 0.74rem;
+    white-space: normal;
+    text-overflow: ellipsis;
   }
   .cc-section-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .cc-section-title {
+    font-size: 1.35rem;
+    margin-bottom: 2px;
+  }
+  .cc-section-subtitle {
+    font-size: 0.78rem;
+  }
+  .cc-section-link {
+    font-size: 0.78rem;
   }
 }

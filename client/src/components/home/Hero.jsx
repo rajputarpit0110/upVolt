@@ -1,21 +1,110 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../common/Button';
 import { WhatsAppIcon } from '../common/WhatsAppIcon';
 import { getWhatsAppLink } from '../../utils/constants';
-import { Truck, Headphones, ShieldCheck, ArrowRight, Sparkles } from 'lucide-react';
+import { Truck, Headphones, ShieldCheck, ArrowRight, Sparkles, ChevronRight } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import './Hero.css';
+
+const MOBILE_SLIDES = [
+  {
+    badge: 'COLLEGE PROJECTS',
+    title: 'Smart IoT Kits & Boards',
+    subtitle: 'From Arduino to ESP32 with guided circuit diagrams & tested code.',
+    btnText: 'Shop IoT Kits',
+    link: '/shop?category=IoT+Kits',
+    image: '/images/hero_hardware_nano_light.webp',
+    darkImage: '/images/hero_hardware_nano_dark.webp',
+    accentColor: '#38BDF8'
+  },
+  {
+    badge: 'FRESH ARRIVALS',
+    title: 'Microcontrollers & Sensors',
+    subtitle: 'Original modules tested for student engineering & robotics.',
+    btnText: 'Explore Sensors',
+    link: '/shop?category=Sensors',
+    image: '/images/realistic/esp32.webp',
+    darkImage: '/images/realistic/esp32.webp',
+    accentColor: '#10B981'
+  },
+  {
+    badge: 'FAST CAMPUS DELIVERY',
+    title: 'Hostel & College Ready',
+    subtitle: 'Super fast delivery to your college gate with student-first pricing.',
+    btnText: 'Shop All Products',
+    link: '/shop',
+    image: '/images/realistic/arduino_uno.webp',
+    darkImage: '/images/realistic/arduino_uno.webp',
+    accentColor: '#F59E0B'
+  }
+];
 
 export const Hero = () => {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  // Auto-advance mobile carousel banner smoothly
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % MOBILE_SLIDES.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, []);
+
+  const slide = MOBILE_SLIDES[activeSlide];
 
   return (
     <section className="cc-hero">
       <div className="container cc-hero__container">
-        {/* Left Content Column */}
-        <div className="cc-hero__content">
+        {/* MOBILE LANDSCAPE HERO BANNER (Shown only on Mobile/Tablet like reference UI) */}
+        <div className="cc-hero__mobile-banner-wrapper">
+          <div className="cc-hero__mobile-banner">
+            <div className="cc-hero__mobile-banner-content">
+              <span className="cc-hero__mobile-pill">
+                <Sparkles size={11} />
+                {slide.badge}
+              </span>
+              <h2 className="cc-hero__mobile-title">
+                {slide.title}
+              </h2>
+              <p className="cc-hero__mobile-desc">
+                {slide.subtitle}
+              </p>
+              <Link to={slide.link} className="cc-hero__mobile-btn">
+                <span>{slide.btnText}</span>
+                <ChevronRight size={14} />
+              </Link>
+            </div>
+
+            <div className="cc-hero__mobile-banner-visual">
+              <div className="cc-hero__mobile-arc-bg" />
+              <img
+                src={isDark ? slide.darkImage : slide.image}
+                alt={slide.title}
+                className="cc-hero__mobile-banner-img"
+                loading="eager"
+              />
+            </div>
+          </div>
+
+          {/* Dots Indicator */}
+          <div className="cc-hero__mobile-dots">
+            {MOBILE_SLIDES.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                className={`cc-hero__mobile-dot ${i === activeSlide ? 'cc-hero__mobile-dot--active' : ''}`}
+                onClick={() => setActiveSlide(i)}
+                aria-label={`Go to slide ${i + 1}`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Left Content Column (Shown on Desktop, hidden/minimized on mobile so the landscape banner leads straight to Categories) */}
+        <div className="cc-hero__content hide-on-mobile-banner">
           <div className="cc-hero__badge">
             <Sparkles size={14} className="cc-hero__badge-icon" />
             <span>IDEAS DESERVE HARDWARE • BUILT FOR STUDENT MAKERS</span>
@@ -92,8 +181,8 @@ export const Hero = () => {
           </div>
         </div>
 
-        {/* Right Visual Showcase Column with Seamless Blending */}
-        <div className="cc-hero__visual">
+        {/* Right Visual Showcase Column with Seamless Blending (Desktop) */}
+        <div className="cc-hero__visual hide-on-mobile-banner">
           <div className="cc-hero__glow-bg" />
           
           <div className="cc-hero__showcase">
@@ -116,7 +205,7 @@ export const Hero = () => {
               </picture>
             </div>
 
-            {/* Unified Precision Vector Pointer Lines Overlay (2-part L-shaped elbow lines with single bend) */}
+            {/* Unified Precision Vector Pointer Lines Overlay */}
             <svg
               className="cc-hero__pointers-svg"
               viewBox="0 0 1000 750"

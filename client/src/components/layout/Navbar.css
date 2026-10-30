@@ -700,3 +700,44 @@
     font-size: 0.8rem;
   }
 }
+
+/* Flipkart-style prominent mobile search bar strip */
+.cc-mobile-header-search {
+  padding: 6px 12px 10px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+[data-theme="light"] .cc-mobile-header-search {
+  background: #F1F5F9;
+}
+
+.cc-mobile-header-search__inner {
+  position: relative;
+  width: 100%;
+  padding: 0;
+}
+
+.cc-mobile-search-form {
+  width: 100%;
+}
+
+.cc-search-box--mobile {
+  height: 40px;
+  border-radius: 9999px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .cc-search-box--mobile {
+  background: #FFFFFF;
+  border-color: #CBD5E1;
+}
+
+.cc-search-box--mobile .cc-search-input {
+  font-size: 0.86rem;
+}
+
